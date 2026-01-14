@@ -1,0 +1,19 @@
+<h1>Portfolios#new</h1>
+<%= form_with model: @portfolio, url: user_portfolio_path(@user), local: true, data: { turbo: false } do |f| %>
+<div>
+<%=f.label :title%>
+<%=f.text_field :title%>
+</div>
+<div>
+<%=f.label :body%>
+<%=f.text_area :body, class: "portfolio-body", size: "30x10"%>
+</div>
+<div>
+<%= f.label :image, '画像(5MBまで)'%><br>
+<%= f.file_field :image%>
+</div>
+<%=f.submit%>
+</div>
+<%end%>
+
+

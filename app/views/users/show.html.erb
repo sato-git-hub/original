@@ -1,0 +1,4 @@
+<h1><%=@user.name%></h1>
+<h1><%=@user.email%></h1>
+<%= image_tag(@user.avatar) %>
+<%= link_to "ログアウト", "/logout", data: { turbo_method: :delete }%> 
