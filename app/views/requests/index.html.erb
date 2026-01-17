@@ -1,0 +1,11 @@
+<% @requests.each do |request| %>
+  <%= link_to request_path(request) do %>
+    <% if request.request_images.attached? %>
+    <% request.request_images.each do |request_image| %>
+      <%= image_tag request_image %>
+    <% end %>
+    <% else %>
+     <p>画像なし</p>
+    <% end %>
+  <% end %>
+<%end%>

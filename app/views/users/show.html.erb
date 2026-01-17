@@ -1,4 +1,6 @@
-<h1><%=@user.name%></h1>
-<h1><%=@user.email%></h1>
-<%= image_tag(@user.avatar) %>
+<%if @user.avatar.attached?  %>
+<%= image_tag @user.avatar, class: "max-w-50 h-auto rounded-full" %>
+<% else %>
+<%= image_tag "default_avatar.jpg", class: "max-w-50 h-auto" %>
+<% end %>
 <%= link_to "ログアウト", "/logout", data: { turbo_method: :delete }%> 

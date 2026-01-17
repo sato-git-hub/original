@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_13_020935) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_17_043634) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -40,18 +40,35 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_13_020935) do
   end
 
   create_table "portfolios", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "title"
-    t.text "body"
-    t.bigint "user_id"
+    t.string "title", null: false
+    t.text "body", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.boolean "published", default: false, null: false
     t.index ["user_id"], name: "index_portfolios_on_user_id"
   end
 
+  create_table "requests", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "body", null: false
+    t.bigint "user_id", null: false
+    t.bigint "creator_id", null: false
+    t.integer "current_amount", default: 0, null: false
+    t.integer "lowest_amount", default: 0, null: false
+    t.integer "target_amount", default: 0, null: false
+    t.integer "status", default: 0, null: false
+    t.integer "approval_status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_requests_on_creator_id"
+    t.index ["user_id"], name: "index_requests_on_user_id"
+  end
+
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "email"
-    t.string "password_digest"
-    t.string "name"
+    t.string "email", null: false
+    t.string "password_digest", null: false
+    t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -60,4 +77,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_13_020935) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "portfolios", "users"
+  add_foreign_key "requests", "users"
+  add_foreign_key "requests", "users", column: "creator_id"
 end

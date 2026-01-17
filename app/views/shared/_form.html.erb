@@ -1,23 +1,108 @@
-<h2><%=document%></h2>
+
+      <p class="text-2xl text-black font-bold text-center mb-5">
+        <%=document%>
+      </p>
+
+      <!-- ユーザー名 -->
+      <div class="md:flex md:items-center mb-6">
+        <div class="md:w-1/3">
+          <%= f.label :name, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+            ユーザー名<br>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+              必須
+            </span>
+          <% end %>
+        </div>
+
+        <div class="md:w-2/3">
+          <%= f.text_field :name,
+            placeholder: "ユーザー名",
+            class: "bg-gray-200 appearance-none border-2 border-gray-400 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" %>
+        </div>
+      </div>
+
+      <!-- メールアドレス -->
+      <div class="md:flex md:items-center mb-6">
+        <div class="md:w-1/3">
+          <%= f.label :email, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+            メールアドレス<br>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+              必須
+            </span>
+          <% end %>
+        </div>
+
+        <div class="md:w-2/3">
+          <%= f.email_field :email,
+            placeholder: "例) example@gmail.com",
+            class: "bg-gray-200 appearance-none border-2 border-gray-400 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" %>
+        </div>
+      </div>
+
+
+      <div class="md:flex md:items-center mb-6">
+        <div class="md:w-1/3">
+          <%= f.label :password, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+            パスワード<br>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+              必須
+            </span>
+          <% end %>
+        </div>
+
+        <div class="md:w-2/3">
+          <%= f.password_field :password,
+            placeholder: "6文字以上",
+            class: "bg-gray-200 appearance-none border-2 border-gray-400 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" %>
+        </div>
+      </div>
+
+
+        <div class="md:flex md:items-center mb-6">
+        <div class="md:w-1/3">
+          <%= f.label :password_confirmation, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+            パスワード(確認用)<br>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+              必須
+            </span>
+          <% end %>
+        </div>
+
+        <div class="md:w-2/3">
+          <%= f.password_field :password_confirmation,
+            placeholder: "",
+            class: "bg-gray-200 appearance-none border-2 border-gray-400 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" %>
+        </div>
+      </div>
+
 <div>
-<%=f.label :name%>
-<%=f.text_field :name%>
-</div>
-<div>
-<%=f.label :email%>
-<%=f.text_field :email%>
-</div>
-<div>
-<%=f.label :password%>
-<%=f.password_field :password%>
-</div>
-<div>
-<%=f.label :password_confirmation%>
-<%=f.password_field :password_confirmation%>
-<div>
-<%= f.label :avatar, '画像(5MBまで)'%><br>
-<%= f.file_field :avatar%>
-</div>
-<%=f.submit document%>
+<%= f.label :avatar,
+  "画像を選択",
+  class: "inline-block cursor-pointer rounded-md bg-neutral-900 px-6 py-2 text-white hover:bg-neutral-700 transition" %>
+
+<span class="ml-3 text-sm text-gray-600" id="file-name">
+  選択されていません
+</span>
+<%= f.file_field :avatar, id: "user_avatar",
+  class: "hidden", onchange: "avatarImage(this);", accept: "image/jpeg,image/gif,image/png"%>
 </div>
 
+      <!-- 送信ボタン -->
+      <div class="flex justify-center">
+        <button
+          type="submit"
+          class="py-3 px-14 font-bold rounded-3xl bg-blue-400 text-white hover:shadow-teal-md transition-all">
+          送信
+        </button>
+      </div>
+
+  </div>
+
+
+<script>
+  function avatarImage(input) {
+    if (input.files.length > 0) {
+      document.getElementById("file-name").textContent = input.files[0].name;
+    }
+  }
+</script>

@@ -1,0 +1,17 @@
+<%= form_with model: @request, url: user_requests_path(@creator), local: true, data: { turbo: false } do |f| %>
+<div>
+<%= f.label :title %>
+<%= f.text_field :title, required: true%>
+</div>
+<div>
+<%= f.label :body %>
+<%= f.text_area :body, required: true%>
+</div>
+<div>
+<%= f.label :request_image, '画像(5MBまで)' %><br>
+<%= f.file_field :request_images, multiple: true, required: true%>
+</div>
+<div>
+<%= f.submit %>
+</div>
+<% end %>

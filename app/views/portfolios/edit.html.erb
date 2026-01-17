@@ -1,17 +1,18 @@
 
 <%= form_with model: @portfolio, scope: :portfolio, url: user_portfolio_path(@user), local: true, data: { turbo: false } do |f| %>
 <div>
-<%=f.label :title%>
-<%=f.text_field :title%>
+<%=f.label :title, class:"block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+<%=f.text_field :title, class:"appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"%>
 </div>
 <div>
 <%=f.label :body%>
-<%=f.text_area :body, class: "portfolio-body", size: "30x10"%>
+<%=f.text_area :body, class: "no-resize appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 h-48 resize-none"%>
 </div>
 <div>
 <%= f.label :image, '画像(5MBまで)'%><br>
-<%= f.file_field :image%>
+<%= f.file_field :image, class: "inline-flex h-12 items-center justify-center rounded-md bg-neutral-950 px-6 font-medium text-neutral-50 transition active:scale-110 " %>
 </div>
-<%=f.submit%>
+<%= f.submit "作成",
+  class: "inline-flex h-12 items-center justify-center rounded-md bg-neutral-950 px-6 font-medium text-neutral-50 transition active:scale-110 " %>
 </div>
 <%end%>

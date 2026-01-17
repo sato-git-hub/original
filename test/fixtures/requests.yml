@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  body: MyText
+  user: one
+  creator: one
+  current_amount: 1
+  lowest_amount: 1
+  target_amount: 1
+  status: 1
+  approval_status: 1
+
+two:
+  title: MyString
+  body: MyText
+  user: two
+  creator: two
+  current_amount: 1
+  lowest_amount: 1
+  target_amount: 1
+  status: 1
+  approval_status: 1

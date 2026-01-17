@@ -1,4 +1,5 @@
-<%=@portfolio.title%>
-<%=@portfolio.body%>
+<%= @portfolio.title %>
+<%= @portfolio.body %>
 <!-- <img src=""> -->
 <%= image_tag(@portfolio.image) %>
+<%= link_to "リクエストを送る", new_user_request_path %>

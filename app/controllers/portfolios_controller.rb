@@ -2,6 +2,7 @@ class PortfoliosController < ApplicationController
   before_action :authorize_portfolio_owner!, except:[:show]
   before_action :portfolio_created!, only:[:new, :create]
   before_action :portfolio_new!, only:[:edit, :update]
+  before_action :ensure_published!, only:[:show]
   def new
     #入れ子にすると/users/:user_id/portfolio/newとなる
     #　idが例えば1のユーザ情報レコードを格納
@@ -42,9 +43,6 @@ class PortfoliosController < ApplicationController
     end
  end
 
-  def destroy
-  end
-
   private 
   def portfolio_created!
     redirect_to edit_user_portfolio_path(current_user) if current_user.portfolio
@@ -61,7 +59,13 @@ class PortfoliosController < ApplicationController
     #一致しない場合 
     redirect_to user_path(current_user)
   end
-  
+
+  def ensure_published!
+   @user = User.find(params[:user_id])
+   @portfolio = @user.portfolio
+   raise ActiveRecord::RecordNotFound if @portfolio.nil? || !@portfolio.published?
+  end
+
   def portfolio_params
     params.require(:portfolio).permit(:title, :body, :image)
   end
