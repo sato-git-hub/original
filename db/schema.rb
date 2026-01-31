@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_17_043634) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_31_083103) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -39,6 +39,31 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_17_043634) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "characters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "hair_color"
+    t.string "hair_style"
+    t.string "hair_type"
+    t.string "hair_length"
+    t.string "skin_tone"
+    t.integer "height"
+    t.string "body_type"
+    t.string "body_frame"
+    t.string "personal_color"
+    t.integer "age"
+    t.string "sex"
+    t.string "eye_color"
+    t.string "eye_shape"
+    t.string "mbti"
+    t.boolean "glasses"
+    t.string "face_type"
+    t.string "face_shape"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "request_id", null: false
+    t.string "bang_style"
+    t.index ["request_id"], name: "index_characters_on_request_id"
+  end
+
   create_table "portfolios", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title", null: false
     t.text "body", null: false
@@ -46,7 +71,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_17_043634) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.boolean "published", default: false, null: false
-    t.index ["user_id"], name: "index_portfolios_on_user_id"
+    t.index ["user_id"], name: "index_portfolios_on_user_id", unique: true
   end
 
   create_table "requests", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -61,8 +86,37 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_17_043634) do
     t.integer "approval_status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "published", default: false, null: false
+    t.datetime "approved_at", precision: nil
+    t.datetime "deadline_at", precision: nil
+    t.text "search_conf"
     t.index ["creator_id"], name: "index_requests_on_creator_id"
     t.index ["user_id"], name: "index_requests_on_user_id"
+  end
+
+  create_table "revisions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "request_id", null: false
+    t.bigint "creator_id", null: false
+    t.text "body", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["creator_id"], name: "index_revisions_on_creator_id"
+    t.index ["request_id"], name: "index_revisions_on_request_id"
+    t.index ["user_id"], name: "index_revisions_on_user_id"
+  end
+
+  create_table "support_histories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "request_id", null: false
+    t.integer "amount", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "payjp_charge_id", default: "", null: false
+    t.integer "status", default: 0, null: false
+    t.index ["request_id"], name: "index_support_histories_on_request_id"
+    t.index ["user_id"], name: "index_support_histories_on_user_id"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -71,12 +125,24 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_17_043634) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "comment", default: ""
+    t.string "twitter"
+    t.string "facebook"
+    t.string "instagram"
+    t.string "pixiv"
+    t.string "payjp_customer_id"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "characters", "requests"
   add_foreign_key "portfolios", "users"
   add_foreign_key "requests", "users"
   add_foreign_key "requests", "users", column: "creator_id"
+  add_foreign_key "revisions", "requests"
+  add_foreign_key "revisions", "users"
+  add_foreign_key "revisions", "users", column: "creator_id"
+  add_foreign_key "support_histories", "requests"
+  add_foreign_key "support_histories", "users"
 end

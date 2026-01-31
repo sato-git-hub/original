@@ -1,9 +1,0 @@
-<h1 class="font-bold text-4xl">ポートフォリオ公開設定</h1>
-<% if @portfolio.nil? %>
-  <p>ポートフォリオを作成した後に設定ができます</p>
-<% else %>
-  <%= form_with model: @portfolio, url: setting_path, local: true do |f| %>
-    <%= f.check_box :published %>
-    <%= f.submit "保存" %>
-  <% end %>
-<% end %>

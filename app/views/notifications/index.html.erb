@@ -1,0 +1,31 @@
+<div class="text-center"><%="メッセージはありません" if @requests.blank?%></div>
+<% @requests.each do |request| %>
+  <li>
+    <%= link_to request_path(request) do %>
+      <h3><%= request.title %></h3>
+      <p><%= request.body %></p>
+
+      <% if request.request_images.attached? %>
+        <% request.request_images.each do |request_image| %>
+          <%= image_tag request_image %>
+        <% end %>
+      <% end %>
+    <% end %>
+    <%= link_to "修正依頼を作成する",
+            new_request_revision_request_path(request) %>
+  </li>
+<% end %>
+
+<div class="text-center"><%="修正依頼はありません" if @revision_requests.blank?%></div>
+<% @revision_requests.each do |revision_request| %>
+<li>
+      <p><%= revision_request.body %></p>
+
+      <% if revision_request.revision_images.attached? %>
+        <% revision_request.revision_images.each do |revision_image| %>
+          <%= image_tag revision_image %>
+        <% end %>
+      <% end %>
+      <%= link_to "拒否する", request_path(revision_request.request_id), data: { turbo_method: :delete } %>
+  </li>
+<% end %>

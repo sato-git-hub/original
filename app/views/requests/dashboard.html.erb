@@ -1,0 +1,23 @@
+<%= search_form_for @q, url: dashboard_requests_path, method: :get, local: true do |f| %>
+  <%= f.label :status_eq, "ステータス" %>
+  <%= f.select :status_eq,
+    [["下書き", 0], ["承認待ち", 1], ["掲載中", 2], ["拒否", 3], ["成功", 4], ["失敗(終了)", 5], ["成功(終了)", 6]],
+    { include_blank: "すべて", selected: params[:q]&.[](:status_eq) }, 
+    { onchange: "this.form.submit();" } %>
+<% end %>
+
+<% @requests.each do |request| %>
+  <%=link_to request do%>
+    <%= request.title %>
+    <%= request.body %>
+    <% if request.request_images.attached? %>
+      <% request.request_images.each do |request_image| %>
+        <%= image_tag request_image %>
+      <% end %>
+    <% end %>
+    <% if request.draft? %>
+      <%= link_to "編集", edit_request_path(request) %>
+      <%= link_to "送信", submit_request_status_path(request), data: { turbo_method: :patch }%>
+    <% end %>
+  <% end %>
+<% end %>

@@ -2,11 +2,12 @@ class UsersController < ApplicationController
   skip_before_action :authenticate_user!, only:[:new, :create]
   before_action :set_user, only:[:show, :edit, :update, :destroy]
   before_action :redirect_if_authenticated, only:[:new, :create]
-  before_action :authorize_user!, only:[:show, :edit, :update, :destroy]
+  before_action :authorize_user!, only:[:edit, :update, :destroy]
   def index
   end
   
   def show
+    
   end
 
   def new
@@ -25,9 +26,11 @@ class UsersController < ApplicationController
   end
 
   def edit
+    @user = current_user
   end
 
   def update
+    @user = current_user
     if @user.update(user_params)
       redirect_to @user
     else
@@ -54,6 +57,6 @@ private
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :avatar, :password, :password_confirmation)
+    params.require(:user).permit(:name, :email, :avatar, :password, :password_confirmation, :twitter, :pixiv, :instagram, :comment)
   end
 end

@@ -1,0 +1,11 @@
+<h2>拒否されたリクエスト</h2>
+<%= @requests.each do |request| %>
+  <%= request.title %>
+  <%= request.body %>
+  <%= request.target_amount %>
+  <% if request.request_images.attached? %>
+    <% request.request_images.each do |request_image| %>
+      <%= image_tag request_image %>
+    <% end %>
+  <%end%>
+<%end%>

@@ -1,0 +1,12 @@
+<h2>下書き一覧</h2>
+<% @requests.each do |request| %>
+  <%= request.title %>
+  <%= request.body %>
+  <% if request.request_images.attached? %>
+    <% request.request_images.each do |request_image| %>
+      <%= image_tag request_image %>
+    <% end %>
+  <% end %>
+  <!--status: を :draft から :submitに更新する-->
+  <%= link_to "リクエストを送信する", submit_request_path(request), data: { turbo_method: :patch } %>
+<% end %>

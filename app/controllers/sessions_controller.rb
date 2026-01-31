@@ -10,6 +10,7 @@ class SessionsController < ApplicationController
       session[:user_id] = @user.id
       redirect_to requests_path
     else
+      flash.now[:alert] = "メールアドレスまたはパスワードが誤っています"
       render :new, status: :unprocessable_entity
     end
   end

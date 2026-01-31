@@ -17,9 +17,14 @@
     <!--application.css-->
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <script src="https://kit.fontawesome.com/9a71256c57.js" crossorigin="anonymous"></script>
   </head>
   <body>
+    
     <main class="container mx-auto mt-28 px-5">
+    <% flash.each do |key, message| %>
+      <div class="flash <%= key %>"><%= message %></div>
+    <% end %>
       <%= yield %>
     </main>
   </body>
