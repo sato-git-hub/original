@@ -1,19 +1,57 @@
-<h1>Portfolios#new</h1>
-<%= form_with model: @portfolio, url: user_portfolio_path(@user), local: true, data: { turbo: false } do |f| %>
+
+<%= form_with model: @portfolio, local: true, data: { turbo: false } do |f| %>
 <div>
-<%=f.label :title%>
-<%=f.text_field :title, class: "border-solid"%>
+<%=f.label :title, class:"block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+<%=f.text_field :title, required: true, class:"appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"%>
 </div>
 <div>
 <%=f.label :body%>
-<%=f.text_area :body, class: "portfolio-body", size: "30x10"%>
+<%=f.text_area :body, required: true, class: "no-resize appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 h-48 resize-none"%>
 </div>
 <div>
-<%= f.label :image, '画像(5MBまで)'%><br>
-<%= f.file_field :image%>
+
+<%= f.label :images, "画像を選択",
+  class: "inline-block cursor-pointer rounded-md bg-neutral-900 px-6 py-2 text-white hover:bg-neutral-700 transition ml-40 mb-7"%>
+
+<%# edit用 %>
+<div id="image-preview-container" class="flex flex-wrap gap-4 mb-4">
+  <% if @portfolio.images.attached? %>
+    <% @portfolio.images.each do |image| %>
+      <%= image_tag image, size: "150x150", class: "object-cover rounded" %>
+    <% end %>
+  <% end %>
 </div>
-<%=f.submit%>
+
+<%= f.file_field :images, multiple: true, required: true,
+  class: "hidden", onchange: "setImage(this);", accept: "image/jpeg,image/gif,image/png"%>
+</div>
+
+<%= f.submit "作成",
+  class: "inline-flex h-12 items-center justify-center rounded-md bg-neutral-950 px-6 font-medium text-neutral-50 transition active:scale-110 " %>
 </div>
 <%end%>
 
+<script>
+  const previewContainer = document.getElementById("image-preview-container")
+  //document.getElementById("image-upload-field").addEventListener("change", (event) => {
+  function setImage(input){
+    if (!input.files) return;
+        previewContainer.innerHTML = "";
+        for (const file of input.files){
+          const imageUrl = URL.createObjectURL(file);
+          //前方一致か？
+          if (!file.type.startsWith("image/")) continue;
+          //imgタグの作成
+          const img = document.createElement("img")
+          img.src = imageUrl;
+          img.style.width = "150px";
+          img.style.height = "auto";
+          img.style.objectFit = "cover";
+          img.classList.add("rounded", "preview-img");
+          img.onload = () => {
+            URL.revokeObjectURL(imageUrl); 
+          };
+          previewContainer.appendChild(img)
+      }};
+</script>
 

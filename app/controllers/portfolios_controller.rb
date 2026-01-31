@@ -1,72 +1,61 @@
 class PortfoliosController < ApplicationController
-  before_action :authorize_portfolio_owner!, except:[:show]
-  before_action :portfolio_created!, only:[:new, :create]
-  before_action :portfolio_new!, only:[:edit, :update]
-  before_action :ensure_published!, only:[:show]
+  before_action :portfolio_set!, only:[:show]
+  before_action :authorize_portfolio!, only:[:edit, :update]
+  before_action :redirect_if_portfolio_exists, only:[:new, :create]
+  before_action :redirect_unless_portfolio_exists, only:[:edit]
+  def index
+    @portfolios = Portfolio.where(published: true)
+  end
   def new
-    #入れ子にすると/users/:user_id/portfolio/newとなる
-    #　idが例えば1のユーザ情報レコードを格納
-    @user = User.find(params[:user_id])
-    # @portfolio = Portfolio.new(user_id: @user.id)と同じ意味
-    @portfolio = @user.build_portfolio
+    @portfolio = Portfolio.new
   end
 
   def create
-    @user = User.find(params[:user_id])
-    @portfolio = @user.build_portfolio(portfolio_params)
+    @portfolio = current_user.build_portfolio(portfolio_params)
     if @portfolio.save
-      redirect_to user_portfolio_path(@user)
+      redirect_to current_user
     else
-      render :new, status: :unprocessable_entity
+      render :new, alert: "作成に失敗しました", status: :unprocessable_entity
     end
   end
 
   def show
-    @user =User.find(params[:user_id])
-    @portfolio = @user.portfolio
+    @creator = @portfolio.user
   end
 
   def edit
-    @user = User.find(params[:user_id])
-    @portfolio = @user.portfolio
+    @portfolio = current_user.portfolio
   end
 
  def update
-    @user = User.find(params[:user_id])
-    #既存の portfolio があるか確認。あった場合→ 既存 portfolio の user_id を nil にして削除しようとする。そのあと 新しい portfolio を作ろうとする
-    #@portfolio = @user.build_portfolio(portfolio_params)
-    @portfolio = @user.portfolio
+    @portfolio = current_user.portfolio
     if @portfolio.update(portfolio_params)
-      redirect_to user_portfolio_path(@user)
+      redirect_to current_user
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, alert: "更新に失敗しました", status: :unprocessable_entity
     end
  end
 
   private 
-  def portfolio_created!
-    redirect_to edit_user_portfolio_path(current_user) if current_user.portfolio
+
+  def portfolio_set!
+       @portfolio = Portfolio.find(params[:id])
   end
 
-  def portfolio_new!
-    redirect_to new_user_portfolio_path(current_user) unless current_user.portfolio
+  def authorize_portfolio!
+      portfolio = Portfolio.find(params[:id])
+      raise ActiveRecord::RecordNotFound unless portfolio.user == current_user
   end
 
-  def authorize_portfolio_owner!
-    @user = User.find(params[:user_id])
-    #一致してたらこの関数を抜ける
-    return if current_user.id == @user.id
-    #一致しない場合 
-    redirect_to user_path(current_user)
+  def redirect_if_portfolio_exists
+    redirect_to edit_portfolio_path(current_user.portfolio), alert: "ポートフォリオはすでに作成されています" if current_user.portfolio
   end
 
-  def ensure_published!
-   @user = User.find(params[:user_id])
-   @portfolio = @user.portfolio
-   raise ActiveRecord::RecordNotFound if @portfolio.nil? || !@portfolio.published?
+  def redirect_unless_portfolio_exists
+    redirect_to new_portfolio_path, alert: "先にポートフォリオを作成してください" unless current_user.portfolio
   end
 
   def portfolio_params
-    params.require(:portfolio).permit(:title, :body, :image)
+    params.require(:portfolio).permit(:title, :body, images: [])
   end
 end

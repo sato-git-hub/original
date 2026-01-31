@@ -1,22 +1,45 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
+  # 本番環境では devise 等で認証をかけないと誰でも見れてしまうので注意！
+  mount Sidekiq::Web => '/sidekiq'
 
-#new_user_setting GET    /users/:user_id/setting/new settings#new
-#user_setting POST   /users/:user_id/setting settings#create
+resources :users
+
+# resources :notifications, only: [:index, :show]
 
 
-resource :setting, only: [:edit, :update]  
-
-
-resources :users do
-  resource :portfolio, only: [:new, :create, :edit, :update, :show]
+namespace :portfolios, only: [] do
+    resource :publish, only: [:update]
 end
 
-#リクエストを送るボタンを押しときのURL
-# users/user_id/request/new new_user_request_path => requests#new
-resources :users, only: [] do
-  resources :requests, only: [:new, :create]  #送信　users/user_id/request　user_request_path => requests#create
+resources :portfolios
+
+resources :requests, only: [] do 
+  scope module: :requests do 
+    resource :status, only: [] do
+    # draft → waiting_for_approval
+      patch :submit
+      # waiting_for_approval → approved
+      patch :approve
+      # → creator_declined
+      patch :decline
+    end
+  end
 end
-resources :requests, only: [:index, :show]
+
+resources :requests, only: [] do # /requests/:id/
+  resources :support_histories, only: [ :create ]
+end
+
+resources :requests, only: [] do # /requests/
+  collection do
+    get :dashboard
+    get :incoming
+  end
+end
+
+resources :requests
 
 get "login", to: "sessions#new"
 post "login", to: "sessions#create"

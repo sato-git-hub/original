@@ -1,0 +1,16 @@
+<% @portfolios.each do |portfolio| %>
+  <li class = "border">
+    <%= link_to portfolio_path(portfolio) do %>
+      <%= portfolio.title %>
+      <%= portfolio.body %>
+      <% if portfolio.images.attached? %>
+        <% portfolio.images.each do |image| %>
+          <%= image_tag image %>
+        <% end %>
+      <% else %>
+        <p>画像なし</p>
+      <% end %>
+    <% end %>
+    <%= link_to "リクエストを送る", new_request_path(portfolio_id: portfolio.id) %>
+  </li>
+<% end %>

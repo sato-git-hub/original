@@ -1,5 +1,30 @@
 <%= @portfolio.title %>
 <%= @portfolio.body %>
 <!-- <img src=""> -->
-<%= image_tag(@portfolio.image) %>
-<%= link_to "リクエストを送る", new_user_request_path %>
+<% if @portfolio.images.attached? %>
+<% @portfolio.images.each do |image| %>
+          <%= image_tag image %>
+        <% end %>
+      <% else %>
+        <p>画像なし</p>
+      <% end %>
+<% if @portfolio.published %>
+<%= link_to "リクエストを送る", new_request_path(portfolio_id: @portfolio.id) %>
+<% end %>
+<% if @portfolio.user == current_user %>
+  <%= link_to "編集", edit_portfolio_path(@portfolio) %>
+
+<%# data-controller で JS と フォームを連結 %>
+<%= form_with model: @portfolio, url: portfolios_publish_path, method: :patch, data: { controller: "autosave" } do |f| %>
+  
+  <div class="flex items-center gap-2">
+    <%# data-action で 「変化(change)したら save を実行」と指定 %>
+    <%#element.addEventListener("change", () => { controller.save() });%>
+    <%= f.check_box :published,{ checked: @portfolio.published?, data: { action: "change->autosave#save" } }, 
+        "true", "false" %>
+    <%= f.label :published, "ポートフォリオを公開する" %>
+  </div>
+  <%= f.submit "保存", class: "hidden" %>
+<% end %>
+<% end %>
+

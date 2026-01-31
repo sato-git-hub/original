@@ -1,5 +1,37 @@
-<div><%=@request.id%></div>
-<div><%=@request.user_id%></div>
-<div><%=@request.creator_id%></div>
+<% if @request.request_images.attached? %>
+  <% @request.request_images.each do |request_image| %>
+    <%= image_tag request_image %>
+  <% end %>
+<% end %>
 <div><%=@request.title%></div>
 <div><%=@request.body%></div>
+<div>現在の支援額</div>
+<%=@request.current_amount%>
+<div>現在の支援者数</div>
+<%=@request.support_histories.distinct.count(:user_id)%>
+<div>残り</div>
+<% if @request.deadline_at > Time.current %>
+  <%= distance_of_time_in_words(Time.current, @request.deadline_at) %>
+<% else %>
+  終了しました
+<% end %>
+
+<%= form_with model: [@request, @support_history], local: true, data: { turbo: false } do |f| %>
+  <div>
+    <%= f.label :amount, "支援金額" %>
+    <%= f.number_field :amount, value: @request.lowest_amount, min: @request.lowest_amount, required: true%>
+  </div>
+
+  <hr><!--水平方向の罫線-->
+  <script
+    src="https://checkout.pay.jp/"
+    class="payjp-button"
+    data-key="<%= ENV["PAYJP_PUBLIC_KEY"] %>"
+    data-text="カードで支援する"
+    data-submit-text="支援を確定する"
+    data-partial="true"
+  ></script>
+
+  <%= f.submit "支援を確定する", class: "btn btn-primary"%>
+
+<% end %>

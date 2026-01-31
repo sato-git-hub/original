@@ -1,0 +1,2 @@
+module Requests::StatusesHelper
+end

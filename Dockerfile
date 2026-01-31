@@ -13,7 +13,14 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl default-mysql-client libjemalloc2 libvips && \
+    apt-get install --no-install-recommends -y \
+    curl \
+    default-mysql-client \
+    libjemalloc2 \
+    libvips \
+    imagemagick \
+    mecab libmecab-dev \
+    mecab-ipadic-utf8 && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
@@ -23,11 +30,19 @@ ENV RAILS_ENV="production" \
     BUNDLE_WITHOUT="development"
 
 # Throw-away build stage to reduce size of final image
+# ビルド（Gemのインストール）時に必要なもの
 FROM base AS build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential default-libmysqlclient-dev git libyaml-dev pkg-config && \
+    apt-get install --no-install-recommends -y \
+      build-essential \
+      default-libmysqlclient-dev \
+      git \
+      libyaml-dev \
+      pkg-config \
+      mecab \
+      libmecab-dev && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Install application gems
@@ -35,7 +50,7 @@ COPY Gemfile Gemfile.lock ./
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
-
+#キャッシュが有効になっているGemfile / Gemfile.lock が 変更された時だけbundle install
 # Copy application code
 COPY . .
 
@@ -49,6 +64,7 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 
 # Final stage for app image
+#「実行時に必要なもの」
 FROM base
 
 # Copy built artifacts: gems, application

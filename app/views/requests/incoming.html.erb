@@ -1,0 +1,15 @@
+<h2>受けたリクエスト</h2>
+<% @requests.each do |request| %>
+
+  <%= request.id %>
+  <%= request.title %>
+  <%= request.body %>
+  <%= request.target_amount %>
+  <% if request.request_images.attached? %>
+    <% request.request_images.each do |request_image| %>
+      <%= image_tag request_image %>
+    <% end %>
+  <%end%>
+  <%= link_to "承認", approve_request_status_path(request), data: { turbo_method: :patch } %>  
+  <%= link_to "拒否", decline_request_status_path(request), data: { turbo_method: :patch } %>  
+ <%end%>

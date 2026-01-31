@@ -1,8 +1,8 @@
 class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   before_action :authenticate_user!
-  rescue_from ActiveRecord::RecordNotFound, with: :render_404
-
+  #rescue_from ActiveRecord::RecordNotFound, with: :render_404
+  helper_method :current_user #ビューで使えるようになる
   private
 
   def render_404
@@ -25,8 +25,5 @@ class ApplicationController < ActionController::Base
 
   def redirect_if_authenticated
     redirect_to user_path(current_user) if current_user
-  end
-
-  
-
+  end  
 end

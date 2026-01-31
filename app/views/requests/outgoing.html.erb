@@ -1,0 +1,27 @@
+<h2>送ったリクエスト</h2>
+<% @requests.each do |request| %>
+  <div>依頼先:
+  <% if request.creator == current_user %>
+  自分
+  <% else %>
+  <%= link_to request.creator.name, user_path(request.creator)%>さん
+  <% end %>
+  </div>
+  <div>状態:
+  <%= request.status %>
+  </div>
+  <div>タイトル:
+  <%= request.title %>
+  </div>
+  <div>内容:
+  <%= request.body %>
+  </div>
+  <div>予算:
+  <%= request.target_amount %>円
+  </div>
+  <% if request.request_images.attached? %>
+    <% request.request_images.each do |request_image| %>
+      <%= image_tag request_image %>
+    <% end %>
+  <%end%>
+ <%end%>

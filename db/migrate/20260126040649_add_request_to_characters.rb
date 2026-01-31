@@ -1,0 +1,5 @@
+class AddRequestToCharacters < ActiveRecord::Migration[7.2]
+  def change
+    add_reference :characters, :request, null: false, foreign_key: true
+  end
+end

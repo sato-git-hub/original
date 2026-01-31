@@ -1,6 +1,49 @@
+<div class = "flex flex-col items-center text-center">
 <%if @user.avatar.attached?  %>
-<%= image_tag @user.avatar, class: "max-w-50 h-auto rounded-full" %>
+  <%= image_tag @user.avatar.variant(
+  resize_to_fill: [300, 300, { gravity: "North" }]
+  ), class: "h-auto w-[clamp(30px,18vw,200px)] rounded-full mb-4" %>
 <% else %>
-<%= image_tag "default_avatar.jpg", class: "max-w-50 h-auto" %>
+  <%= image_tag "default_avatar.jpg", class: "h-auto w-[clamp(30px,18vw,200px)] mb-3" %>
 <% end %>
-<%= link_to "ログアウト", "/logout", data: { turbo_method: :delete }%> 
+<div class = "font-bold text-[clamp(16px,5vw,18px)] mb-3" ><%=@user.name%></div>
+<% if @user.portfolio %>
+  <div class = "mb-10 text-[clamp(10px,5vw,12px)] cursor-pointer rounded-[8px] bg-neutral-200 px-3 py-1 text-sm text-neutral-950 transition-colors hover:bg-neutral-100 active:bg-neutral-50">
+    <%= link_to "ポートフォリオ", @user.portfolio %>
+  </div>
+<% end %>
+
+<div class="flex space-x-4">
+  <%= link_to @user.twitter, target: "_blank" do %>
+    <i class="fa-brands fa-square-x-twitter text-[clamp(20px,6vw,40px)]"></i>
+  <% end if @user.twitter? %>
+
+  <%= link_to @user.pixiv, target: "_blank" do %>
+    <i class="fa-brands fa-pixiv text-[#0096FA] text-[clamp(20px,6vw,40px)]"></i>
+  <% end if @user.pixiv? %>
+
+  <%= link_to @user.instagram, target: "_blank" do %>
+    <i class="fa-brands fa-instagram text-[#C13584] text-[clamp(20px,6vw,40px)]"></i>
+  <% end if @user.instagram? %>
+</div>
+
+<%if @user == current_user %>
+  <% unless @user.portfolio %>
+    <div class = "mb-10 text-[clamp(10px,5vw,12px)] cursor-pointer rounded-[8px] bg-neutral-200 px-3 py-1 text-sm text-neutral-950 transition-colors hover:bg-neutral-100 active:bg-neutral-50">
+      <%= link_to "ポートフォリオ作成",  new_portfolio_path %>
+    </div>
+  <% end %>
+  <%= form_with model: @user, local: true, data: { turbo: false } do |f| %>
+    <%= f.text_area :comment, class: "text-center" %><br>
+    <%= f.submit "決定" %>
+  <% end %>
+
+  <%= link_to "受け取ったリクエスト", incoming_requests_path %>
+  <%= link_to "作成したリクエスト一覧", dashboard_requests_path %>
+  <div><%= link_to "設定", "/setting" %></div>
+  <%= link_to "ログアウト", "/logout", data: { turbo_method: :delete }%> 
+<%else%>
+  <% if @user.comment.present? %>
+    <p class="p-20 border-solid"><%= @user.comment %></p>
+  <% end %>
+<%end%>
