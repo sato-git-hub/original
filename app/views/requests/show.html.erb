@@ -1,37 +1,78 @@
+
 <% if @request.request_images.attached? %>
   <% @request.request_images.each do |request_image| %>
     <%= image_tag request_image %>
   <% end %>
 <% end %>
-<div><%=@request.title%></div>
-<div><%=@request.body%></div>
-<div>現在の支援額</div>
-<%=@request.current_amount%>
-<div>現在の支援者数</div>
-<%=@request.support_histories.distinct.count(:user_id)%>
-<div>残り</div>
-<% if @request.deadline_at > Time.current %>
-  <%= distance_of_time_in_words(Time.current, @request.deadline_at) %>
+
+<p class="mb-4 font-bold text-xl md:text-2xl pb-4 text-center"><%=@request.title%></p>
+
+<% percentage = (@request.current_amount.to_f / @request.target_amount * 100) %>
+
+<section class="bg-white rounded shadow-[0_4px_#e4e4e4] p-5 mb-4">
+<p class="text-center font-bold">現在の支援総額</p>
+<p class="text-center text-2xl font-bold"><%=@request.current_amount%>円</p>
+<div class="flex md:text-sm text-xs justify-between">
+  <p><%= percentage.round %>%</p>
+  <p>
+  <% if @request.deadline_at > Time.current %>
+    <%= distance_of_time_in_words(Time.current, @request.deadline_at) %>
+  <% else %>
+    終了
+  <% end %>
+  </p>
+</div>
+<div class="w-52 h-4 bg-gray-200 rounded w-full">
+  <div class="h-4 bg-green-400 rounded " style="width:<%= percentage.clamp(0,100).round(1) %>%"></div>
+</div>
+<div class="flex md:text-sm text-xs justify-between">
+<p>現在の支援者数 <%=@request.support_histories.distinct.count(:user_id)%> 人</p>
+<p>目標金額 <%=@request.target_amount%>円</p>
+</div>
+</section>
+
+<section class="w-full mx-auto text-center bg-white p-5">
+<div class="w-70">
+<% if current_user.payjp_customer_id.present? %>
+  <%= form_with model: [@request, @support_history], local: true, data: { turbo: false } do |f| %>
+  <p class="font-bold text-base pb-4">登録カードで支援する</p>
+<div class="join mx-auto">
+<div class="relative">
+<p class="absolute left-2 top-3 ">¥</p>
+  <%= f.number_field :amount, 
+        class: "input input-bordered text-right join-item w-full focus:outline-none", 
+        placeholder: "金額を入力", 
+        value: @request.lowest_amount, min: @request.lowest_amount %>
+</div>
+  <%= f.submit "決済", 
+        class: "btn btn-primary join-item" %>
+</div>
+  <% end %>
+
 <% else %>
-  終了しました
+  <%= form_with model: [@request, @support_history], local: true, data: { turbo: false } do |f| %>
+    <div>
+      <%= f.label :amount, "支援金額" %>
+      <%= f.number_field :amount, value: @request.lowest_amount, min: @request.lowest_amount, required: true %>
+    </div>
+
+ 
+    <script
+      src="https://checkout.pay.jp/"
+      class="payjp-button"
+      data-key="<%= ENV["PAYJP_PUBLIC_KEY"] %>"
+      data-text="カード情報を入力して支援する"
+      data-submit-text="支援を確定する"
+      data-partial="true"
+    ></script>
+
+    <%= f.submit "支援を確定する", class: "btn btn-primary" %>
+  <% end %>
 <% end %>
+</div>
+</section>
 
-<%= form_with model: [@request, @support_history], local: true, data: { turbo: false } do |f| %>
-  <div>
-    <%= f.label :amount, "支援金額" %>
-    <%= f.number_field :amount, value: @request.lowest_amount, min: @request.lowest_amount, required: true%>
-  </div>
+<div class="bg-white w-full p-4"><%=simple_format(@request.body)%></div>
+</div>
 
-  <hr><!--水平方向の罫線-->
-  <script
-    src="https://checkout.pay.jp/"
-    class="payjp-button"
-    data-key="<%= ENV["PAYJP_PUBLIC_KEY"] %>"
-    data-text="カードで支援する"
-    data-submit-text="支援を確定する"
-    data-partial="true"
-  ></script>
-
-  <%= f.submit "支援を確定する", class: "btn btn-primary"%>
-
-<% end %>
+<h1 class="mb-4 font-bold text-xl md:text-2xl pb-4 text-center"><%=@request.title%></h1>

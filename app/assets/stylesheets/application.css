@@ -13,6 +13,17 @@
  *= require_tree .
  *= require_self
  */
-.port_folio {
-  background-color: blue;
+
+body {
+  font-family: 'MinneSystem', 'MinneSansSerif', 'MinneHiragino', 'メイリオ', 'Meiryo, Osaka', 'MS UI Gothic', 'MS Ｐゴシック', 'MS PGothic', sans-serif;
+  color: #575756;
+  font-size: 14px;
+  letter-spacing: 0.35px;
+  font-feature-settings: 'palt' 1;
+  -webkit-font-smoothing: antialiased;
+  background-color: #f6f8fa;
+}
+
+* {
+  box-sizing: border-box; 
 }

@@ -40,7 +40,7 @@
 
   <%= link_to "受け取ったリクエスト", incoming_requests_path %>
   <%= link_to "作成したリクエスト一覧", dashboard_requests_path %>
-  <div><%= link_to "設定", "/setting" %></div>
+  <div><%= link_to "設定", setting_path %></div>
   <%= link_to "ログアウト", "/logout", data: { turbo_method: :delete }%> 
 <%else%>
   <% if @user.comment.present? %>

@@ -75,7 +75,7 @@ scope :active, -> {
       # update!(status: :approved, approved_at: Time.current.floor, deadline_at: 30.seconds.from_now)は成功
       update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
       # update！とすることで更新失敗時には下の処理が呼ばれる前に例外を返す　CloseProjectJobは作られない
-      CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self)
+      CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self.id)
     # CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self)
     # 成功時の戻り値はCloseProjectJob のインスタンスを返す
   end
@@ -113,16 +113,31 @@ PAYJP_ERROR_CODE = {
     'missing_card' => '顧客がカードを保持していない',
     'unacceptable_brand' => '対象のカードブランドが許可されていません'
   }.freeze
+
 def support!(user:, amount:, payjp_token:)
+  raise "支払い情報がありません" if payjp_token.blank? && user.payjp_customer_id.blank?
+  raise ArgumentError, "最低金額以上で入力してください" unless amount >= lowest_amount
+
   begin
-    raise ArgumentError, "最低金額以上で入力してください" unless amount >= lowest_amount
-    
+  if payjp_token.nil? 
+
+    charge = Payjp::Charge.create(
+      amount: amount,
+      customer: user.payjp_customer_id, 
+      currency: "jpy",
+      capture: false,
+      expiry_days: 60
+    )
+
+  else
     charge = Payjp::Charge.create(
       amount: amount,
       card: payjp_token,
       currency: "jpy",
-      capture: false
+      capture: false,
+      expiry_days: 60
     )
+  end
 
     transaction do
       lock!
@@ -130,8 +145,9 @@ def support!(user:, amount:, payjp_token:)
         user: user,
         amount: amount,
         payjp_charge_id: charge.id,
-        status: :authorized
+        status: :authorized #省略可
       )
+
       self.current_amount += amount
       save!
       mark_success_if_reached!
@@ -141,15 +157,13 @@ def support!(user:, amount:, payjp_token:)
   Rails.logger.debug "DEBUG: keyword=#{e.methods.sort}"
   #{e.json_body}はDEBUG: keyword={:error=>{:charge=>"ch_e72d27cb0fe9ff942dda9b8974bbf", :code=>"card_declined", :message=>"Card declined", :status=>402, :type=>"card_error"}}となった
   error_code = e.json_body[:error][:code] rescue nil
-  ja_message = PAYJP_ERROR_CODE[error_code] ||= "決済処理に失敗しました"
+  ja_message = PAYJP_ERROR_CODE[error_code] || "決済処理に失敗しました"
   raise ja_message
   rescue => e
     charge&.refund
-    raise StandardError, "決済処理に失敗しました"
+    raise RunTimeError, "決済処理に失敗しました" # RnuTimeErrorは省略可
   end
 end
-
-
 
   def set_search_conf
     return if title.blank?

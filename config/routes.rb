@@ -4,9 +4,11 @@ Rails.application.routes.draw do
   # 本番環境では devise 等で認証をかけないと誰でも見れてしまうので注意！
   mount Sidekiq::Web => '/sidekiq'
 
-resources :users
 
+resources :users
+resource :payment, only:[:create, :update]
 # resources :notifications, only: [:index, :show]
+resource :setting, only:[:show]
 
 
 namespace :portfolios, only: [] do
