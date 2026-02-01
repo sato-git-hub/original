@@ -1,0 +1,31 @@
+{
+  "name": "original",
+  "version": "1.0.0",
+  "description": "This README would normally document whatever steps are necessary to get the application up and running.",
+  "main": "tailwind.config.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sato-git-hub/original.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sato-git-hub/original/issues"
+  },
+  "homepage": "https://github.com/sato-git-hub/original#readme",
+  "dependencies": {
+    "swiper": "^12.1.0"
+  },
+  "devDependencies": {
+    "daisyui": "^5.5.14",
+    "tailwindcss": "^4.1.18"
+  }
+}
