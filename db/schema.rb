@@ -94,19 +94,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_31_083103) do
     t.index ["user_id"], name: "index_requests_on_user_id"
   end
 
-  create_table "revisions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "request_id", null: false
-    t.bigint "creator_id", null: false
-    t.text "body", null: false
-    t.integer "status", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.index ["creator_id"], name: "index_revisions_on_creator_id"
-    t.index ["request_id"], name: "index_revisions_on_request_id"
-    t.index ["user_id"], name: "index_revisions_on_user_id"
-  end
-
   create_table "support_histories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "request_id", null: false
@@ -140,9 +127,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_31_083103) do
   add_foreign_key "portfolios", "users"
   add_foreign_key "requests", "users"
   add_foreign_key "requests", "users", column: "creator_id"
-  add_foreign_key "revisions", "requests"
-  add_foreign_key "revisions", "users"
-  add_foreign_key "revisions", "users", column: "creator_id"
   add_foreign_key "support_histories", "requests"
   add_foreign_key "support_histories", "users"
 end

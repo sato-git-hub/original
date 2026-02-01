@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+  <title>Document</title>
+</head>
+<body>
+  <div class="swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide"><img src="img/devil.jpg"></div>
+    <div class="swiper-slide">スライド2</div>
+    <div class="swiper-slide">スライド3</div>
+    <div class="swiper-slide">スライド4</div>
+    <div class="swiper-slide">スライド5</div>
+    <div class="swiper-slide">スライド6</div>
+    <div class="swiper-slide">スライド7</div>
+    <div class="swiper-slide">スライド8</div>
+    <div class="swiper-slide">スライド9</div>
+  </div>
+  <div class="click-area top"></div>
+  <div class="click-area bottom"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script>
+  const swiper = new Swiper('.swiper', {
+  direction: 'vertical',
+  allowTouchMove: false,
+// マウスのホイール、トランスパッドのスワイプで操作する場合
+    mousewheel: {
+    forceToAxis: true,
+    sensitivity: 1,
+    thresholdDelta: 10, 
+    },
+});
+
+let startY = 0;
+let startTranslateY = 0;
+let bool = false;
+const wrapper = document.querySelector(".swiper-wrapper")
+
+document.addEventListener("pointerdown", (e) => {
+// マウス、トランスパッドのクリックで操作する場合
+  if (e.pointerType === "mouse"){
+    if (e.target.closest(".click-area.top")){
+      swiper.slidePrev();
+    }else if (e.target.closest(".click-area.bottom")){
+        swiper.slideNext();
+    }
+// 画面をタッチして、またはタッチペンで操作する場合
+  }else if (e.pointerType === "touch"|| e.pointerType === "pen"){
+    if (!e.target.closest(".swiper"))return;
+    if (e.target.closest(".menu-bar"))
+    startY = e.clientY;
+    bool = true;
+    startTranslateY = swiper.getTranslate()
+  }
+});
+
+document.addEventListener("pointermove", (e) => {
+  if (e.pointerType === "touch"|| e.pointerType === "pen"){
+  if (!bool) return;
+  const diff = e.clientY - startY;
+  const newY = startTranslateY + diff;
+  swiper.setTransition(0);
+  swiper.setTranslate(newY)
+  }
+});
+
+document.addEventListener("pointerup", (e) => {
+  if (e.pointerType === "touch"|| e.pointerType === "pen"){
+  if (!bool) return;
+  bool = false;
+  const diff = e.clientY - startY;
+
+  if (diff > 300) {
+    swiper.slidePrev();
+  } else if (diff < -300) {
+    swiper.slideNext();
+  }else {
+    swiper.setTransition(300);
+    swiper.setTranslate(startTranslateY);
+  }
+}
+});
+</script>
+</body>
+</html>
