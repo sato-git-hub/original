@@ -9,18 +9,55 @@
 
 <div class="text-center"><%= "現在公開されているリクエストはありません" if @requests.blank? %></div>
 <% @requests.each do |request| %>
-  <li>
-  <%= link_to request_path(request) do %>
-    <% if request.request_images.attached? %>
-      <div class="h-200 bg-black">
-        <%= image_tag request.request_images[0], class: "w-full h-full object-contain" %>
+<li class="bg-[#f0f2f4] border border-[#d9dee5] mx-auto max-w-200 text-center rounded p-4 mb-4">
+  <h2 class="font-bold text-lg text-center mb-4"><%= request.title %></h2>
+    <div class="flex w-full gap-4">
+
+      <div class="basis-1/3">
+        <%= link_to request_path(request), class: "block h-full" do %>
+          <% if request.request_images.attached? %>
+            <div class="h-52 bg-black">
+              <%= image_tag request.request_images[0],
+                  class: "w-full h-full object-contain" %>
+            </div>
+          <% else %>
+            <div class="h-52 flex items-center justify-center bg-gray-300">
+              <p>画像が読み込めませんでした</p>
+            </div>
+          <% end %>
+        <% end %>
       </div>
-    <% else %>
-    <div class="h-200 flex items-center bg-gray-300 justify-center"><p>画像が読み込めませんでした</p></div>
-    <% end %>
-    <%= request.title %>
-    <%= request.body %>
-    <%= request.search_conf %>
-  <% end %>
+
+      <% percentage = (request.current_amount.to_f / request.target_amount * 100) %>
+      <section class="basis-2/3 bg-white rounded shadow-[0_4px_#e4e4e4] p-5">
+        <p class="text-center font-bold">現在の支援総額</p>
+        <p class="text-center text-2xl font-bold">
+          <%= request.current_amount %>円
+        </p>
+
+        <div class="flex text-xs md:text-sm justify-between">
+          <p><%= percentage.round %>%</p>
+          <p>
+            <% if request.deadline_at > Time.current %>
+              残り <%= distance_of_time_in_words(Time.current, request.deadline_at) %>
+            <% else %>
+              終了
+            <% end %>
+          </p>
+        </div>
+
+        <div class="w-full h-4 bg-gray-200 rounded">
+          <div
+            class="h-4 bg-green-400 rounded"
+            style="width: <%= percentage.clamp(0, 100).round(1) %>%">
+          </div>
+        </div>
+
+        <div class="flex text-xs md:text-sm justify-between mt-2">
+          <p>支援者 <%= request.support_histories.distinct.count(:user_id) %> 人</p>
+          <p>目標 <%= request.target_amount %>円</p>
+        </div>
+      </section>
+    </div>
   </li>
 <% end %>

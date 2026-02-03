@@ -1,58 +1,45 @@
 document.addEventListener("turbo:load", () => {
   const swiperEl = document.querySelector(".swiper");
   if (!swiperEl) return;
-  const swiper = new Swiper('.swiper', {
-  direction: 'horizontal',
-  allowTouchMove: false,
-});
 
-let startX = 0;
-let startTranslateX = 0;
-let bool = false;
-const wrapper = document.querySelector(".swiper-wrapper")
+  const swiper = new Swiper(swiperEl, {
+    direction: "horizontal",
+    allowTouchMove: false,
+  });
 
-document.addEventListener("pointerdown", (e) => {
-// マウス、トランスパッドのクリックで操作する場合
-  //if (e.pointerType === "mouse"){
-  //  if (e.target.closest(".swiper-button-prev")){
-  //    swiper.slidePrev();
-  //  }else if (e.target.closest(".swiper-button-next")){
-  //      swiper.slideNext();
-  //  }
-// 画面をタッチして、またはタッチペンで操作する場合
-  if (e.pointerType === "mouse"){
-    if (!e.target.closest(".swiper"))return;
+  let startX = 0;
+  let startTranslateX = 0;
+  let isDragging = false;
+
+  swiperEl.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") {
+      if (e.target.closest(".swiper-button-prev")) swiper.slidePrev();
+      if (e.target.closest(".swiper-button-next")) swiper.slideNext();
+      return;
+    }
+
     startX = e.clientX;
-    console.log(startX)
-    bool = true;
-    startTranslateX = swiper.getTranslate()
-  }
-});
+    startTranslateX = swiper.translate;
+    isDragging = true;
+  });
 
-document.addEventListener("pointermove", (e) => {
-  if (e.pointerType === "mouse"){
-  if (!bool) return;
-  const diff = e.clientX - startX;
-  const newX = startTranslateX + diff;
-  swiper.setTransition(0);
-  swiper.setTranslate(newX)
-  }
-});
+  swiperEl.addEventListener("pointermove", (e) => {
+    if (!isDragging) return;
+    const diff = e.clientX - startX;
+    swiper.setTransition(0);
+    swiper.setTranslate(startTranslateX + diff);
+  });
 
-document.addEventListener("pointerup", (e) => {
-  if (e.pointerType === "mouse"){
-  if (!bool) return;
-  bool = false;
-  const diff = e.clientX - startX;
-   if (diff > 300) {
-    swiper.slidePrev();
-  } else if (diff < -300) {
-    swiper.slideNext();
-  }else {
-    swiper.setTransition(300);
-    swiper.setTranslate(startTranslateX);
-  }
-}
-});
-});
+  swiperEl.addEventListener("pointerup", (e) => {
+    if (!isDragging) return;
+    isDragging = false;
 
+    const diff = e.clientX - startX;
+    if (diff > 300) swiper.slidePrev();
+    else if (diff < -300) swiper.slideNext();
+    else {
+      swiper.setTransition(300);
+      swiper.setTranslate(startTranslateX);
+    }
+  });
+});

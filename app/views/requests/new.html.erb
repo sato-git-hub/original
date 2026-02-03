@@ -32,33 +32,6 @@
   class: "hidden", onchange: "setImage(this);", accept: "image/jpeg,image/gif,image/png"%>
 </div>
 
-<%= f.fields_for :character do |c| %>
-  <% Character.defined_enums.each do |attr, values| %>
-    <div>
-      <%= c.label attr %>
-      <%= c.select attr, values.map { |k, v| [v, k] },{ include_blank: "選択してください(任意)" },{ class: "block w-full border rounded p-2" } %>
-    </div>
-  <% end %>
-  
-<div class="my-4">
-   <%= c.label :glasses, "年齢", class: "block tracking-wide text-gray-700 text-xs font-bold mb-2" %>
-<%=c.number_field :age, min: "1", max: "100", class: "w-20 h-10 border mr-2 rounded px-2 focus:outline-none"%><span>歳</span>
-  </div>
-<div class="mb-4">
-   <%= c.label :height, "身長", class: "block tracking-wide text-gray-700 text-xs font-bold mb-2" %>
-  <%=c.number_field :height, min: "50", max: "200", class: "w-20 h-10 border mr-2 rounded px-2 focus:outline-none"%><span>cm</span>
-</div>
-<div class="mb-4">
-    <%= c.label :glasses, "眼鏡の有無", class: "block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
-    <%= c.select :glasses, 
-        [["あり", true], ["なし", false]], 
-        { include_blank: "選択してください" }, 
-        { class: "block w-full border rounded p-2" } %>
-  </div>
-<% end %>
-
-
-
 <button type="submit" class = "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-300 px-6 py-2 hover:bg-gray-500" >
   下書き保存
 </button>
