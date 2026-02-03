@@ -13,21 +13,27 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/styled.min.css" rel="stylesheet" type="text/css" />
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <!--application.css-->
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    
     <%= javascript_importmap_tags %>
     <script src="https://kit.fontawesome.com/9a71256c57.js" crossorigin="anonymous"></script>
   </head>
 <body class="min-h-screen">
+<% if show_header? %>
+  <%= render "shared/header" %>
+  <div class="pt-25"></div>
+<% end %>
   <main class="container mx-auto px-4 py-8"> 
       <% flash.each do |key, message| %>
         <div class="flash <%= key %>"><%= message %></div>
       <% end %>
       <%= yield %>
   </main>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<%= javascript_include_tag "application", defer: true %>
 </body>
 </html>

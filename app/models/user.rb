@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   has_secure_password
-  
+  has_many :support_histories, dependent: :destroy
   has_many :received_requests,
            class_name: "Request",
            foreign_key: :creator_id, 

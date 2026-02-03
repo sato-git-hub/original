@@ -1,23 +1,22 @@
 
 <%= search_form_for @q, url: requests_path, method: :get, local: true do |f| %>
-  <div>
-    <%= f.label :title_or_search_conf_cont, "タイトル" %>
-    <%= f.search_field :title_or_search_conf_cont %>
-  </div>
-
-  <div>
-    <%= f.submit "検索" %>
+  <%= f.label :title_or_search_conf_cont, "タイトル", class:"block font-bold text-base"%>
+  <div class="flex mb-15">
+    <%= f.search_field :title_or_search_conf_cont, class: "border rounded focus:outline-none bg-white w-60 focus:border-gray-300 mr-4" %>
+    <%= f.submit "検索", class:"bg-gray-200 px-4 rounded" %>
   </div>
 <% end %>
 
-<div><%= "現在公開されているリクエストはありません" if @requests.blank? %></div>
+<div class="text-center"><%= "現在公開されているリクエストはありません" if @requests.blank? %></div>
 <% @requests.each do |request| %>
   <li>
   <%= link_to request_path(request) do %>
     <% if request.request_images.attached? %>
-      <% request.request_images.each do |request_image| %>
-        <%= image_tag request_image %>
-      <% end %>
+      <div class="h-200 bg-black">
+        <%= image_tag request.request_images[0], class: "w-full h-full object-contain" %>
+      </div>
+    <% else %>
+    <div class="h-200 flex items-center bg-gray-300 justify-center"><p>画像が読み込めませんでした</p></div>
     <% end %>
     <%= request.title %>
     <%= request.body %>

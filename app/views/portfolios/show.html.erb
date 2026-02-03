@@ -1,20 +1,26 @@
-<%= @portfolio.title %>
-<%= @portfolio.body %>
-<!-- <img src=""> -->
-<% if @portfolio.images.attached? %>
-<% @portfolio.images.each do |image| %>
-          <%= image_tag image %>
-        <% end %>
-      <% else %>
-        <p>画像なし</p>
+<div class="my-4 font-bold text-xl md:text-2xl pb-4 text-center"><%=@portfolio.title%></div>
+
+<div class="swiper h-200">
+  <div class="swiper-wrapper">
+    <% if @portfolio.images.attached? %>
+      <% @portfolio.images.each do |image| %>
+      <div class="swiper-slide"><%= image_tag image, class: "bg-black w-full h-full object-contain select-none",
+        draggable: false %></div>
       <% end %>
+    <% end %>
+  </div>
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+</div>
+
+<div class="bg-white w-full p-4 rounded my-4 "><%=simple_format(@portfolio.body)%></div>
+
 <% if @portfolio.published %>
-<%= link_to "リクエストを送る", new_request_path(portfolio_id: @portfolio.id) %>
+  <%= link_to "リクエストを送る", new_request_path(portfolio_id: @portfolio.id), class: "inline-block bg-gray-300 py-4 px-8 rounded" %>
 <% end %>
 <% if @portfolio.user == current_user %>
-  <%= link_to "編集", edit_portfolio_path(@portfolio) %>
+  <%= link_to "編集", edit_portfolio_path(@portfolio), class: "inline-block bg-gray-300 py-4 px-8 mb-4 rounded" %>
 
-<%# data-controller で JS と フォームを連結 %>
 <%= form_with model: @portfolio, url: portfolios_publish_path, method: :patch, data: { controller: "autosave" } do |f| %>
   
   <div class="flex items-center gap-2">
@@ -22,86 +28,8 @@
     <%#element.addEventListener("change", () => { controller.save() });%>
     <%= f.check_box :published,{ checked: @portfolio.published?, data: { action: "change->autosave#save" } }, 
         "true", "false" %>
-    <%= f.label :published, "ポートフォリオを公開する" %>
+    <%= f.label :published, "ポートフォリオを公開する(リクエストが送られるようになります)" %>
   </div>
   <%= f.submit "保存", class: "hidden" %>
 <% end %>
 <% end %>
-
-
-  <div class="swiper h-100 relative">
-  <div class="swiper-wrapper">
-  <% if @portfolio.images.attached? %>
-<% @portfolio.images.each do |image| %>
-    <div class="swiper-slide"><%= image_tag image, class:"w-full h-full object-contain"%></div>
-     <div class="swiper-slide"><%= image_tag image, class:"w-full h-full object-contain"%></div>
-      <% end %>
-    <% end %>
-  </div>
-<div class="swiper-button-next"></div>
-<div class="swiper-button-prev"></div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
-<script>
-  const swiper = new Swiper('.swiper', {
-  direction: 'horizontal',
-  allowTouchMove: false,
-// マウスのホイール、トランスパッドのスワイプで操作する場合
-    mousewheel: {
-    forceToAxis: true,
-    sensitivity: 1,
-    thresholdDelta: 10, 
-    },
-});
-
-let startY = 0;
-let startTranslateY = 0;
-let bool = false;
-const wrapper = document.querySelector(".swiper-wrapper")
-
-document.addEventListener("pointerdown", (e) => {
-// マウス、トランスパッドのクリックで操作する場合
-  if (e.pointerType === "mouse"){
-    if (e.target.closest(".swiper-button-prev")){
-      swiper.slidePrev();
-    }else if (e.target.closest(".swiper-button-next")){
-        swiper.slideNext();
-    }
-// 画面をタッチして、またはタッチペンで操作する場合
-  }else if (e.pointerType === "touch"|| e.pointerType === "pen"){
-    if (!e.target.closest(".swiper"))return;
-    startY = e.clientY;
-    bool = true;
-    startTranslateY = swiper.getTranslate()
-  }
-});
-
-document.addEventListener("pointermove", (e) => {
-  if (e.pointerType === "touch"|| e.pointerType === "pen"){
-  if (!bool) return;
-  const diff = e.clientY - startY;
-  const newY = startTranslateY + diff;
-  swiper.setTransition(0);
-  swiper.setTranslate(newY)
-  }
-});
-
-document.addEventListener("pointerup", (e) => {
-  if (e.pointerType === "touch"|| e.pointerType === "pen"){
-  if (!bool) return;
-  bool = false;
-  const diff = e.clientY - startY;
-
-  if (diff > 300) {
-    swiper.slidePrev();
-  } else if (diff < -300) {
-    swiper.slideNext();
-  }else {
-    swiper.setTransition(300);
-    swiper.setTranslate(startTranslateY);
-  }
-}
-});
-</script>
-</body>
-</html>

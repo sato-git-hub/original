@@ -1,15 +1,22 @@
-<h2>受けたリクエスト</h2>
+<div class="text-center"><%= "現在依頼されているリクエストはありません" if @requests.blank? %></div>
 <% @requests.each do |request| %>
+<h2 class="font-bold text-base mb-4">依頼主</h2>
+    <%= link_to user_path(request.user), class: "flex items-center mb-4" do %>
+      <%= user_avatar(request.user) %>
+      <p class="pl-4 text-lg font-bold"><%= request.user.name %></p>
+    <% end %>
 
-  <%= request.id %>
-  <%= request.title %>
-  <%= request.body %>
-  <%= request.target_amount %>
+  <div class="font-bold text-base mb-4">依頼内容: <%= request.title %></div>
+  <div class="mb-4"><%= request.body %></div>
+  <div class="font-bold text-base mb-4">依頼金額
+  <%= request.target_amount %>円</div>
   <% if request.request_images.attached? %>
     <% request.request_images.each do |request_image| %>
-      <%= image_tag request_image %>
+      <%= image_tag request_image, class: "mb-4"%>
     <% end %>
   <%end%>
-  <%= link_to "承認", approve_request_status_path(request), data: { turbo_method: :patch } %>  
-  <%= link_to "拒否", decline_request_status_path(request), data: { turbo_method: :patch } %>  
+  <div class="text-center">
+    <%= link_to "承認する", approve_request_status_path(request), class: "bg-blue-500 text-lg text-black px-10 py-2 rounded", data: { turbo_method: :patch } %>  
+    <%= link_to "拒否する", decline_request_status_path(request), class: "bg-gray-500 text-lg text-black px-10 py-2 rounded", data: { turbo_method: :patch } %>  
+  </div>
  <%end%>

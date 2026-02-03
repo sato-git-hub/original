@@ -63,6 +63,16 @@ class RequestsController < ApplicationController
     @request = Request.find(params[:id])
     #Support_history.new(request: @request)と同じ意味
     @support_history = @request.support_histories.build
+    
+    #支援者履歴テーブルからこのリクエストのレコードだけ
+    #user_idごとの合計amount順に
+    @top_supporters = User
+  .joins(:support_histories)
+  .where(support_histories: { request_id: @request.id })
+  .group("users.id")
+  .select("users.*, SUM(support_histories.amount) AS total_amount")
+  .order("total_amount DESC")
+  .limit(3)
   end
 
   def edit
