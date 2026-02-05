@@ -1,19 +1,20 @@
 class RequestsController < ApplicationController
   before_action :set_request, only: [:edit, :show, :update]
   before_action :authorize_user!, only: [:update]
+  before_action :authorize_approved_or_succeeded!, only: [:show]
   before_action :authorize_publish!, only: [:show]
   before_action :ensure_draft!, only: [:edit, :update]
-
   # 受け取ったリクエスト一覧
   def incoming
   # クリエーターとして関わるリクエスト #requestモデルにて received_requestsがrequestsテーブルのcreator_id == current_user.id
-    @requests = current_user.received_requests.submit.order(updated_at: :desc)
+    @q = Request.ransack(params[:q])
+    @requests = @q.result.where(creator: current_user).where.not(status: [:draft, :creator_declined, ]).order(updated_at: :desc)
   end
 
   def dashboard
       @q = Request.ransack(params[:q])
       # Request.where(status: 1)
-      @requests = @q.result.where(user: current_user)
+      @requests = @q.result.where(user: current_user).order(updated_at: :desc)
   end
 
   def index
@@ -27,25 +28,23 @@ class RequestsController < ApplicationController
       )
       #id が同じ Request は1件にまとめられる
       @requests = @q.result(distinct: true)
-      .where(status: [:approved, :successed]).active.order(updated_at: :desc)
+      .where(status: [:approved, :succeeded?]).active.order(updated_at: :desc)
       #.active.where("deadline_at >= ?", Time.current)
     else
       #空で渡す
       @q = Request.ransack({})
       @requests = @q.result(distinct: true)
-      .where(status: [:approved, :successed]).active.order(updated_at: :desc)
+      .where(status: [:approved, :succeeded?]).active.order(updated_at: :desc)
         #.active.where("deadline_at >= ?", Time.current)
     end
   end
 
   def new
     @request = Request.new
-    @request.build_character
     @portfolio = Portfolio.find(params[:portfolio_id])
   end
 
   def create
-    
     @request = current_user.requests.build(request_params)
     @portfolio = Portfolio.find(params[:portfolio_id])
     @creator = @portfolio.user
@@ -80,12 +79,15 @@ class RequestsController < ApplicationController
   end
 
   def update
-    if @request.update(request_params)
-      #flash[:notice] = "成功しました！"とおなじ
-      redirect_to dashboard_requests_path, notice: "更新に成功しました"
-    else
-      render :edit, flash.now[:alert] = "操作の更新に失敗しました"
-    end
+   # ActiveStorage_Attachmentsテーブルのnameがrequest_imagesでidが送られてきたidのレコードに絞り込む。それに一つ一つpurge
+    @request.request_images
+            .where(id: params[:remove_image_ids])
+            .each(&:purge)
+#送られてくるのはチェックしたもの
+    @request.update!(request_params.except(:request_images)) if @request.request_images.attached?
+    @request.update!(request_params) unless @request.request_images.attached?
+    redirect_to dashboard_requests_path, notice: "更新に成功しました"
+    
   end
 
   def destroy
@@ -99,10 +101,17 @@ private
   def set_request
     @request = Request.find(params[:id])
   end
-  #statusがapproved、successedでないのと期限外であるもの
+  #終了しているリクエストには入金ページを表示できない
+  #statusがapproved、succeeded?でないのと期限外であるもの
   def authorize_publish!
-    unless (@request.approved? || @request.successed?) && @request.deadline_at >= Time.current.floor
-      redirect_to dashboard_requests_path, alert: "このリクエストは終了しています"
+    if @request.deadline_at.present? && @request.deadline_at < Time.current.floor
+      redirect_to current_user, alert: "このリクエストは終了しています"
+    end
+  end
+  #approvedとsucceeded以外のリクエストは入金ページを表示できない
+  def authorize_approved_or_succeeded!
+    unless @request.approved? || @request.succeeded?
+      redirect_to current_user, alert: "このリクエストは非公開です"
     end
   end
 
@@ -126,12 +135,7 @@ private
   end
 
   def request_params
-    params.require(:request).permit(:title, :body, :target_amount, :lowest_amount, request_images: [],
-    character_attributes: [
-      :hair_color, :hair_style, :hair_type, :hair_length, :skin_tone, :height, :body_type, 
-      :body_frame, :personal_color, :age, :sex, :eye_color, :glasses,
-      :eye_shape, :face_type, :face_shape, :mbti, :bang_style
-    ])
+    params.require(:request).permit(:title, :body, :target_amount, :lowest_amount, request_images: [])
   end
 end
  

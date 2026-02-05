@@ -5,32 +5,41 @@ class Requests::StatusesController < ApplicationController
 
     # draft → submit
     def submit
-      Rails.logger.debug "DEBUG: keyword=#{@request.status}"
+      
       @request.submit!
-      redirect_to drafts_requests_path
+      redirect_to dashboard_requests_path, notice: "リクエストの公開が開始されました"
+      
+      rescue => e
+        redirect_to @user, alert: "処理に失敗しました"
     end
     
     # submit → approved
     def approve
       begin #省略可
+        
         @request.approve!
         redirect_to incoming_requests_path, notice: "リクエストの公開が開始されました"
+    
       rescue => e
-        redirect_to @user, alert: "処理に失敗しました。リクエストは公開されていません"
+        Rails.logger.debug "DEBUG: keyword=#{e.message}"
+        redirect_to @creator, alert: "処理に失敗しました"
       end
     end
  
     # → creator_declined
     def decline
+      
       @request.decline!
       redirect_to incoming_requests_path
+     
+      rescue => e
+        redirect_to current_user, alert: "処理に失敗しました"
     end
 
   private
 
   def set_request
     @request = Request.find(params[:request_id])
-    Rails.logger.debug "DEBUG: keyword=\"通りました\""
   end
 
   # 操作しているのが依頼者でない場合弾く

@@ -10,6 +10,7 @@ class CloseProjectJob < ApplicationJob
     # 期間が過ぎた時にどっちになるか判定
     request.finish_if_expired!
     if request.success_finished?
+      request.notifications.create!(receiver: request.user, action: :success_finished)
       request.support_histories.authorized.find_each do |support_history|
         begin
           charge = Payjp::Charge.retrieve(support_history.payjp_charge_id)
@@ -17,6 +18,7 @@ class CloseProjectJob < ApplicationJob
             charge.capture
           end
           support_history.update!(status: :paid)
+          request.notifications.create!(receiver: support_history.user, action: :paid)
         # Payjp::Charge.retrieveまたはcharge.captureで失敗 => リトライ。statusはauthorizedのまま
         rescue Payjp::PayjpError => e
           #e.json_body[:error][:code]rescue nil この処理自体を失敗した時にnilを代入
@@ -36,6 +38,7 @@ class CloseProjectJob < ApplicationJob
         end
       end
     else #request.finished?
+      request.notifications.create!(receiver: request.user, action: :failed_finished)
       request.support_histories.authorized.find_each do |support_history|
         begin
           charge = Payjp::Charge.retrieve(support_history.payjp_charge_id)

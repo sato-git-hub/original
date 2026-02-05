@@ -1,15 +1,17 @@
   <header class="bg-white fixed top-0 left-0 h-25 w-full z-10">
   <div class="flex justify-between container h-full mx-auto items-center">
-  <div>
+  <div class="flex items-center gap-4">
     <%= link_to user_path(current_user) do %>
-      <% if current_user.avatar.attached? %>
-        <%= image_tag current_user.avatar.variant(
-        resize_to_fill: [300, 300, { gravity: "North" }]
-        ), class: "h-auto w-20 rounded-full" %>
-      <% else %>
-        <%= image_tag "default_avatar.jpg", class: "h-auto w-20 rounded-full" %>
-      <% end %>
+      <%=user_avatar(current_user)%>
     <% end %>
+    <%= link_to notification_path do %>
+      <div id="bell" class="relative">
+        <i class="fa-solid fa-bell text-2xl "></i>
+          <% if %>
+          <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+          <% end %>
+      </div>
+     <%end%>
   </div>
     <nav>
       <ul class="flex">

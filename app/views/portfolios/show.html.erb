@@ -26,6 +26,7 @@
   <div class="flex items-center gap-2">
     <%# data-action で 「変化(change)したら save を実行」と指定 %>
     <%#element.addEventListener("change", () => { controller.save() });%>
+    <!--チェックを外したらその画像のattachedを外す-->
     <%= f.check_box :published,{ checked: @portfolio.published?, data: { action: "change->autosave#save" } }, 
         "true", "false" %>
     <%= f.label :published, "ポートフォリオを公開する(リクエストが送られるようになります)" %>

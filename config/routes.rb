@@ -7,7 +7,13 @@ Rails.application.routes.draw do
 
 resources :users
 resource :payment, only:[:create, :update]
-# resources :notifications, only: [:index, :show]
+
+resource :notification, only: [:show]
+
+resources :notifications, only: [] do
+  patch :checked
+end
+
 resource :setting, only:[:show]
 
 

@@ -2,16 +2,6 @@ class Request < ApplicationRecord
   before_save :set_search_conf
   # validate :editable_only_when_draft, on: :update
 
-  def editable_only_when_draft
-    # 保存時に status(カラム) が変更に含まれるか？ && 変更するのはstatusとupdated_atだけ
-    return if draft?
-    return if will_save_change_to_status?
-      errors.add(:base, "下書き以外は内容を変更できません")
-  end
-
-
-
-
   scope :search, ->(keyword) {
     keywords = keyword.split(/[ 　]+/)
     relation = all
@@ -21,6 +11,8 @@ class Request < ApplicationRecord
    end
    relation
 }
+
+
 
 # jobが失敗してstatusがfinishedまたはsuccess_finishedに切り替わらなかった時用
 scope :active, -> {
@@ -40,6 +32,7 @@ scope :active, -> {
   %w[character]
   end
 
+  has_many :notifications, dependent: :destroy 
   has_one :character, dependent: :destroy
   accepts_nested_attributes_for :character
   has_many :support_histories, dependent: :destroy
@@ -52,7 +45,7 @@ scope :active, -> {
   submit: 1, # クリエーターに送信済みで承認待ち
   approved: 2, # クリエーター承認済み
   creator_declined: 3, # クリエーターがリクエストを拒否
-  successed: 4,
+  succeeded: 4,
   finished: 5,
   success_finished: 6
 }
@@ -74,10 +67,10 @@ scope :active, -> {
     raise "invalid state" unless submit?
       # update!(status: :approved, approved_at: Time.current.floor, deadline_at: 30.seconds.from_now)は成功
       update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
+
       # update！とすることで更新失敗時には下の処理が呼ばれる前に例外を返す　CloseProjectJobは作られない
       CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self.id)
-    # CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self)
-    # 成功時の戻り値はCloseProjectJob のインスタンスを返す
+      self.notifications.create!(action: :approved, receiver: self.user)
   end
 
   def decline!
@@ -88,13 +81,13 @@ scope :active, -> {
   def mark_success_if_reached!
     return unless approved?
     return unless target_amount <= current_amount
-    update!(status: :successed)
+    update!(status: :succeeded)
   end
 
   def finish_if_expired!
     return unless Time.current.floor >= deadline_at
     # 期間が過ぎた時にどっちになるか判定
-    if successed?
+    if succeeded?
       update!(status: :success_finished)
     elsif approved?
       update!(status: :finished)

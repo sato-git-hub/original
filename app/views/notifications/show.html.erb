@@ -1,0 +1,27 @@
+<% @notifications.each do |notification| %>
+
+<%if notification.approved?%>
+<div><p>依頼が承認され、リクエストの公開が開始されました</p></div>
+<p><%=notification.created_at%></p>
+<%elsif notification.success_finished?%> 
+<div><p>達成金額に到達して、リクエストが終了しました</p></div>
+<%elsif notification.succeeded?%>
+<div><p>リクエストの達成金額に到達しました</p></div>
+<%elsif notification.failed_finished?%>
+<div><p>リクエストの達成金額に到達せず、リクエストが終了しました</p></div>
+<%elsif notification.paid?%>
+<div><p>リクエストへの支払いが完了しました</p></div>
+<%elsif notification.pcredited?%>
+<div><p>支援金が入金されました</p></div>
+<% end %>
+
+<div id="<%= notification.id %>">
+<%if notification.checked %>
+<p>既読</p>
+<%else%>
+<%= button_to "既読にする",
+      notification_checked_path(notification),
+      method: :patch %>
+<% end %>
+</div>
+<% end %>

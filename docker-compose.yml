@@ -30,6 +30,7 @@ services:
     volumes:
       - .:/rails
       - rails_storage:/app/storage
+      #"ホスト:コンテナ" PCから直接docker内のmysqlにアクセスできる
     ports:
       - "3000:3000"
     environment:
