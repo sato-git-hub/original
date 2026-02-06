@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_04_035435) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_05_233526) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -107,6 +107,17 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_04_035435) do
     t.index ["user_id"], name: "index_requests_on_user_id"
   end
 
+  create_table "rewards", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "request_id", null: false
+    t.string "title", null: false
+    t.text "body", null: false
+    t.integer "amount", null: false
+    t.integer "stock"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["request_id"], name: "index_rewards_on_request_id"
+  end
+
   create_table "support_histories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "request_id", null: false
@@ -115,7 +126,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_04_035435) do
     t.datetime "updated_at", null: false
     t.string "payjp_charge_id", default: "", null: false
     t.integer "status", default: 0, null: false
+    t.bigint "reward_id", null: false
     t.index ["request_id"], name: "index_support_histories_on_request_id"
+    t.index ["reward_id"], name: "index_support_histories_on_reward_id"
     t.index ["user_id"], name: "index_support_histories_on_user_id"
   end
 
@@ -143,6 +156,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_04_035435) do
   add_foreign_key "portfolios", "users"
   add_foreign_key "requests", "users"
   add_foreign_key "requests", "users", column: "creator_id"
+  add_foreign_key "rewards", "requests"
   add_foreign_key "support_histories", "requests"
+  add_foreign_key "support_histories", "rewards"
   add_foreign_key "support_histories", "users"
 end

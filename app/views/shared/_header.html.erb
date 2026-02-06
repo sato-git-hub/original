@@ -4,15 +4,11 @@
     <%= link_to user_path(current_user) do %>
       <%=user_avatar(current_user)%>
     <% end %>
-    <%= link_to notification_path do %>
-      <div id="bell" class="relative">
-        <i class="fa-solid fa-bell text-2xl "></i>
-          <% if %>
-          <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-          <% end %>
-      </div>
-     <%end%>
-  </div>
+    
+<%= turbo_stream_from current_user %>
+<div id="notification_bell" class="relative">
+<%= render "notifications/notification_bell", unchecked_count: current_user.received_notifications.where(checked: false).count %>
+</div>
     <nav>
       <ul class="flex">
         <li><%= link_to "クリエーターを探す", portfolios_path %></li>

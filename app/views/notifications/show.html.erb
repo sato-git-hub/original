@@ -1,27 +1,38 @@
+<div class="max-w-2xl mx-auto">
 <% @notifications.each do |notification| %>
-
-<%if notification.approved?%>
-<div><p>依頼が承認され、リクエストの公開が開始されました</p></div>
-<p><%=notification.created_at%></p>
+<div class="flex flex-col hover:bg-gray-100 block py-3 rounded">
+<p>
+<%if notification.submit?%>
+リクエストが届きました
+<%elsif notification.approved?%>
+依頼が承認され、リクエストの公開が開始されました
 <%elsif notification.success_finished?%> 
-<div><p>達成金額に到達して、リクエストが終了しました</p></div>
+達成金額に到達して、リクエストが終了しました
 <%elsif notification.succeeded?%>
-<div><p>リクエストの達成金額に到達しました</p></div>
+リクエストの達成金額に到達しました
 <%elsif notification.failed_finished?%>
-<div><p>リクエストの達成金額に到達せず、リクエストが終了しました</p></div>
+リクエストの達成金額に到達せず、リクエストが終了しました
 <%elsif notification.paid?%>
-<div><p>リクエストへの支払いが完了しました</p></div>
+リクエストへの支払いが完了しました
 <%elsif notification.pcredited?%>
-<div><p>支援金が入金されました</p></div>
+支援金が入金されました
 <% end %>
+</p>
 
+<div class="flex justify-between">
+<p><%=notification.created_at.strftime('%Y/%m/%d %k:%M')%></p>
 <div id="<%= notification.id %>">
 <%if notification.checked %>
 <p>既読</p>
 <%else%>
 <%= button_to "既読にする",
-      notification_checked_path(notification),
-      method: :patch %>
+      notification_checked_path(notification), class: "font-bold",
+      method: :patch
+      %>
 <% end %>
 </div>
-<% end %>
+</div>
+</div>
+<hr class="border-gray-200 my-4">
+<% end %> 
+</div>

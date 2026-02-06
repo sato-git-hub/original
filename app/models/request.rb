@@ -31,7 +31,7 @@ scope :active, -> {
   def self.ransackable_associations(auth_object = nil)
   %w[character]
   end
-
+  has_many :rewards, dependent: :destroy 
   has_many :notifications, dependent: :destroy 
   has_one :character, dependent: :destroy
   accepts_nested_attributes_for :character
@@ -61,6 +61,7 @@ scope :active, -> {
   def submit!
     raise "invalid state" unless draft?
     update!(status: :submit)
+    self.notifications.create!(action: :submit, receiver: self.creator)
   end
 
   def approve!

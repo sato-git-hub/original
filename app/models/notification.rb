@@ -6,7 +6,7 @@ belongs_to :receiver, class_name: "User"
 #belongs_to :sender, class_name: "User" #not_null つけてない
 belongs_to :request
 #公開された　　成功した　成功して終了した　失敗して終了した　お金が引かれた
-enum action: { approved:0, succeeded:1, success_finished:2, failed_finished:3, paid:4, art_published:5 }
+enum action: { submit:0, approved:1, succeeded:2, success_finished:3, failed_finished:4, paid:5, art_published:6 }
 
   def checked!
     raise "invalid state" if self.checked
@@ -15,10 +15,11 @@ enum action: { approved:0, succeeded:1, success_finished:2, failed_finished:3, p
 end
 
 def broadcast_notification
-  broadcast_replace_to(
+  # 作成したreceiverカラムに紐づくユーザーが表示している画面のid="notification_bell"を持った要素をnotifications/_bell.html.erbの内容に置き換え
+  broadcast_update_to(
   receiver,
   target: "notification_bell",
-  partial: "notifications/bell",
-  locals: { unchecked_count: receiver.notifications.unchecked.count }
+  partial: "notifications/notification_bell",
+  locals: { unchecked_count: receiver.received_notifications.where(checked: false).count }
 )
 end

@@ -1,6 +1,6 @@
 services:
   db:
-    image: mysql:8.0
+    image: mysql:8.0.36
     # .env ファイルを読み込む
     env_file: .env
     environment:
@@ -10,23 +10,20 @@ services:
       # 特定のユーザーを作りたい場合は追加
       MYSQL_USER: ${DATABASE_USER}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
-    ports:
-      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
 
   redis:
 
-    image: redis:latest
-
-    ports:
-      - "6379:6379"
+    image: redis:7.2
 
   web:
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     # Railsコンテナにも .env を読み込ませる
     env_file: .env
+    #- rails_storage:/rails/storageにすると表示されなくなる
     volumes:
       - .:/rails
       - rails_storage:/app/storage
@@ -35,9 +32,10 @@ services:
       - "3000:3000"
     environment:
       # Rails側のhostはdocker上のサービス名（db）に向ける
-      - DATABASE_HOST=db
-      - RAILS_ENV=development
-      - REDIS_URL=redis://redis:6379/1
+      # 環境ごとに Docker を起動する前に外部で RAILS_ENV=production とセットする必要がある
+      DATABASE_HOST: db
+      REDIS_URL: redis://redis:6379/1
+      RAILS_ENV: ${RAILS_ENV:-development}
     depends_on:
       - db
       - redis
@@ -53,9 +51,9 @@ services:
       - .:/rails
     # webコンテナと同じ環境変数が必要
     environment:
-      - DATABASE_HOST=db
-      - RAILS_ENV=development
-      - REDIS_URL=redis://redis:6379/1
+      DATABASE_HOST: db
+      REDIS_URL: redis://redis:6379/1
+      RAILS_ENV: ${RAILS_ENV:-development}
     depends_on:
       - db
       - redis

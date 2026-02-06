@@ -1,9 +1,13 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+
   # 本番環境では devise 等で認証をかけないと誰でも見れてしまうので注意！
   mount Sidekiq::Web => '/sidekiq'
 
+namespace :requests do
+  resource :reward, only: [:new]
+end
 
 resources :users
 resource :payment, only:[:create, :update]
