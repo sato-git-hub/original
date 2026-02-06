@@ -75,15 +75,17 @@ scope :active, -> {
   def approve!(request_params)
     raise "invalid state" unless submit?
       transaction do
+      Rails.logger.debug "DEBUG: keyword=#{request_params}"
       # update!(status: :approved, approved_at: Time.current.floor, deadline_at: 30.seconds.from_now)は成功
       update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
 
       # update！とすることで更新失敗時には下の処理が呼ばれる前に例外を返す　CloseProjectJobは作られない
       
       #送られてきた番号ハッシュ = 1つのレコード をつくる
-      reward = self.assign_attributes(request_params)
-      reward.save!
-
+      self.assign_attributes(request_params)
+      self.save!
+      #selfはリクエストレコード
+      Rails.logger.debug "DEBUG: keyword=#{self.inspect}"
       CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self.id)
       self.notifications.create!(action: :approved, receiver: self.user)
       end
@@ -125,7 +127,7 @@ PAYJP_ERROR_CODE = {
 
 def support!(user:, amount:, payjp_token:)
   raise "支払い情報がありません" if payjp_token.blank? && user.payjp_customer_id.blank?
-  raise ArgumentError, "最低金額以上で入力してください" unless amount >= lowest_amount
+  raise ArgumentError, "最低金額以上で入力してください" unless amount >= 1
 
   begin
   if payjp_token.nil? 

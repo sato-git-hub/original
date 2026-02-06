@@ -89,7 +89,7 @@
   <%= f.number_field :amount, 
         class: "border border-gray-300 rounded text-right mb-4 w-full focus:outline-none", 
         placeholder: "金額を入力", 
-        value: @request.lowest_amount, min: @request.lowest_amount %>
+        value: 0, min: 1, required: true %>
 </div>
   <%= f.submit "決済", onclick: "return confirm('この金額で支援します。よろしいですか？')",
         class: "inline-block bg-blue-500 py-2 text-white px-8 rounded" %>
@@ -101,7 +101,7 @@
   <%= form_with model: [@request, @support_history], local: true, data: { turbo: false } do |f| %>
     <div class="mb-4">
       <%= f.label :amount, "支援金額", class: "text-lg" %>
-      <%= f.number_field :amount, value: @request.lowest_amount, min: @request.lowest_amount, class: "border w-30 mr-1 text-lg rounded text-right", required: true %>円
+      <%= f.number_field :amount, value: 0, min: 1, class: "border w-30 mr-1 text-lg rounded text-right", required: true %>円
     </div>
 
  

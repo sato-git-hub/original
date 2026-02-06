@@ -47,7 +47,7 @@
               任意
             </span>
 <%= reward_f.file_field :reward_image,
- onchange: "setImage(this);", accept: "image/jpeg,image/gif,image/png"%>
+ onchange: "setImage(this, 'image-preview-container#{reward_f.index + 1}');", accept: "image/jpeg,image/gif,image/png"%>
 </div>
 
 <% end %>
@@ -57,9 +57,10 @@
 
 <script>
 //表示部のコンテナ取得 → file_fieldが変化時(onchange)に表示部コンテナのDOMをfile_fieldで選択した画像に書き換える
-  const previewContainer = document.getElementById("image-preview-container2")
+  const previewContainer = document.getElementById("image-preview-container")
   //document.getElementById("image-upload-field").addEventListener("change", (event) => {
-  function setImage(input){ //対象file_field
+  function setImage(input, id){ //対象file_field
+  const previewContainer = document.getElementById(id)
     if (!input.files) return;
         previewContainer.innerHTML = ""; //リセット
         for (const file of input.files){　//選択画像を

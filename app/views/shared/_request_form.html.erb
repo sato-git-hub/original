@@ -22,13 +22,6 @@
 <%= f.number_field :target_amount, required: true, min:1, class: "w-40 h-10 border mr-2 rounded px-2 focus:outline-none"%>
 
 </div>
-<div class = "mb-4">
-<%= f.label :lowest_amount, "１人あたりの最低支援金額", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
-<span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
-              必須
-            </span><br>
-<%= f.number_field :lowest_amount, required: true, min:1, class: "w-20 h-10 border mr-2 rounded px-2 focus:outline-none"%>
-</div>
 
 <div id="image-preview-container" class="flex flex-wrap items-center gap-4 mb-4">
   <% if @request.request_images.attached? %>

@@ -135,7 +135,7 @@ private
   end
 
   def request_params
-    params.require(:request).permit(:title, :body, :target_amount, :lowest_amount, request_images: [])
+    params.require(:request).permit(:title, :body, :target_amount, request_images: [])
   end
 end
  
