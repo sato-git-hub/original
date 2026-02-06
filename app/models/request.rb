@@ -31,6 +31,7 @@ scope :active, -> {
   def self.ransackable_associations(auth_object = nil)
   %w[character]
   end
+
   has_many :rewards, dependent: :destroy 
   has_many :notifications, dependent: :destroy 
   has_one :character, dependent: :destroy
@@ -39,6 +40,13 @@ scope :active, -> {
   belongs_to :user
   belongs_to :creator, class_name: "User"
   validates :user, :creator, presence: true
+  
+  # 複数の子要素に対して処理したいとき 「Userの新規登録と同時に、そのUserの最初のPostを1つだけ作る」といったケースでは、使わない
+  # assign_attributes、updateがparams[:"0"]つまり{0=>{}}こういうハッシュを受け取れるようにする働き
+  # allow_destroy: true　親モデルのフォームで子モデルの削除を許可 params[:_destroy]というデータが送られてきたら
+  # reject_if: :all_blank 空の子モデルを自動的に拒否　送られてきたハッシュの中身がすべて空（nilや空文字）だった場合無視
+  accepts_nested_attributes_for :rewards, allow_destroy: true, reject_if: :all_blank
+  
 
     enum :status, {
   draft: 0, # 下書き
@@ -64,14 +72,21 @@ scope :active, -> {
     self.notifications.create!(action: :submit, receiver: self.creator)
   end
 
-  def approve!
+  def approve!(request_params)
     raise "invalid state" unless submit?
+      transaction do
       # update!(status: :approved, approved_at: Time.current.floor, deadline_at: 30.seconds.from_now)は成功
       update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
 
       # update！とすることで更新失敗時には下の処理が呼ばれる前に例外を返す　CloseProjectJobは作られない
+      
+      #送られてきた番号ハッシュ = 1つのレコード をつくる
+      reward = self.assign_attributes(request_params)
+      reward.save!
+
       CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self.id)
       self.notifications.create!(action: :approved, receiver: self.user)
+      end
   end
 
   def decline!

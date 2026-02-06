@@ -5,8 +5,10 @@ Rails.application.routes.draw do
   # 本番環境では devise 等で認証をかけないと誰でも見れてしまうので注意！
   mount Sidekiq::Web => '/sidekiq'
 
-namespace :requests do
-  resource :reward, only: [:new]
+resources :requests, only: [] do
+  scope module: :requests do
+  resource :reward, only: [:new, :create]
+end
 end
 
 resources :users

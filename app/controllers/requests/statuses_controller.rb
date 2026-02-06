@@ -17,9 +17,8 @@ class Requests::StatusesController < ApplicationController
     def approve
       begin #省略可
         
-        @request.approve!
+        @request.approve!(request_params)
         redirect_to incoming_requests_path, notice: "リクエストの公開が開始されました"
-    
       rescue => e
         Rails.logger.debug "DEBUG: keyword=#{e.message}"
         redirect_to @creator, alert: "処理に失敗しました"
@@ -38,19 +37,26 @@ class Requests::StatusesController < ApplicationController
 
   private
 
-  def set_request
-    @request = Request.find(params[:request_id])
-  end
+    def set_request
+      @request = Request.find(params[:request_id])
+    end
 
-  # 操作しているのが依頼者でない場合弾く
-  def authorize_user!
-    @user = @request.user
-    raise ActiveRecord::RecordNotFound unless @user == current_user
-  end
+    # 操作しているのが依頼者でない場合弾く
+    def authorize_user!
+      @user = @request.user
+      raise ActiveRecord::RecordNotFound unless @user == current_user
+    end
 
-  # 操作しているのがクリエーターでない場合弾く
-  def authorize_creator!
-    @creator = @request.creator
-    raise ActiveRecord::RecordNotFound unless @creator == current_user
-  end
+    # 操作しているのがクリエーターでない場合弾く
+    def authorize_creator!
+      @creator = @request.creator
+      raise ActiveRecord::RecordNotFound unless @creator == current_user
+    end
+
+    def request_params
+    # rewards_attributes を許可するのがポイント
+    params.require(:request).permit(
+      rewards_attributes: [:id, :title, :body, :amount, :stock, :_destroy]
+    )
+    end
 end

@@ -1,75 +1,68 @@
-<%= form_with model: @reward, url: approve_request_status_path, local: true, data: { turbo: false } do |f| %>
-
 <h2 class=" tracking-wide text-gray-700 text-lg font-bold mb-2 text-center">リターン内容作成</h2>
 
+<%= form_with model: @request, url: approve_request_status_path(@request) do |f| %>
+<%# fields_for が @request.rewards の中身を自動でループして、0番、1番と名前を付けてくれる %>
+  <%= f.fields_for :rewards do |reward_f| %>
+<h3>リターン <%= reward_f.index + 1 %>つ目</h3>
 <div>
-<%= f.label :title, "タイトル", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+<%= reward_f.label :title, "タイトル", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
 <span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
               必須
             </span>
-<%= f.text_field :title, required: true, placeholder: "1000円コース：イラストの下書きプレゼント", class: "appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"%>
+<%= reward_f.text_field :title, required: true, placeholder: "1000円コース：イラストの下書きプレゼント", class: "appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"%>
 </div>
 <div>
-<%= f.label :body,  "リターンの内容", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+<%= reward_f.label :body,  "リターンの内容", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
 <span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
               必須
             </span>
-<%= f.text_area :body, required: true, placeholder: "キャラクター構成案段階での下書きイラストをプレゼントいたします。完成する作品の元となった作者のアイディアが詰まっています。", class: "no-resize appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 h-48 resize-none"%>
+<%= reward_f.text_area :body, required: true, placeholder: "キャラクター構成案段階での下書きイラストをプレゼントいたします。完成する作品の元となった作者のアイディアが詰まっています。", class: "no-resize appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 h-48 resize-none"%>
 </div>
 <div class = "mb-4">
-<%= f.label :amount, "価格", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+<%= reward_f.label :amount, "価格", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
 <span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
               必須
             </span><br>
-<%= f.number_field :amount, required: true, min:1, class: "w-40 h-10 border mr-2 rounded px-2 focus:outline-none"%>
+<%= reward_f.number_field :amount, required: true, min:1, class: "w-40 h-10 border mr-2 rounded px-2 focus:outline-none"%>
 
 </div>
+
 <div class = "mb-4">
-<%= f.label :stock, "配布上限", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+<%= reward_f.label :stock, "配布上限", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
 <span class=" text-white bg-gray-400 font-normal text-sm ml-2 p-0.5 rounded-md">
               任意
             </span><br>
-<%= f.number_field :stock, min:1, class: "w-20 h-10 border mr-2 rounded px-2 focus:outline-none"%>
+<%= reward_f.number_field :stock, min:1, class: "w-20 h-10 border mr-2 rounded px-2 focus:outline-none"%>
 </div>
 
-<div id="image-preview-container" class="flex flex-wrap items-center gap-4 mb-4">
-  <% if @reward.reward_image.attached? %>
-    <% @reward.reward_image.each do |image| %>
 
-<!--params[:remove_image_ids]で送る, チェックされたimage.idをparamsにいれる, trueでチェックボックスを最初からチェックにする-->
-<!--<input type="checkbox" name="remove_image_ids[]" id="remove_image_ids_" value="62" checked="checked">-->
-    <p class="-mr-3">削除</p>
-    <%= check_box_tag "remove_image_ids[]",
-      image.id,
-      false %>
-      <%= image_tag image, class: "object-cover rounded mb:w-35 w-15"%>
-    <% end %>
-  <% end %>
+<div id="image-preview-container<%= reward_f.index + 1 %>" class="flex flex-wrap items-center gap-4 mb-4">
 </div>
 
 <div class="mb-4">
 
-<%= f.label :reward_image, "画像を選択", 
+<%= reward_f.label :reward_image, "画像を選択", 
   class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-300 px-6 py-2 hover:bg-gray-500"%>
 <span class="mr-2 text-white z-10 bg-gray-400 font-normal text-sm ml-2 p-0.5 rounded-md">
               任意
             </span>
-<%= f.file_field :reward_image,
+<%= reward_f.file_field :reward_image,
  onchange: "setImage(this);", accept: "image/jpeg,image/gif,image/png"%>
 </div>
 
-<button type="submit" name="commit" value="send" class = "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-blue-400 px-6 py-2 hover:bg-blue-500 mb-20">
-  リクエストを公開する
-</button>
+<% end %>
+<%= f.submit "リターンを確定して承認", class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-blue-400 px-6 py-2 hover:bg-blue-500 mb-20"%>
 <% end %>
 
+
 <script>
-  const previewContainer = document.getElementById("image-preview-container")
+//表示部のコンテナ取得 → file_fieldが変化時(onchange)に表示部コンテナのDOMをfile_fieldで選択した画像に書き換える
+  const previewContainer = document.getElementById("image-preview-container2")
   //document.getElementById("image-upload-field").addEventListener("change", (event) => {
-  function setImage(input){
+  function setImage(input){ //対象file_field
     if (!input.files) return;
-        previewContainer.innerHTML = "";
-        for (const file of input.files){
+        previewContainer.innerHTML = ""; //リセット
+        for (const file of input.files){　//選択画像を
           const imageUrl = URL.createObjectURL(file);
           //前方一致か？
           if (!file.type.startsWith("image/")) continue;
@@ -79,8 +72,8 @@
           img.style.width = "150px";
           img.style.height = "auto";
           img.style.objectFit = "cover";
-          img.classList.add("rounded", "preview-img");
-          img.onload = () => {
+          img.classList.add("rounded");
+          img.onload = () => { //画像も含めた全ての要素の読み込み完了で
             URL.revokeObjectURL(imageUrl); 
           };
           previewContainer.appendChild(img)

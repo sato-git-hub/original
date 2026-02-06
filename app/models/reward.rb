@@ -1,5 +1,6 @@
 class Reward < ApplicationRecord
   belongs_to :request
+  has_many :support_histories, dependent: :destroy
   
   has_one_attached :reward_image
   validates :reward_image,
