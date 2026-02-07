@@ -3,6 +3,8 @@ class SupportHistoriesController < ApplicationController
 
   def create
     request = Request.find(params[:request_id])
+    reward = params[:reward_id]
+    
     request.support!(user: current_user, amount: support_history_params[:amount].to_i, payjp_token: params["payjp-token"])
     redirect_to request, notice: "支援が完了しました"
     rescue => e
