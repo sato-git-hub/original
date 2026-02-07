@@ -23,7 +23,8 @@
 
 </div>
 
-<div id="image-preview-container" class="flex flex-wrap items-center gap-4 mb-4">
+<div data-controller="image-preview">
+<div data-image-preview-target="preview" class="flex flex-wrap items-center gap-4 mb-4">
   <% if @request.request_images.attached? %>
     <% @request.request_images.each do |image| %>
 
@@ -46,7 +47,9 @@
               必須
             </span>
 <%= f.file_field :request_images, multiple: true, required: f.object.new_record?,
- onchange: "setImage(this);", accept: "image/jpeg,image/gif,image/png"%>
+  data: { action: "change->image-preview#preview"},
+  accept: "image/jpeg,image/gif,image/png"%>
+</div>
 </div>
 
 <button type="submit" class = "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-300 px-6 py-2 hover:bg-gray-500" >
@@ -55,29 +58,3 @@
 <button type="submit" name="commit" value="send" class = "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-blue-400 px-6 py-2 hover:bg-blue-500 mb-20">
   リクエスト送信
 </button>
-
-
-<script>
-  const previewContainer = document.getElementById("image-preview-container")
-  //document.getElementById("image-upload-field").addEventListener("change", (event) => {
-  function setImage(input){
-    if (!input.files) return;
-        previewContainer.innerHTML = "";
-        for (const file of input.files){
-          const imageUrl = URL.createObjectURL(file);
-          //前方一致か？
-          if (!file.type.startsWith("image/")) continue;
-          //imgタグの作成
-          const img = document.createElement("img")
-          img.src = imageUrl;
-          img.style.width = "150px";
-          img.style.height = "auto";
-          img.style.objectFit = "cover";
-          img.classList.add("rounded", "preview-img");
-          img.onload = () => {
-            URL.revokeObjectURL(imageUrl); 
-          };
-          previewContainer.appendChild(img)
-      }};
-</script>
-

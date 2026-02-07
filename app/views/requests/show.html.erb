@@ -42,58 +42,45 @@
 
 <div class="bg-[#f0f2f4] border border-[#d9dee5] mx-auto text-center max-w-300 rounded p-4 mb-4">
 <h4 class="text-base text-orange font-bold">All-or-Nothing方式</h4>
-<p>目標金額に達成した場合、イラストが公開されます</p>
+<p>目標金額に達成しなかった場合、全額返金されます</p>
 </div>
 
-<div class="bg-white w-full p-4 mb-5"><%=simple_format(@request.body)%></div>
+<div class="flex w-full">
+<div class="bg-white p-4 mb-5 basis-2/3"><%=simple_format(@request.body)%></div>
 
-<% if @top_supporters.any? %>
-<section class="bg-white rounded shadow-[0_4px_#e4e4e4] pt-2 pb-5 mb-4">
-
-    <div class="text-center font-bold mb-4">支援額ランキング</div>
-
-    <div class="flex flex-col md:flex-row justify-center gap-4 md:gap-10">
-      <% @top_supporters.each_with_index do |user, index| %>
-        <div class="relative flex items-center p-4 bg-gray-50 rounded-lg shadow-sm min-w-[220px]">
-
-            <span
-              class="absolute top-0 left-0
-                     text-xs font-bold bg-white
-                     w-5 h-5 
-                     flex items-center justify-center">
-              <%= index + 1 %>
-            </span>
-
-            <%= user_avatar(user, size: :sm) %>
-
-          <div class="ml-4 text-left">
-            <p class="font-bold"><%= user.name %></p>
-            <p class="text-lg font-semibold">
-              <%= number_with_delimiter(user.total_amount) %>円
-            </p>
-          </div>
-        </div>
-      <% end %>
-    </div>
-</section>
-  <% end %>
-
-<section class="flex flex-col justify-center items-center w-full">
+<section class="flex flex-col basis-1/3 p-4">
 <% @rewards.each do |reward|%>
-  <div class="bg-white rounded shadow-[0_4px_#e4e4e4] w-full">
-  <% if reward.reward_image.attached? %>
-    <%= image_tag reward.reward_image %>
-  <% else %>
-    <div class="flex bg-gray-300 h-10 items-center justify-center"><%= reward.title %></div>
-  <% end %>  
-  <%=link_to "このリターンを選択する", request_support_histories_path(@request) , class: "bg-blue-500 rounded text-white py-4 px-4"%>
-  <div class="flex">
-    <p>支援者数 <%=reward.support_histories.count%>人</p>
-    <p>在庫数 <%=(reward.stock) - (reward.support_histories.count) if reward.stock.present? %></p>
-  </div>
+  <div class="bg-[#f0f2f4] mb-5 rounded shadow-[0_4px_#e4e4e4]">
+  <div class="flex items-center">
+    <% if reward.reward_image.attached? %>
+      <%= image_tag reward.reward_image.variant(resize_to_fill: [160, 120, { gravity: 'Center' }], 
+      format: :jpeg, 
+      quality: 85,
+      strip: true)%>
+    <% else %>
+      <div class="flex bg-gray-300 h-10 items-center justify-center"><%= reward.title %></div>
+    <% end %>  
+
+    <div class="text-center">
+      <h3 class="font-bold text-base"><%=reward.title%></h3>
+      <span>支援者数 <%=reward.support_histories.count%>人</span>
+      <span>在庫数 <%=(reward.stock) - (reward.support_histories.count) if reward.stock.present? %></span>
+      <%=link_to "このリターンを選択する", request_support_histories_path(@request) , class: "inline-block bg-blue-500 rounded text-white py-2 px-4"%>
+  
+    </div>
+    </div>
+    
+<div data-controller="toggle">
+  <button type="button" data-action="click->toggle#toggle" class="font-bold border-b border-gray-400">
+    リターン概要
+  </button>
+<div data-toggle-target="content" class="hidden"><%=simple_format(reward.body)%></div>
+</div>
+
   </div>
 <% end %>
 </section>
+</div>
 
 <section class="w-full mx-auto text-center rounded shadow-[0_4px_#e4e4e4] bg-white p-5">
 <div class="w-70 mx-auto">
