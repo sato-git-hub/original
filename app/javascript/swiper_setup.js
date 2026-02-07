@@ -1,3 +1,5 @@
+import Swiper from 'swiper';
+
 document.addEventListener("turbo:load", () => {
   const swiperEl = document.querySelector(".swiper");
   if (!swiperEl) return;
