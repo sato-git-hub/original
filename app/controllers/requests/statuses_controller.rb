@@ -56,7 +56,7 @@ class Requests::StatusesController < ApplicationController
     def request_params
     # rewards_attributes を許可するのがポイント
     params.require(:request).permit(
-      rewards_attributes: [:id, :title, :body, :amount, :stock, :_destroy]
+      rewards_attributes: [:id, :title, :body, :amount, :stock, :reward_image, :_destroy]
     )
     end
 end

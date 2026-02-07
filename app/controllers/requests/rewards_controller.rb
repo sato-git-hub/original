@@ -7,11 +7,4 @@ class Requests::RewardsController < ApplicationController
     2.times { @request.rewards.build }
   end
 
-  def create
-  end
-
-private
-  def reward_params
-    params.require(:reward).permit(:title, :body, :amount, :stock)
-  end
 end

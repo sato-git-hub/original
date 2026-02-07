@@ -78,6 +78,23 @@
 </section>
   <% end %>
 
+<section class="flex flex-col justify-center items-center w-full">
+<% @rewards.each do |reward|%>
+  <div class="bg-white rounded shadow-[0_4px_#e4e4e4] w-full">
+  <% if reward.reward_image.attached? %>
+    <%= image_tag reward.reward_image %>
+  <% else %>
+    <div class="flex bg-gray-300 h-10 items-center justify-center"><%= reward.title %></div>
+  <% end %>  
+  <%=link_to "このリターンを選択する", request_support_histories_path(@request) , class: "bg-blue-500 rounded text-white py-4 px-4"%>
+  <div class="flex">
+    <p>支援者数 <%=reward.support_histories.count%>人</p>
+    <p>在庫数 <%=(reward.stock) - (reward.support_histories.count) if reward.stock.present? %></p>
+  </div>
+  </div>
+<% end %>
+</section>
+
 <section class="w-full mx-auto text-center rounded shadow-[0_4px_#e4e4e4] bg-white p-5">
 <div class="w-70 mx-auto">
 <% if current_user.payjp_customer_id.present? %>
