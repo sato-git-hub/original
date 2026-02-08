@@ -22,6 +22,8 @@ body {
   font-feature-settings: 'palt' 1;
   -webkit-font-smoothing: antialiased;
   background-color: #f6f8fa;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 * {

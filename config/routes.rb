@@ -1,38 +1,37 @@
-require 'sidekiq/web'
+require "sidekiq/web"
 
 Rails.application.routes.draw do
-
   # 本番環境では devise 等で認証をかけないと誰でも見れてしまうので注意！
-  mount Sidekiq::Web => '/sidekiq'
+  mount Sidekiq::Web => "/sidekiq"
 
 resources :requests, only: [] do
   scope module: :requests do
-  resource :reward, only: [:new, :create]
-end
+    resource :reward, only: [ :new, :create ]
+  end
 end
 
 resources :users
-resource :payment, only:[:create, :update]
+resource :payment, only: [ :create, :update ]
 
-resource :notification, only: [:show]
+resource :notification, only: [ :show ]
 
 resources :notifications, only: [] do
   patch :checked
 end
 
-resource :setting, only:[:show]
+resource :setting, only: [ :show ]
 
 
 namespace :portfolios, only: [] do
-    resource :publish, only: [:update]
+    resource :publish, only: [ :update ]
 end
 
 resources :portfolios
 
-resources :requests, only: [] do 
-  scope module: :requests do 
+resources :requests, only: [] do
+  scope module: :requests do
     resource :status, only: [] do
-    # draft → waiting_for_approval
+      # draft → waiting_for_approval
       patch :submit
       # waiting_for_approval → approved
       patch :approve
@@ -43,7 +42,7 @@ resources :requests, only: [] do
 end
 
 resources :requests, only: [] do # /requests/:id/
-  resources :support_histories, only: [ :create ]
+  resources :support_histories, only: [ :new, :create ]
 end
 
 resources :requests, only: [] do # /requests/

@@ -1,9 +1,11 @@
 class User < ApplicationRecord
   has_secure_password
+  
   #has_many :sent_notifications,
    #         class_name: "Notification",
    #        foreign_key: :sender_id,
    #        dependent: :destroy
+
 
   has_many :received_notifications,
             class_name: "Notification",
@@ -48,20 +50,27 @@ PAYJP_ERROR_CODE = {
   #カード登録
   def register_card(payjp_token)
     if self.payjp_customer_id.present?
-      # 【更新】
       customer = Payjp::Customer.retrieve(payjp_customer_id)
       customer.card = payjp_token 
-      customer.save # Customerの更新はsave
+      customer.save
+      begin
+      update!(last4: customer.cards.data[0].last4)
+      Rails.logger.debug "DEBUG:  ID=#{self.last4}"
       Rails.logger.debug "DEBUG: 更新完了 ID=#{payjp_customer_id}"
+      rescue => e
+        customer.delete
+        raise e 
+      end
     else
-      # 【新規】
       customer = Payjp::Customer.create(
         card: payjp_token,
-        description: "User ID: #{self.id}"
+        description: "User ID: #{self.id}",
+        email: self.email
       )
       begin
-      update!(payjp_customer_id: customer.id)
+      update!(payjp_customer_id: customer.id, last4: customer.cards.data[0].last4)
       Rails.logger.debug "DEBUG: 新規登録完了 ID=#{customer.id}"
+      Rails.logger.debug "DEBUG: 新規登録完了 ID=#{self.last4}"
       rescue => e
         customer.delete
         raise e 

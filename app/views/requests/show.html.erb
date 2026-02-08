@@ -56,7 +56,7 @@
       <%= image_tag reward.reward_image.variant(resize_to_fill: [160, 120, { gravity: 'Center' }], 
       format: :jpeg, 
       quality: 85,
-      strip: true)%>
+      strip: true), class: "rounded"%>
     <% else %>
       <div class="flex bg-gray-300 h-10 items-center justify-center"><%= reward.title %></div>
     <% end %>  
@@ -65,7 +65,7 @@
       <h3 class="font-bold text-base"><%=reward.title%></h3>
       <span>支援者数 <%=reward.support_histories.count%>人</span>
       <span>在庫数 <%=(reward.stock) - (reward.support_histories.count) if reward.stock.present? %></span>
-      <%=link_to "このリターンを選択する", request_support_histories_path(@request, reward_id: reward.id), class: "inline-block bg-blue-500 rounded text-white py-2 px-4", data: { "turbo-method": :post } %>
+      <%= link_to "このリターンを選択する", new_request_support_history_path(@request, reward_id: reward.id), class: "inline-block bg-blue-500 rounded text-white py-2 px-4"%>
   
     </div>
     </div>
@@ -82,44 +82,4 @@
 </section>
 </div>
 
-<section class="w-full mx-auto text-center rounded shadow-[0_4px_#e4e4e4] bg-white p-5">
-<div class="w-70 mx-auto">
-<% if current_user.payjp_customer_id.present? %>
-  <%= form_with model: [@request, @support_history], local: true, data: { turbo: false } do |f| %>
-  <p class="font-bold text-base pb-4">登録カードで支援する</p>
-<div class=" mx-auto">
-<div class="relative">
-<p class="absolute left-2 top-0.5 ">¥</p>
-  <%= f.number_field :amount, 
-        class: "border border-gray-300 rounded text-right mb-4 w-full focus:outline-none", 
-        placeholder: "金額を入力", 
-        value: 0, min: 1, required: true %>
-</div>
-  <%= f.submit "決済", onclick: "return confirm('この金額で支援します。よろしいですか？')",
-        class: "inline-block bg-blue-500 py-2 text-white px-8 rounded" %>
-</div>
-</div>
-  <% end %>
-
-<% else %>
-  <%= form_with model: [@request, @support_history], local: true, data: { turbo: false } do |f| %>
-    <div class="mb-4">
-      <%= f.label :amount, "支援金額", class: "text-lg" %>
-      <%= f.number_field :amount, value: 0, min: 1, class: "border w-30 mr-1 text-lg rounded text-right", required: true %>円
-    </div>
-
- 
-    <script
-      src="https://checkout.pay.jp/"
-      class="payjp-button"
-      data-key="<%= ENV["PAYJP_PUBLIC_KEY"] %>"
-      data-text="カード情報を入力して支援する"
-      data-submit-text="支援を確定する"
-    ></script>
-    </div>
-    
-  <% end %>
-<% end %>
-</div>
-</section>
 </div>

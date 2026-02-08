@@ -1,0 +1,106 @@
+<h2 class="text-gray-700 text-2xl font-bold mb-2 text-center">決済確認画面</h2>
+
+<h2 class="text-gray-700 text-xl font-bold mb-2">選択中のリターン</h2>
+
+<div class="bg-[#f0f2f4] mb-5 rounded shadow-[0_4px_#e4e4e4]">
+  <div class="flex">
+    <% if @reward.reward_image.attached? %>
+      <%= image_tag @reward.reward_image.variant(resize_to_fill: [160, 120, { gravity: 'Center' }], 
+      format: :jpeg, 
+      quality: 85,
+      strip: true), class: "rounded"%>
+    <% else %>
+      <div class="flex bg-gray-300 h-59 items-center justify-center"><%= @reward.title %></div>
+    <% end %>  
+
+
+      <h3 class="font-bold text-base"><%=@reward.title%></h3>
+      <p>リターン概要</p>
+  <div class=""><%=simple_format(@reward.body)%></div>
+  </div>
+</div>
+
+  
+  
+<%= form_with model: [@request, @support_history], class: "h-adr" do |f| %>
+  <%= hidden_field_tag :reward_id, @reward.id %>
+
+  <% if @reward.has_shipping %>
+    <h3>お届け先住所</h3>
+    <span class="p-country-name" style="display:none;">Japan</span>
+    
+    <div>
+      <%= f.label :shipping_postal_code, "郵便番号", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+      <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+      <%= f.text_field :shipping_postal_code, required: true, placeholder: "123-4567", class: "p-postal-code appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"%>
+    </div>
+
+    <div>
+      <%= f.label :shipping_prefecture,  "都道府県", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+      <span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+      <!--SupportHistoryモデルの、shipping_prefecture（都道府県）という属性の中にある、tokyo という値に対応する人間用の名前を ja.yml から取ってくる　[SupportHistory.human_attribute_name("shipping_prefecture.#{k}"), k]に省略可-->
+      <%= f.select :shipping_prefecture, SupportHistory.shipping_prefecture.keys.map { |k| [SupportHistory.human_attribute_name("shipping_prefecture.#{k}"), SupportHistory.shipping_prefectures[k]] }, { include_blank: "選択してください" }, class: "p-region　mb-3 sm:mb-0 mr-9 border border-line-200 rounded-[3px] rounded-[3px] py-3 pl-6 w-52 h-12 font-bold" %>
+    </div>
+
+    <div class = "mb-4">
+      <%= f.label :shipping_city, "市区町村", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+      <span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span><br>
+      <%= f.text_field :shipping_city, required: true, placeholder: "港区", class: "p-locality w-40 h-10 border mr-2 rounded px-2 focus:outline-none"%>
+    </div>
+
+    <div class = "mb-4">
+      <%= f.label :shipping_address_line1, "番地", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+      <span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span><br>
+      <%= f.text_field :shipping_address_line1, required: true, placeholder: "1-2-3", class: "p-street-address w-40 h-10 border mr-2 rounded px-2 focus:outline-none"%>
+    </div>
+
+    <div class = "mb-4">
+      <%= f.label :shipping_address_line2, "建物名・マンション名・部屋番号", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+      <span class=" text-white bg-gray-400 font-normal text-sm ml-2 p-0.5 rounded-md">任意</span><br>
+      <%= f.text_field :shipping_address_line2, placeholder: "テックビル 101", class: "p-street-address w-40 h-10 border mr-2 rounded px-2 focus:outline-none"%>
+    </div>
+
+    <div class = "mb-4">
+      <%= f.label :shipping_phone_number, "電話番号", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+      <span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span><br>
+      <%= f.text_field :shipping_phone_number, required: true, placeholder: "000-1234-5678", class: "p-street-address w-40 h-10 border mr-2 rounded px-2 focus:outline-none"%>
+    </div>
+
+  <% else %>
+    <div class="mt-8 p-6 border border-gray-200 rounded-xl bg-gray-50 text-center">
+      <p class="text-gray-600 font-medium">このリターンは配送を伴いません</p>
+      <p class="text-sm text-gray-500 mt-1">リターンの配信方法については、リクエストが達成金額に到達時、クリエーターよりメール等で詳細が届きます</p>
+    </div>
+  <% end %>
+
+  <div data-controller="card-select">
+    <section class="font-bold text-base pb-4">
+      <% if current_user.payjp_customer_id.present? %>
+        <label class="block mb-2">
+          <input type="radio" name="payment_type" value="registered" checked data-action="change->card-select#toggle">
+          登録済みのカード（**** **** **** <%= current_user.last4 || "----" %>）で決済する
+        </label>
+      <% end %>
+    
+      <label class="block">
+        <input type="radio" name="payment_type" value="new" data-action="change->card-select#toggle" <%= current_user.payjp_customer_id.present? ? "" : "checked" %>>
+        新しいカード情報を入力する
+      </label>
+    </section>
+
+    <div data-card-select-target="registeredForm" class="<%= current_user.payjp_customer_id.present? ? "" : "hidden" %>">
+      <%= f.submit "登録済みのカードで支援を確定する", class: "bg-blue-600 text-white font-bold py-3 px-8 rounded-lg cursor-pointer"%>
+    </div>
+    
+    <div data-card-select-target="newForm" class="<%= current_user.payjp_customer_id.blank? ? "" : "hidden" %>">
+      <script
+        src="https://checkout.pay.jp/"
+        class="payjp-button"
+        data-key="<%= ENV["PAYJP_PUBLIC_KEY"] %>"
+        data-text="カード情報を入力する"
+        data-submit-text="支援を確定する"
+      ></script>
+      <%= f.submit "入力を確定する", class: "bg-blue-600 text-white font-bold py-3 px-8 rounded-lg cursor-pointer"%>
+    </div>
+  </div>
+<% end %>

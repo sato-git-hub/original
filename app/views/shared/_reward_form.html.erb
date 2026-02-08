@@ -18,8 +18,8 @@
               必須
             </span><br>
 <%= reward_f.number_field :amount, required: true, min:1, class: "w-40 h-10 border mr-2 rounded px-2 focus:outline-none"%>
-
 </div>
+
 
 <div class = "mb-4">
 <%= reward_f.label :stock, "配布上限", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
@@ -27,6 +27,15 @@
               任意
             </span><br>
 <%= reward_f.number_field :stock, min:1, class: "w-20 h-10 border mr-2 rounded px-2 focus:outline-none"%>
+</div>
+
+
+<div class = "mb-4">
+<%= reward_f.check_box :has_shipping%>
+<%= reward_f.label :has_shipping, "住所情報が必要なリターンの場合、チェックマークを入れてください", class: "inline-block tracking-wide text-gray-700 text-xs font-bold" %>
+<span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+              必須
+            </span>
 </div>
 
 <div data-controller="image-preview"
