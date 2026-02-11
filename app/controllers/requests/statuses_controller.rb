@@ -7,10 +7,10 @@ class Requests::StatusesController < ApplicationController
     def submit
       
       @request.submit!
-      redirect_to dashboard_requests_path, notice: "リクエストの公開が開始されました"
+      redirect_to dashboard_requests_path, notice: "リクエストを送信しました"
       
       rescue => e
-        redirect_to @user, alert: "処理に失敗しました"
+        redirect_to @user, alert: "送信に失敗しました"
     end
     
     # submit → approved

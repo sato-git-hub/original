@@ -33,3 +33,10 @@ body {
 li {
   list-style: none;
  }
+
+.select-reward,
+.reward-desc,
+.card-select,
+.address-input {
+  width: 600px;
+}

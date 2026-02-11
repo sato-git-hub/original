@@ -25,17 +25,13 @@ class SupportHistory < ApplicationRecord
   not_required: 2
 }
 
-  validates :has_shipping, inclusion: { in: [true, false] }
-  validates :shipping_status, inclusion: { in: SupportHistory.shipping_statuses.keys }
-  validates :total_price, presence: true
-  validates :shipping_prefecture, presence: true, inclusion: { in: SupportHistory.shipping_prefectures.keys }
-  validates :shipping_city,
-  :shipping_prefecture, 
-  :shipping_postal_code, 
-  :shipping_address_line1, 
-  :shipping_phone_number, 
-  presence: true,
-  if: :needs_shipping?
+
+validates :shipping_status, inclusion: { in: SupportHistory.shipping_statuses.keys }
+
+with_options if: :needs_shipping? do
+  validates :shipping_prefecture, inclusion: { in: SupportHistory.shipping_prefectures.keys }, presence: true
+  validates :shipping_city, :shipping_postal_code, :shipping_address_line1, :shipping_phone_number, presence: true
+end
 
   private
 

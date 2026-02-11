@@ -12,8 +12,6 @@ class Request < ApplicationRecord
    relation
 }
 
-
-
 # jobが失敗してstatusがfinishedまたはsuccess_finishedに切り替わらなかった時用
 scope :active, -> {
     where("deadline_at > ?", Time.current.floor)
@@ -64,20 +62,21 @@ scope :active, -> {
                     message: "png, jpg, jpegいずれかの形式にして下さい" },
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
 
+
   validates :title, :body, :target_amount, presence: true, on: :create
 
   def submit!
     raise "invalid state" unless draft?
     update!(status: :submit)
-    self.notifications.create!(action: :submit, receiver: self.creator)
+    self.notifications.create!(action: :submit, receiver: self.creator, target: :creator)
   end
 
   def approve!(request_params)
     raise "invalid state" unless submit?
       transaction do
       Rails.logger.debug "DEBUG: keyword=#{request_params}"
-      # update!(status: :approved, approved_at: Time.current.floor, deadline_at: 30.seconds.from_now)は成功
-      update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
+      update!(status: :approved, published: true, approved_at: Time.current.floor, deadline_at: 30.minutes.from_now)
+      #update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
       
       #送られてきた番号ハッシュ = 1つのレコード をつくる
       self.assign_attributes(request_params)
@@ -85,19 +84,22 @@ scope :active, -> {
       #selfはリクエストレコード
       Rails.logger.debug "DEBUG: keyword=#{self.inspect}"
       CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self.id)
-      self.notifications.create!(action: :approved, receiver: self.user)
+      self.notifications.create!(action: :approved, receiver: self.user, target: :supporter)
       end
   end
 
   def decline!
     raise "invalid state" unless submit?
     update!(status: :creator_declined)
+    self.notifications.create!(action: :decline, receiver: self.user, target: :supporter)
   end
 
   def mark_success_if_reached!
     return unless approved?
     return unless target_amount <= current_amount
     update!(status: :succeeded)
+    self.notifications.create!(action: :succeeded, receiver: self.user, target: :supporter)
+    self.notifications.create!(action: :succeeded, receiver: self.creator, target: :creator)
   end
 
   def finish_if_expired!
@@ -123,55 +125,49 @@ PAYJP_ERROR_CODE = {
     'unacceptable_brand' => '対象のカードブランドが許可されていません'
   }.freeze
 
-def support!(user:, amount:, payjp_token:)
+def support!(user:, reward_id:, payjp_token:)
   raise "支払い情報がありません" if payjp_token.blank? && user.payjp_customer_id.blank?
 
   begin
-  if payjp_token.nil? 
+    reward = Reward.find(reward_id)
+
+    if payjp_token.present? 
+      customer = Payjp::Customer.create(card: payjp_token)
+      user.update!(payjp_customer_id: customer.id)
+      customer_id = customer.id
+    else
+      customer_id = user.payjp_customer_id
+    end
 
     charge = Payjp::Charge.create(
-      amount: amount,
-      customer: user.payjp_customer_id, 
+      amount: reward.amount,
+      customer: customer_id, 
       currency: "jpy",
       capture: false,
       expiry_days: 60
     )
-
-  else
-    charge = Payjp::Charge.create(
-      amount: amount,
-      card: payjp_token,
-      currency: "jpy",
-      capture: false,
-      expiry_days: 60
-    )
-  end
-
-    transaction do
+    
+    transaction do 
       lock!
-      support_histories.create!(
-        user: user,
-        amount: amount,
+      support_histories.update!(
         payjp_charge_id: charge.id,
-        status: :authorized #省略可
       )
 
-      self.current_amount += amount
+      self.current_amount += reward.amount
       save!
       mark_success_if_reached!
     end
-  rescue Payjp::PayjpError => e
-  Rails.logger.debug "DEBUG: keyword=#{e.json_body}"# #{e}はDEBUG: keyword=(Status 402) Card declinedとなった
-  Rails.logger.debug "DEBUG: keyword=#{e.methods.sort}"
-  #{e.json_body}はDEBUG: keyword={:error=>{:charge=>"ch_e72d27cb0fe9ff942dda9b8974bbf", :code=>"card_declined", :message=>"Card declined", :status=>402, :type=>"card_error"}}となった
-  error_code = e.json_body[:error][:code] rescue nil
-  ja_message = PAYJP_ERROR_CODE[error_code] || "決済処理に失敗しました"
-  raise ja_message
-  rescue => e
-    charge&.refund
-    raise RunTimeError, "決済処理に失敗しました" # RnuTimeErrorは省略可
+    rescue Payjp::PayjpError => e
+      Rails.logger.debug "DEBUG: keyword=#{e.json_body}"
+      error_code = e.json_body.dig(:error, :code)
+      ja_message = PAYJP_ERROR_CODE[error_code] || "決済処理に失敗しました"
+      raise ja_message
+    rescue => e
+      charge&.refund
+      Rails.logger.error "DEBUG: keyword=#{e.full_message}=================="
+      raise "予期しないエラーが発生しました"
+    end
   end
-end
 
   def set_search_conf
     return if title.blank?

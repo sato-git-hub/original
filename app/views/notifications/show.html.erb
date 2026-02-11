@@ -1,23 +1,48 @@
+<%= form_with url: notification_path, method: :get, local: true do |f| %>
+  <%= f.select :target, 
+    [ ["依頼したリクエスト", "supporter"], ["依頼されたリクエスト", "creator"] ], 
+    { include_blank: "すべて", selected: params[:target] }, 
+    { onchange: "this.form.submit()" } 
+  %>
+<% end %>
+
 <div class="max-w-2xl mx-auto">
 <% @notifications.each do |notification| %>
-<div class="flex flex-col hover:bg-gray-100 block py-3 rounded">
-<p>
-<%if notification.submit?%>
-リクエストが届きました
-<%elsif notification.approved?%>
-依頼が承認され、リクエストの公開が開始されました
-<%elsif notification.success_finished?%> 
-達成金額に到達して、リクエストが終了しました
-<%elsif notification.succeeded?%>
-リクエストの達成金額に到達しました
-<%elsif notification.failed_finished?%>
-リクエストの達成金額に到達せず、リクエストが終了しました
-<%elsif notification.paid?%>
-リクエストへの支払いが完了しました
-<%elsif notification.pcredited?%>
-支援金が入金されました
-<% end %>
-</p>
+  <div class="flex flex-col hover:bg-gray-100 block py-3 rounded">
+  <% if notification.supporter? %>
+    <p>
+    <%if notification.approved?%>
+      依頼が承認され、リクエストの公開が開始されました
+    <%elsif notification.decline?%>
+      依頼したリクエストが拒否されました
+    <%elsif notification.success_finished?%> 
+      支援したリクエストが達成金額に到達して、終了しました
+    <%elsif notification.succeeded?%>
+      支援したリクエストが達成金額に到達しました。
+    <%elsif notification.failed_finished?%>
+      支援したリクエストが達成金額に到達せず、終了しました
+    <%elsif notification.paid?%>
+      リクエストへの支払いが完了しました
+    <%elsif notification.payment_failed?%>
+      登録したカードの決済に失敗しました　リターンはキャンセルされました
+    <%elsif notification.refunded?%>
+      仮押さえを解除しました。お金は引き落とされていません
+    <% end %>
+    </p>
+
+  <% elsif notification.creator? %>
+    <p>
+    <%if notification.submit?%>
+      リクエストが届きました
+    <%elsif notification.success_finished?%> 
+      依頼されたリクエストが達成金額に到達して、終了しました。 リクエストされたイラストの作成をお願いします。
+    <%elsif notification.succeeded?%>
+      依頼されたリクエストが達成金額に到達しました。
+    <%elsif notification.failed_finished?%>
+      依頼されたリクエストが達成金額に到達せず、終了しました
+    <% end %>
+    </p>
+  <% end %>
 
 <div class="flex justify-between">
 <p><%=notification.created_at.strftime('%Y/%m/%d %k:%M')%></p>

@@ -1,9 +1,13 @@
 class NotificationsController < ApplicationController
 
   def show
-    @notifications = Notification.where(receiver: current_user).order(updated_at: :desc)
+    @notifications = Notification.where(receiver: current_user).order(created_at: :desc)
+    if params[:target] == "supporter"
+      @notifications = Notification.where(receiver: current_user, target: :supporter).order(created_at: :desc)
+    elsif params[:target] == "creator"
+      @notifications = Notification.where(receiver: current_user, target: :creator).order(created_at: :desc)
+    end
   end
-
   def checked
     @notification = Notification.find(params[:notification_id])
     @notification.checked!
