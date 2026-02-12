@@ -1,15 +1,66 @@
-<h2>受けたリクエスト</h2>
+<%= search_form_for @q,
+  url: incoming_requests_path,
+  method: :get,
+  class: "mb-15",
+  local: true do |f| %>
+
+  <%= f.label :status_eq, "ステータス" %>
+  <%= f.select :status_eq,
+    [["承認待ち", 1], ["掲載中", 2], ["掲載中(成功)", 4], ["終了(失敗)", 5], ["終了(成功)", 6]],
+
+    { include_blank: "すべて", selected: params[:q]&.[](:status_eq) },
+    { onchange: "this.form.submit()" } %>
+
+<% end %>
+
+<div class="text-center">
+  <%= "現在依頼されているリクエストはありません" if @requests.blank? %>
+</div>
+
 <% @requests.each do |request| %>
 
-  <%= request.id %>
-  <%= request.title %>
-  <%= request.body %>
-  <%= request.target_amount %>
-  <% if request.request_images.attached? %>
-    <% request.request_images.each do |request_image| %>
-      <%= image_tag request_image %>
-    <% end %>
-  <%end%>
-  <%= link_to "承認", approve_request_status_path(request), data: { turbo_method: :patch } %>  
-  <%= link_to "拒否", decline_request_status_path(request), data: { turbo_method: :patch } %>  
- <%end%>
+  <% if request.submit? %>
+
+      <div class="max-w-200 mx-auto flex items-center mb-4">
+      <%= link_to request.user do %>
+      <%= user_avatar(request.user, size: :sm)%>
+      <% end %>
+      <p class="font-bold md:text-lg mb-2"><%= request.user.name %>よりリクエストが届きました</p>
+      </div>
+
+    <div class="bg-[#f0f2f4] border border-[#d9dee5] mx-auto max-w-200 md:px-4 rounded mb-6 py-4">
+      <h2 class="font-bold md:text-lg text-center mb-2">
+        <%= request.title %>
+      </h2>
+
+      <%= render partial: "requests/request_image", locals: {request: request} %>
+        
+      <div class="bg-white rounded p-3 mb-4">
+        <%= simple_format(request.body) %>
+      </div>
+
+      <div class="flex justify-center gap-6">
+        <%= link_to "承認する",
+          new_request_reward_path(request),
+          class: "inline-block bg-gray-500 py-2 text-white px-8 rounded" %>
+
+        <%= link_to "拒否する",
+          decline_request_status_path(request),
+          data: { turbo_method: :patch },
+          class: "inline-block bg-blue-500 py-2 text-white px-8 rounded" %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-[#f0f2f4] border border-[#d9dee5] mx-auto max-w-200 md:px-4 rounded mb-6 py-4">
+      <%= link_to request do %>
+        <h2 class="font-bold md:text-lg text-center mb-4">
+          <%= request.title %>
+        </h2>
+         <%= render partial: "requests/request_image", locals: {request: request} %>
+        <div class="bg-white rounded p-3 mt-4">
+          <%= simple_format(request.body) %>
+        </div>
+       <% end %>
+    </div>
+  <% end %>
+<% end %>

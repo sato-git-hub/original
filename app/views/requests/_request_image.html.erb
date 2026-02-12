@@ -1,0 +1,20 @@
+<% if request.request_images.attached? %>
+<div class="swiper my-4 md:h-100 h-70">
+          <div class="swiper-wrapper">
+            <% request.request_images.each do |image| %>
+              <div class="swiper-slide">
+                <%= image_tag image,
+                  class: "bg-black w-full h-full object-contain select-none",
+                  draggable: false %>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+        </div>
+<% else %>
+  <div class="md:h-100 h-50 flex items-center bg-gray-300 justify-center my-4">
+    <p>画像が読み込めませんでした</p>
+  </div>
+<% end %>

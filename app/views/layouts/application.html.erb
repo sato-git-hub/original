@@ -1,31 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja" style="--rounded-btn: 0.2rem; --rounded-box: 0.2rem">
   <head>
     <title><%= content_for(:title) || "Original" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+    
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <!--application.css-->
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
     <script src="https://kit.fontawesome.com/9a71256c57.js" crossorigin="anonymous"></script>
   </head>
-  <body>
-    
-    <main class="container mx-auto mt-28 px-5">
-    <% flash.each do |key, message| %>
-      <div class="flash <%= key %>"><%= message %></div>
-    <% end %>
+<body class="min-h-screen">
+<% if show_header? %>
+  <%= render "shared/header" %>
+  <div class="pt-25"></div>
+<% end %>
+  <main class="max-w-6xl mx-auto px-4 py-8"> 
+      <% flash.each do |key, message| %>
+        <div class="flash <%= key %>"><%= message %></div>
+      <% end %>
       <%= yield %>
-    </main>
-  </body>
+  </main>
+</body>
 </html>

@@ -1,0 +1,61 @@
+<div>
+<%= reward_f.label :title, "タイトル", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+<span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+              必須
+            </span>
+<%= reward_f.text_field :title, required: true, placeholder: "1000円コース：イラストの下書きプレゼント", class: "appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"%>
+</div>
+<div>
+<%= reward_f.label :body,  "リターンの内容", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+<span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+              必須
+            </span>
+<%= reward_f.text_area :body, required: true, placeholder: "キャラクター構成案段階での下書きイラストをプレゼントいたします。完成する作品の元となった作者のアイディアが詰まっています。", class: "no-resize appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 h-48 resize-none"%>
+</div>
+<div class = "mb-4">
+<%= reward_f.label :amount, "価格", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+<span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+              必須
+            </span><br>
+<%= reward_f.number_field :amount, required: true, min:1, class: "w-40 h-10 border mr-2 rounded px-2 focus:outline-none"%>
+</div>
+
+
+<div class = "mb-4">
+<%= reward_f.label :stock, "配布上限", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+<span class=" text-white bg-gray-400 font-normal text-sm ml-2 p-0.5 rounded-md">
+              任意
+            </span><br>
+<%= reward_f.number_field :stock, min:1, class: "w-20 h-10 border mr-2 rounded px-2 focus:outline-none"%>
+</div>
+
+
+<div class = "mb-4">
+<%= reward_f.check_box :has_shipping%>
+<%= reward_f.label :has_shipping, "住所情報が必要なリターンの場合、チェックマークを入れてください", class: "inline-block tracking-wide text-gray-700 text-xs font-bold" %>
+<span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+              必須
+            </span>
+</div>
+
+<div data-controller="image-preview"
+  data-image-preview-width-value="160px"
+  data-image-preview-height-value="120px"
+  data-image-preview-fit-value="cover"
+  data-image-preview-position-value="center"
+  >
+<!--画像プレビュー部-->
+<div data-image-preview-target="preview"></div>
+
+<div class="mb-4">
+<%= reward_f.label :reward_image, "画像を選択", 
+  class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-300 px-6 py-2 hover:bg-gray-500"%>
+<span class="mr-2 text-white z-10 bg-gray-400 font-normal text-sm ml-2 p-0.5 rounded-md">
+              任意
+            </span>
+<%= reward_f.file_field :reward_image,
+  data: { action: "change->image-preview#preview"},
+  accept: "image/jpeg,image/gif,image/png"%>
+</div>
+</div>
+<hr class="border-gray-200 mb-5">

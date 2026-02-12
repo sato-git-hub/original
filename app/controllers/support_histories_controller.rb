@@ -1,27 +1,36 @@
 class SupportHistoriesController < ApplicationController
-  rescue_from ArgumentError, with: :support_error
+  before_action :authorize_request_publish!, only: [:new, :create]
+  def new 
+    @reward = Reward.find(params[:reward_id])
+    @support_history = SupportHistory.new
+  end
 
   def create
-    request = Request.find(params[:request_id])
-    request.support!(user: current_user, amount: support_history_params[:amount].to_i, payjp_token: params["payjp-token"])
-    redirect_to request, notice: "支援が完了しました"
+    #新規を選んだ場合、
+
+    reward = Reward.find(params[:reward_id])
+    # has_many :support_histories, dependent: :destroy
+    support_history = @request.support_histories.build(support_history_params)
+    support_history.reward = reward
+    support_history.user = current_user
+    support_history.amount = reward.amount
+    support_history.save!
+    @request.support!(user: current_user, reward_id: params[:reward_id], payjp_token: params["payjp-token"])
+
+    redirect_to @request, notice: "支援が完了しました"
     rescue => e
-    redirect_to request, alert: e.message
+    redirect_to @request, alert: e.message
   end
 
   private
 
-  def support_error(error)
-    #このinstance 変数を使って"requests/show"が描画される
-    @request = Request.find(params[:request_id])
-    @support_history = @request.support_histories.build(
-    amount: params[:amount]
-  )
-    flash.now[:alert] = "最低金額以上で入力してください"
-    render "requests/show"
+  def support_history_params
+  params.require(:support_history).permit(:shipping_postal_code, :shipping_prefecture, :shipping_city, :shipping_address_line1, :shipping_address_line2, :shipping_phone_number)
   end
 
-  def support_history_params
-  params.require(:support_history).permit(:amount)
+  def authorize_request_publish!
+    @request = Request.find(params[:request_id])
+    redirect_to current_user, alert: "公開期間が終了したリクエストです" unless @request.published?
   end
+
 end

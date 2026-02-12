@@ -1,0 +1,2 @@
+module Requests::RewardsHelper
+end

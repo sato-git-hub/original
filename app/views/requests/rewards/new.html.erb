@@ -1,0 +1,21 @@
+<h2 class=" tracking-wide text-gray-700 text-lg font-bold mb-2 text-center">リターン内容作成</h2>
+
+<%= form_with model: @request, url: approve_request_status_path(@request) do |f| %>
+<%# fields_for が @request.rewards の中身を自動でループして、0番、1番と名前を付けてくれる %>
+<div data-controller="nested-form">
+  <div data-nested-form-target="container">
+    <%= f.fields_for :rewards do |reward_f| %>
+      <%= render "shared/reward_form", reward_f: reward_f %>
+    <% end %>
+
+    <template data-nested-form-target="template">
+      <%= f.fields_for :rewards, Reward.new, child_index: "NEW_RECORD" do |reward_f| %>
+        <%= render "shared/reward_form", reward_f: reward_f %>
+      <% end %>
+    </template>
+
+  </div>
+  <button type="button" data-action="nested-form#add" class="">リターンを追加する</button>
+  <%= f.submit "リターンを確定して承認", class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-blue-400 px-6 py-2 hover:bg-blue-500 mb-20"%>
+</div>
+<% end %>

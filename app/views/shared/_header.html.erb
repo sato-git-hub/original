@@ -1,0 +1,19 @@
+  <header class="bg-white fixed top-0 left-0 h-25 w-full z-10">
+  <div class="flex justify-between container h-full mx-auto items-center">
+  <div class="flex items-center gap-4">
+    <%= link_to user_path(current_user) do %>
+      <%=user_avatar(current_user)%>
+    <% end %>
+    
+<%= turbo_stream_from current_user %>
+<div id="notification_bell" class="relative">
+<%= render "notifications/notification_bell", unchecked_count: current_user.received_notifications.where(checked: false).count %>
+</div>
+    <nav>
+      <ul class="flex">
+        <li><%= link_to "クリエーターを探す", portfolios_path %></li>
+        <li class="ml-4"><%= link_to "リクエストを探す", requests_path %></li>
+      </ul>
+    </nav>
+    </div>
+  </header>

@@ -13,7 +13,7 @@
   </div>
 <% end %>
 
-<div class="flex space-x-4">
+<div class="flex space-x-4 mb-7">
   <%= link_to @user.twitter, target: "_blank" do %>
     <i class="fa-brands fa-square-x-twitter text-[clamp(20px,6vw,40px)]"></i>
   <% end if @user.twitter? %>
@@ -29,21 +29,28 @@
 
 <%if @user == current_user %>
   <% unless @user.portfolio %>
-    <div class = "mb-10 text-[clamp(10px,5vw,12px)] cursor-pointer rounded-[8px] bg-neutral-200 px-3 py-1 text-sm text-neutral-950 transition-colors hover:bg-neutral-100 active:bg-neutral-50">
+    <div class = "mb-4 text-[clamp(10px,5vw,12px)] cursor-pointer rounded-[8px] bg-neutral-200 px-3 py-1 text-sm text-neutral-950 transition-colors hover:bg-neutral-100 active:bg-neutral-50">
       <%= link_to "ポートフォリオ作成",  new_portfolio_path %>
     </div>
   <% end %>
-  <%= form_with model: @user, local: true, data: { turbo: false } do |f| %>
-    <%= f.text_area :comment, class: "text-center" %><br>
-    <%= f.submit "決定" %>
-  <% end %>
 
-  <%= link_to "受け取ったリクエスト", incoming_requests_path %>
-  <%= link_to "作成したリクエスト一覧", dashboard_requests_path %>
-  <div><%= link_to "設定", "/setting" %></div>
-  <%= link_to "ログアウト", "/logout", data: { turbo_method: :delete }%> 
-<%else%>
-  <% if @user.comment.present? %>
-    <p class="p-20 border-solid"><%= @user.comment %></p>
-  <% end %>
-<%end%>
+
+  <nav class="flex flex-col">
+  <%= link_to "受け取ったリクエスト", incoming_requests_path,
+    class: "block py-3 hover:bg-gray-100 rounded" %>
+
+  <hr class="border-gray-200">
+
+  <%= link_to "作成したリクエスト一覧", dashboard_requests_path,
+    class: "block py-3 hover:bg-gray-100 rounded" %>
+  <hr class="border-gray-200">
+
+  <%= link_to "設定", setting_path,
+    class: "block py-3 hover:bg-gray-100 rounded" %>
+  <hr class="border-gray-200">
+  
+  <%= link_to "ログアウト", "/logout", data: { turbo_method: :delete },
+    class: "block py-3 hover:bg-gray-100 rounded"%> 
+  <hr class="border-gray-200">
+  </nav>
+<% end %>

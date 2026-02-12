@@ -1,3 +1,6 @@
 <%= form_with model: @user, local: true, data: { turbo: false } do |f| %>
 <%= render partial: "shared/form", locals: {document: "編集", f: f} %>
 <% end %>
+<div class="text-center">
+<%= link_to "新規登録はこちら", new_user_path, class: "inline-block" %>
+</div>

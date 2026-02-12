@@ -1,0 +1,10 @@
+<!-- turbo_stream.replace "notification_1" do -->
+<!--show.html.erbのdiv id="notification_1"部分が書き換わる　
+新しく描画したHTMLに丸ごと交換しろ-->
+<%= turbo_stream.replace @notification.id do %>
+  既読
+<% end %>
+
+<%= turbo_stream.update "notification_bell" do %>
+  <%= render "notifications/notification_bell", unchecked_count: @notification.receiver.received_notifications.where(checked: false).count %>
+<% end %>
