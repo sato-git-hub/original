@@ -61,8 +61,6 @@ RUN bundle exec bootsnap precompile app/ lib/
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 
-
-
 # Final stage for app image
 #「実行時に必要なもの」
 FROM base

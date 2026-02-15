@@ -21,19 +21,16 @@ scope :active, -> {
     %w[
       title
       search_conf
-      character
       status
     ]
   end
 
   def self.ransackable_associations(auth_object = nil)
-  %w[character]
+  %w[]
   end
 
   has_many :rewards, dependent: :destroy 
   has_many :notifications, dependent: :destroy 
-  has_one :character, dependent: :destroy
-  accepts_nested_attributes_for :character
   has_many :support_histories, dependent: :destroy
   belongs_to :user
   belongs_to :creator, class_name: "User"

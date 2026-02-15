@@ -63,3 +63,5 @@ services:
 volumes:
   db_data:
   rails_storage:
+
+  
