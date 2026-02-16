@@ -18,7 +18,7 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
-
+      # CI上で結果を直接ターミナルに出力
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
 
