@@ -1,0 +1,47 @@
+name: CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1  
+      with:
+        ruby-version: '3.2'     
+        bundler-cache: true 
+
+    - name: Run Rubocop
+      run: bundle exec rubocop
+
+  deploy:
+      needs: test
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+
+        - name: Amazon EC2 deploy
+          env:
+              PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
+              HOSTNAME : ${{ secrets.HOSTNAME  }}
+              USER_NAME : ${{ secrets.USER_NAME  }}
+
+          run: |
+            echo "$PRIVATE_KEY" > aws-network-test-key.pem
+            chmod 600 aws-network-test-key.pem
+            ssh -i aws-network-test-key.pem -o StrictHostKeyChecking=no $USER_NAME@$HOSTNAME << EOF
+            cd /home/ec2-user/CD
+            git pull origin main
+            bundle install
+            pkill -f "bundle exec ruby app.rb" || true
+            nohup bundle exec ruby app.rb -o 0.0.0.0 > log.txt 2>&1 &
+            EOF

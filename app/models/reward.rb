@@ -8,5 +8,4 @@ class Reward < ApplicationRecord
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
 
   validates :title, :body, :amount, presence: true, on: :create
-
 end

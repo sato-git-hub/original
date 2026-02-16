@@ -1,19 +1,21 @@
 default: &default
   adapter: mysql2
   encoding: utf8mb4
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: <%= ENV.fetch("DATABASE_USER") { "root" } %>
-  password: <%= ENV.fetch("DATABASE_PASSWORD") { nil } %>
-  host: <%= ENV.fetch("DATABASE_HOST") { "localhost" } %>
-
-development:
-  <<: *default
-  database: <%= ENV.fetch("DATABASE_NAME_DEVELOPMENT") { "original_development" } %>
-
-test:
-  <<: *default
-  database: <%= ENV.fetch("DATABASE_NAME_TEST") { "original_test" } %>
+  host: <%= ENV.fetch("DATABASE_HOST") %>
+  username: <%= ENV.fetch("MYSQL_USER") %>
+  password: <%= ENV.fetch("MYSQL_PASSWORD") %>
 
 production:
   <<: *default
-  database: <%= ENV.fetch("DATABASE_NAME_PRODUCTION") { "original_production" } %>
+  database: rails_db_production
+  pool: 20
+
+development:
+  <<: *default
+  database: original_development
+  pool: 5
+
+test:
+  <<: *default
+  database: original_test
+  pool: 5
