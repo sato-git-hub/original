@@ -29,19 +29,19 @@ scope :active, -> {
   %w[]
   end
 
-  has_many :rewards, dependent: :destroy 
-  has_many :notifications, dependent: :destroy 
+  has_many :rewards, dependent: :destroy
+  has_many :notifications, dependent: :destroy
   has_many :support_histories, dependent: :destroy
   belongs_to :user
   belongs_to :creator, class_name: "User"
   validates :user, :creator, presence: true
-  
+
   # 複数の子要素に対して処理したいとき 「Userの新規登録と同時に、そのUserの最初のPostを1つだけ作る」といったケースでは、使わない
   # assign_attributes、updateがparams[:"0"]つまり{0=>{}}こういうハッシュを受け取れるようにする働き
   # allow_destroy: true　親モデルのフォームで子モデルの削除を許可 params[:_destroy]というデータが送られてきたら
   # reject_if: :all_blank 空の子モデルを自動的に拒否　送られてきたハッシュの中身がすべて空（nilや空文字）だった場合無視
   accepts_nested_attributes_for :rewards, allow_destroy: true, reject_if: :all_blank
-  
+
 
     enum :status, {
   draft: 0, # 下書き
@@ -73,12 +73,12 @@ scope :active, -> {
       transaction do
       Rails.logger.debug "DEBUG: keyword=#{request_params}"
       update!(status: :approved, published: true, approved_at: Time.current.floor, deadline_at: 30.minutes.from_now)
-      #update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
-      
-      #送られてきた番号ハッシュ = 1つのレコード をつくる
+      # update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
+
+      # 送られてきた番号ハッシュ = 1つのレコード をつくる
       self.assign_attributes(request_params)
       self.save!
-      #selfはリクエストレコード
+      # selfはリクエストレコード
       Rails.logger.debug "DEBUG: keyword=#{self.inspect}"
       CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self.id)
       self.notifications.create!(action: :approved, receiver: self.user, target: :supporter)
@@ -109,17 +109,17 @@ scope :active, -> {
     end
   end
 PAYJP_ERROR_CODE = {
-    'invalid_number' => 'カード番号が不正です',
-    'invalid_cvc' => 'CVCが不正です',
-    'invalid_expiration_date' => '有効期限年、または月が不正です',
-    'incorrect_card_data' => 'カード番号、有効期限、CVCのいずれかが不正です',
-    'invalid_expiry_month' => '有効期限月が不正です',
-    'invalid_expiry_year' => '有効期限年が不正です',
-    'expired_card' => '有効期限切れです',
-    'card_declined' => 'カード会社によって拒否されたカードです',
-    'processing_error' => '決済ネットワーク上でエラーが発生しました',
-    'missing_card' => '顧客がカードを保持していない',
-    'unacceptable_brand' => '対象のカードブランドが許可されていません'
+    "invalid_number" => "カード番号が不正です",
+    "invalid_cvc" => "CVCが不正です",
+    "invalid_expiration_date" => "有効期限年、または月が不正です",
+    "incorrect_card_data" => "カード番号、有効期限、CVCのいずれかが不正です",
+    "invalid_expiry_month" => "有効期限月が不正です",
+    "invalid_expiry_year" => "有効期限年が不正です",
+    "expired_card" => "有効期限切れです",
+    "card_declined" => "カード会社によって拒否されたカードです",
+    "processing_error" => "決済ネットワーク上でエラーが発生しました",
+    "missing_card" => "顧客がカードを保持していない",
+    "unacceptable_brand" => "対象のカードブランドが許可されていません"
   }.freeze
 
 def support!(user:, reward_id:, payjp_token:)
@@ -128,7 +128,7 @@ def support!(user:, reward_id:, payjp_token:)
   begin
     reward = Reward.find(reward_id)
 
-    if payjp_token.present? 
+    if payjp_token.present?
       customer = Payjp::Customer.create(card: payjp_token)
       user.update!(payjp_customer_id: customer.id)
       customer_id = customer.id
@@ -138,13 +138,13 @@ def support!(user:, reward_id:, payjp_token:)
 
     charge = Payjp::Charge.create(
       amount: reward.amount,
-      customer: customer_id, 
+      customer: customer_id,
       currency: "jpy",
       capture: false,
       expiry_days: 60
     )
-    
-    transaction do 
+
+    transaction do
       lock!
       support_histories.update!(
         payjp_charge_id: charge.id,

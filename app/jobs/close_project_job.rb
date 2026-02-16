@@ -22,11 +22,11 @@ class CloseProjectJob < ApplicationJob
           request.notifications.create!(receiver: support_history.user, action: :paid, target: :supporter)
         # Payjp::Charge.retrieveまたはcharge.captureで失敗 => リトライ。statusはauthorizedのまま
         rescue Payjp::PayjpError => e
-          #e.json_body[:error][:code]rescue nil この処理自体を失敗した時にnilを代入
+          # e.json_body[:error][:code]rescue nil この処理自体を失敗した時にnilを代入
           error_code = e.json_body.dig(:error, :code)
-          if error_code == 'already_captured'
+          if error_code == "already_captured"
             support_history.update!(status: :paid)
-          elsif ['card_declined', 'expired_card'].include?(error_code)
+          elsif [ "card_declined", "expired_card" ].include?(error_code)
             # 【個人的失敗】カード側の問題。リトライしても無駄なので、failedにして次の支援者へ
             support_history.update!(status: :failed)
             Rails.logger.error "決済不能 [ID: #{support_history.id}]: #{e.message}"
@@ -39,7 +39,7 @@ class CloseProjectJob < ApplicationJob
           end
         end
       end
-    else #request.finished?
+    else # request.finished?
       request.notifications.create!(receiver: request.user, action: :failed_finished, target: :supporter)
       request.notifications.create!(receiver: request.creator, action: :failed_finished, target: :creator)
       request.support_histories.authorized.find_each do |support_history|
@@ -51,9 +51,9 @@ class CloseProjectJob < ApplicationJob
           support_history.update!(status: :canceled)
           request.notifications.create!(receiver: request.user, action: :refunded, target: :supporter)
         rescue Payjp::PayjpError => e
-          #e.json_body[:error][:code]rescue nil この処理自体を失敗した時にnilを代入
+          # e.json_body[:error][:code]rescue nil この処理自体を失敗した時にnilを代入
           error_code = e.json_body.dig(:error, :code)
-          if error_code == 'already_refunded'
+          if error_code == "already_refunded"
             support_history.update!(status: :canceled)
           else
             Rails.logger.error "返金失敗 [ID: #{support_history.id}]: #{e.message}"

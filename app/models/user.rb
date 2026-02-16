@@ -5,18 +5,18 @@ class User < ApplicationRecord
             class_name: "Notification",
             foreign_key: :receiver_id,
             dependent: :destroy
-  
+
   has_many :support_histories, dependent: :destroy
   has_many :received_requests,
            class_name: "Request",
-           foreign_key: :creator_id, 
+           foreign_key: :creator_id,
            dependent: :destroy
-           
+
   has_one :portfolio, dependent: :destroy
-  
-  #　複数のリクエストを持つ　　user.request 
+
+  # 　複数のリクエストを持つ　　user.request
   has_many :requests, dependent: :destroy
-  
+
   has_one_attached :avatar
   validates :avatar, content_type: { in: %w[image/jpeg image/gif image/png],
                     message: "png, jpg, jpegいずれかの形式にして下さい" },
@@ -41,11 +41,11 @@ PAYJP_ERROR_CODE = {
     "already_have_card" => "このカードは既に登録されています"
   }.freeze
 
-  #カード登録
+  # カード登録
   def register_card(payjp_token)
     if self.payjp_customer_id.present?
       customer = Payjp::Customer.retrieve(payjp_customer_id)
-      customer.card = payjp_token 
+      customer.card = payjp_token
       customer.save
       begin
       update!(last4: customer.cards.data[0].last4)
@@ -53,7 +53,7 @@ PAYJP_ERROR_CODE = {
       Rails.logger.debug "DEBUG: 更新完了 ID=#{payjp_customer_id}"
       rescue => e
         customer.delete
-        raise e 
+        raise e
       end
     else
       customer = Payjp::Customer.create(
@@ -67,12 +67,12 @@ PAYJP_ERROR_CODE = {
       Rails.logger.debug "DEBUG: 新規登録完了 ID=#{self.last4}"
       rescue => e
         customer.delete
-        raise e 
+        raise e
       end
     end
   rescue Payjp::PayjpError => e
-    #左側の処理でエラーが起きたら、例外を投げずに nilを返す
-    #rescue => eに飛ばないため
+    # 左側の処理でエラーが起きたら、例外を投げずに nilを返す
+    # rescue => eに飛ばないため
     error_code = e.json_body[:error][:code] rescue nil
     ja_message = PAYJP_ERROR_CODE[error_code] || "カード登録に失敗しました"
       raise ja_message

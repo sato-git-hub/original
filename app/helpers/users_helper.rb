@@ -8,7 +8,7 @@ module UsersHelper
     if user.avatar.attached?
       image_tag(
         user.avatar.variant(
-          resize_to_fill: [300, 300, { gravity: "North" }]
+          resize_to_fill: [ 300, 300, { gravity: "North" } ]
         ),
         class: "h-auto #{size_class} rounded-full"
       )

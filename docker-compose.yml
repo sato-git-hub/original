@@ -2,49 +2,23 @@ services:
   db:
    # Docker Hubという市場から「完成品」を借りてくる
     image: mysql:8.0.36
-    # .env ファイルを読み込む
-    env_file: .env.${RAILS_ENV:-development}
+    env_file: 
+      - .env.${RAILS_ENV:-development}
     profiles:
       - dev_only
   
   redis:
-    # Docker Hubからイメージを借りてきて起動
     image: redis:7.2
   web:
     build: .
-    # bash -c dockerのcommand:の代わりにbash上で実行
-    # -f 確認なしで強制削除 
-    # -b '0.0.0.0'(--bind) サーバーが接続を待ち受けるIPアドレスを指定 どこから来た通信でも受け入れるインバウンドルール
-    # rails s -p 3000 ポート番号の指定
-    # tmp/pids/server.pid サーバーのプロセスIDが記録される場所 ここに記載があることでサーバーが立ち上がってる判定される　意図せずサーバーが落ちてプロセスIDが消せなかったときの対策
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
-    # .env を読み込ませる
     env_file: 
       - .env.${RAILS_ENV:-development}
-    # コンテナの3000番をPCの3000番に繋ぐ http://localhost:3000 でアクセスできる
     environment:
       REDIS_URL: redis://redis:6379/1
-    ports:
-      - "3000:3000"
     depends_on:
       - redis
-# docker run -d コンテナの起動 -v volumes:
-# docker run -d \-v .:/rails \--env-file .env \-e DATABASE_HOST=db \-e REDIS_URL=redis://redis:6379/1 \-e RAILS_ENV=development \(ビルド済みのイメージ名) \bundle exec sidekiq
 
-# build: . カレントディレクトリにあるDockerfileというイメージを立ち上げる dockerfileのイメージを立ち上げる時に名前をつけることができる -t my-rails-app . 
-# env_file 指定したファイルの内容を環境変数として読み込む
-# command Dockerfileの CMDをbundle exec sidekiqで上書き
-# .:/rails 左 .（PC）の内容と右 rails配下（コンテナ）を同期させる
-# 開発環境において いちいちイメージを作り直さなくても、コードを書き換えるだけでアプリを更新するため
-# dbコンテナにあるvolumesは、名前付きvolume - db_data:/var/lib/mysql　コンテナを新しく作り直しても、var/lib/mysqlの中身のデータが消えない
-# db_data という永続領域を作る　volumes: db_data:の記載が必要　再起動した時にこの領域に/var/lib/mysqlが保存されている
-# environment: 変数に設定する
-# environmentより.env が 優先される
-# ${}としているものは読み込まれる前に.envファイルの内容に書き換えられる
-# env_fileで読み込んだ値より、environment:で設定した値の方が優先度高い
-# RAILS_ENV: ${RAILS_ENV:-development} RAILS_ENVの定義がなければデフォルトで development
-# コンテナ起動時に RAILS_ENV=productionを追記することで本番モードに切り替わる
-# depends_on: dbコンテナと　redisコンテナが起動しないと起動できない
   worker:
     build: .
     env_file:

@@ -1,12 +1,12 @@
 class SupportHistoriesController < ApplicationController
-  before_action :authorize_request_publish!, only: [:new, :create]
-  def new 
+  before_action :authorize_request_publish!, only: [ :new, :create ]
+  def new
     @reward = Reward.find(params[:reward_id])
     @support_history = SupportHistory.new
   end
 
   def create
-    #新規を選んだ場合、
+    # 新規を選んだ場合、
 
     reward = Reward.find(params[:reward_id])
     # has_many :support_histories, dependent: :destroy
@@ -32,5 +32,4 @@ class SupportHistoriesController < ApplicationController
     @request = Request.find(params[:request_id])
     redirect_to current_user, alert: "公開期間が終了したリクエストです" unless @request.published?
   end
-
 end

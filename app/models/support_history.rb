@@ -5,8 +5,8 @@ class SupportHistory < ApplicationRecord
   before_create :set_amount_from_reward
 
   attribute :shipping_status, :integer
-  
-  #0: 仮押さえ中, 1: 支払い完了, 2: キャンセル済み, 3: 決済失敗
+
+  # 0: 仮押さえ中, 1: 支払い完了, 2: キャンセル済み, 3: 決済失敗
   enum :status, { authorized: 0, paid: 1, canceled: 2, failed: 3 }
 
   # 都道府県
@@ -20,7 +20,7 @@ class SupportHistory < ApplicationRecord
     kumamoto: 43, oita: 44, miyazaki: 45, kagoshima: 46, okinawa: 47
   }
 
-  # 0: 準備中, 1: 発送済み 2: 発送不要 
+ # 0: 準備中, 1: 発送済み 2: 発送不要
  enum :shipping_status, {
   preparing: 0,
   shipped: 1,
@@ -28,7 +28,7 @@ class SupportHistory < ApplicationRecord
 }
 
 
-#validates :shipping_status, inclusion: { in: SupportHistory.shipping_statuses.keys }
+# validates :shipping_status, inclusion: { in: SupportHistory.shipping_statuses.keys }
 
 with_options if: :needs_shipping? do
   validates :shipping_prefecture, inclusion: { in: SupportHistory.shipping_prefectures.keys }, presence: true
@@ -44,5 +44,4 @@ end
   def needs_shipping?
     reward&.has_shipping?
   end
-
 end

@@ -5,18 +5,17 @@ class Requests::StatusesController < ApplicationController
 
     # draft → submit
     def submit
-      
       @request.submit!
       redirect_to dashboard_requests_path, notice: "リクエストを送信しました"
-      
+
       rescue => e
         redirect_to @user, alert: "送信に失敗しました"
     end
-    
+
     # submit → approved
     def approve
-      begin #省略可
-        
+      begin # 省略可
+
         @request.approve!(request_params)
         redirect_to incoming_requests_path, notice: "リクエストの公開が開始されました"
       rescue => e
@@ -24,13 +23,12 @@ class Requests::StatusesController < ApplicationController
         redirect_to @creator, alert: "処理に失敗しました"
       end
     end
- 
+
     # → creator_declined
     def decline
-      
       @request.decline!
       redirect_to incoming_requests_path
-     
+
       rescue => e
         redirect_to current_user, alert: "処理に失敗しました"
     end
@@ -56,7 +54,7 @@ class Requests::StatusesController < ApplicationController
     def request_params
     # rewards_attributes を許可するのがポイント
     params.require(:request).permit(
-      rewards_attributes: [:id, :title, :body, :amount, :stock, :reward_image, :has_shipping, :_destroy]
+      rewards_attributes: [ :id, :title, :body, :amount, :stock, :reward_image, :has_shipping, :_destroy ]
     )
     end
 end

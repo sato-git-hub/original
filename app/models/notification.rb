@@ -1,11 +1,11 @@
 class Notification < ApplicationRecord
-  #after_createはinsertされた時点で呼び出す(after_create、DBに保存処理　通過前)
-  #after_create_commitはDBに保存が確定した時に呼び出される
+# after_createはinsertされた時点で呼び出す(after_create、DBに保存処理　通過前)
+# after_create_commitはDBに保存が確定した時に呼び出される
 after_create_commit :broadcast_notification
 belongs_to :receiver, class_name: "User"
-#belongs_to :sender, class_name: "User" #not_null つけてない
+# belongs_to :sender, class_name: "User" #not_null つけてない
 belongs_to :request
-#公開された　　成功した　成功して終了した　失敗して終了した　お金が引かれた
+# 公開された　　成功した　成功して終了した　失敗して終了した　お金が引かれた
 enum :action, {
   submit:           0,
   decline:          1,
@@ -15,7 +15,7 @@ enum :action, {
   failed_finished:  5,
   paid:             6,
   payment_failed:   7,
-  refunded:         8,
+  refunded:         8
 }
 
 enum :target, { supporter: 0, creator: 1 }
