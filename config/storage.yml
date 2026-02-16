@@ -1,5 +1,6 @@
 test:
   service: Disk
+  # Railsアプリケーションのルートディレクトリからの絶対パスを生成
   root: <%= Rails.root.join("tmp/storage") %>
 
 local:
@@ -14,7 +15,6 @@ local:
 #   region: us-east-1
 #   bucket: your_own_bucket-<%= Rails.env %>
 
-# config/storage.yml
 amazon:
   service: S3
   access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>

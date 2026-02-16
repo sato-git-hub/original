@@ -1,13 +1,9 @@
 default: &default
-  # RubyでMySQLを扱うためのライブラリ名
   adapter: mysql2
   encoding: utf8mb4
-  # 接続先
-  host: <%= ENV.fetch("DATABASE_HOST")%>
-  # 一般ユーザー設定
+  host: <%= ENV.fetch("DATABASE_HOST") %>
   username: <%= ENV.fetch("MYSQL_USER") %>
   password: <%= ENV.fetch("MYSQL_PASSWORD") %>
-  # 起動時に自動作成するDB名
 
 production:
   <<: *default
@@ -16,7 +12,6 @@ production:
 
 development:
   <<: *default
-  # 起動時に自動作成するDB名
   database: original_development
   pool: 5
 

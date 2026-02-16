@@ -8,9 +8,11 @@
 /.bundle
 
 # Ignore all environment files (except templates).
+.env
 .env.production
 # Ignore all logfiles and tempfiles.
 /log/*
+# テスト用
 /tmp/*
 !/log/.keep
 !/tmp/.keep
@@ -34,3 +36,5 @@
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
+
+docker-compose.dev.yml
