@@ -58,3 +58,5 @@ get "login", to: "sessions#new"
 post "login", to: "sessions#create"
 delete "logout", to: "sessions#destroy"
 end
+
+# docker compose exec web bundle exec rails routes
