@@ -23,3 +23,5 @@ services:
       RAILS_ENV: production
     depends_on:
       - redis
+
+# 本番環境では　http://43.207.165.47(EC2のIP):3000
