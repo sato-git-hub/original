@@ -1,18 +1,7 @@
 services:
 
   web:
-    build:
-      context: .            
-      args:                  
-        DATABASE_HOST: ${DATABASE_HOST}
-        REDIS_URL: ${REDIS_URL}
-        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-        MYSQL_USER: ${MYSQL_USER}
-        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-        AWS_REGION: ${AWS_REGION}
-        AWS_BUCKET: ${AWS_BUCKET}
+    build: .
     image: original-app:latest
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -e production -b 0.0.0.0 -p 3000"
     env_file:
