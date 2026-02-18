@@ -104,7 +104,7 @@ private
   # 終了しているリクエストには入金ページを表示できない
   # statusがapproved、succeeded?でないのと期限外であるもの
   def authorize_publish!
-    if @request.deadline_at.present? && @request.deadline_at < Time.current.floor
+    if @request.deadline_at.present? && !(@request.published?)
       redirect_to current_user, alert: "このリクエストは終了しています"
     end
   end

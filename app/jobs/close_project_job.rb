@@ -9,6 +9,8 @@ class CloseProjectJob < ApplicationJob
 
     # 期間が過ぎた時にどっちになるか判定
     request.finish_if_expired!
+    # リクエストを非公開にする
+    request.unpublish!
     if request.success_finished?
       request.notifications.create!(receiver: request.user, action: :success_finished, target: :supporter)
       request.notifications.create!(receiver: request.creator, action: :success_finished, target: :creator)
