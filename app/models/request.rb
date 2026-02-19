@@ -62,10 +62,6 @@ scope :active, -> {
 
   validates :title, :body, :target_amount, presence: true, on: :create
 
-  def unpublish!
-    update!(published: false)
-  end
-
   def submit!
     raise "invalid state" unless draft?
     update!(status: :submit)
@@ -76,7 +72,7 @@ scope :active, -> {
     raise "invalid state" unless submit?
     transaction do
       Rails.logger.debug "DEBUG: keyword=#{request_params}"
-      update!(status: :approved, published: true, approved_at: Time.current.floor, deadline_at: 2.minutes.from_now)
+      update!(status: :approved, approved_at: Time.current.floor, deadline_at: 2.minutes.from_now)
       # update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
 
       # 送られてきた番号ハッシュ = 1つのレコード をつくる

@@ -7,10 +7,10 @@ class SupportHistoriesController < ApplicationController
 
   def create
     # 新規を選んだ場合、
-
     reward = Reward.find(params[:reward_id])
-    # has_many :support_histories, dependent: :destroy
-    support_history = @request.support_histories.build(support_history_params)
+    
+    support_history = @request.support_histories.build(support_history_params) if reward.has_shipping?
+    support_history = @request.support_histories.build unless reward.has_shipping?
     support_history.reward = reward
     support_history.user = current_user
     support_history.amount = reward.amount
@@ -19,7 +19,7 @@ class SupportHistoriesController < ApplicationController
 
     redirect_to @request, notice: "支援が完了しました"
     rescue => e
-    redirect_to @request, alert: e.message
+      redirect_to @request, alert: e.message
   end
 
   private
@@ -30,6 +30,6 @@ class SupportHistoriesController < ApplicationController
 
   def authorize_request_publish!
     @request = Request.find(params[:request_id])
-    redirect_to current_user, alert: "公開期間が終了したリクエストです" unless @request.published?
+    redirect_to current_user, alert: "公開期間が終了したリクエストです" unless @request.approved? || @request.succeeded?
   end
 end

@@ -6,12 +6,28 @@ services:
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -e production -b 0.0.0.0 -p 3000"
     env_file:
       - .env
-    ports:
-      - "3000:3000"
+    #ports:
+      #- "3000:3000"
     environment:
       RAILS_ENV: production
     depends_on:
       - redis
+
+  nginx:
+    image: nginx:1.28.2
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+    
+    volumes:
+      # - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro # /etc/nginx/conf.d/ というフォルダの中にある .conf という名前のファイルを全部読んで
+      # ro　コンテナ側から勝手にファイルを書き換えないでね
+       - ./public:/usr/share/nginx/html:ro
+      # あらかじめ中身を書いたファイルを準備しておく default.conf
+       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+
   redis:
     image: redis:7.2
   worker:

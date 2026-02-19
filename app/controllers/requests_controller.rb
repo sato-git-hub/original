@@ -2,7 +2,7 @@ class RequestsController < ApplicationController
   before_action :set_request, only: [ :edit, :show, :update ]
   before_action :authorize_user!, only: [ :update ]
   before_action :authorize_approved_or_succeeded!, only: [ :show ]
-  before_action :authorize_publish!, only: [ :show ]
+
   before_action :ensure_draft!, only: [ :edit, :update ]
   # 受け取ったリクエスト一覧
   def incoming
@@ -101,14 +101,8 @@ private
   def set_request
     @request = Request.find(params[:id])
   end
-  # 終了しているリクエストには入金ページを表示できない
-  # statusがapproved、succeeded?でないのと期限外であるもの
-  def authorize_publish!
-    if @request.deadline_at.present? && !(@request.published?)
-      redirect_to current_user, alert: "このリクエストは終了しています"
-    end
-  end
-  # approvedとsucceeded以外のリクエストは入金ページを表示できない
+
+  # approvedとsucceeded以外のリクエストは入金ページを表示できない # approvedであるか
   def authorize_approved_or_succeeded!
     unless @request.approved? || @request.succeeded?
       redirect_to current_user, alert: "このリクエストは非公開です"
