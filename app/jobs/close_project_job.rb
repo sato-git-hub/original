@@ -3,12 +3,13 @@ class CloseProjectJob < ApplicationJob
 
   def perform(request_id)
     request = Request.find(request_id)
-    # approved、successed以外は抜ける
-    raise RuntimeError, "Invalid request state" unless request.approved? || request.successed?
+    # approved、succeeded以外は抜ける
+    raise RuntimeError, "Invalid request state" unless request.approved? || request.succeeded?
     raise RuntimeError, "Deadline has not passed" if Time.current.floor < request.deadline_at
 
     # 期間が過ぎた時にどっちになるか判定
     request.finish_if_expired!
+    Rails.logger.debug "DEBUG: keyword=#{request.status}================================================="
     if request.success_finished?
       request.notifications.create!(receiver: request.user, action: :success_finished, target: :supporter)
       request.notifications.create!(receiver: request.creator, action: :success_finished, target: :creator)

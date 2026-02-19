@@ -103,7 +103,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_12_112207) do
     t.string "payjp_charge_id", default: "", null: false
     t.integer "status", default: 0, null: false
     t.bigint "reward_id", null: false
-    t.integer "shipping_status", default: 0, null: false
     t.string "shipping_postal_code"
     t.integer "shipping_prefecture"
     t.string "shipping_city"

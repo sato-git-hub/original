@@ -74,6 +74,7 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   config.action_cable.disable_request_forgery_protection = true
+  # .* 改行以外の文字」が0文字以上連続している状態　http:// https://
   config.action_cable.allowed_request_origins = [ /http:\/\/.*/, /https:\/\/.*/ ]
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true

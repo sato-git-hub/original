@@ -70,9 +70,9 @@ scope :active, -> {
 
   def approve!(request_params)
     raise "invalid state" unless submit?
-      transaction do
+    transaction do
       Rails.logger.debug "DEBUG: keyword=#{request_params}"
-      update!(status: :approved, published: true, approved_at: Time.current.floor, deadline_at: 30.minutes.from_now)
+      update!(status: :approved, approved_at: Time.current.floor, deadline_at: 2.minutes.from_now)
       # update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
 
       # 送られてきた番号ハッシュ = 1つのレコード をつくる
@@ -82,7 +82,7 @@ scope :active, -> {
       Rails.logger.debug "DEBUG: keyword=#{self.inspect}"
       CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self.id)
       self.notifications.create!(action: :approved, receiver: self.user, target: :supporter)
-      end
+    end
   end
 
   def decline!
