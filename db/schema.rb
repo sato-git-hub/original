@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_12_112207) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_20_141308) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -109,6 +109,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_12_112207) do
     t.string "shipping_address_line1"
     t.string "shipping_address_line2"
     t.string "shipping_phone_number"
+    t.string "user_name"
     t.index ["request_id"], name: "index_support_histories_on_request_id"
     t.index ["reward_id"], name: "index_support_histories_on_reward_id"
     t.index ["user_id"], name: "index_support_histories_on_user_id"

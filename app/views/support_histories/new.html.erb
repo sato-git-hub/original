@@ -37,11 +37,18 @@
   <%= hidden_field_tag :reward_id, @reward.id %>
 
   <% if @reward.has_shipping %>
-    <h3 class="text-gray-700 text-xl font-bold mb-2">お届け先住所</h3>
+    <h3 class="text-gray-700 text-xl font-bold mb-2">お届け先</h3>
     <span class="p-country-name" style="display:none;">Japan</span>
     
     <div class="address-input mx-auto">
-      <div>
+
+      <div class = "mb-4">
+        <%= f.label :user_name, "氏名", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
+        <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span><br>
+        <%= f.text_field :user_name, required: true, placeholder: "", class: "w-40 h-10 border mr-2 rounded px-2 focus:outline-none"%>
+      </div>
+
+      <div class = "mb-4">
         <%= f.label :shipping_postal_code, "郵便番号", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
         <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
         <%= f.text_field :shipping_postal_code, required: true, placeholder: "123-4567", class: "p-postal-code appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"%>

@@ -1,0 +1,28 @@
+<h2 style="font-weight: bold; font-size: 25px; text-align: center; margin: 20px 0;">支援者の連絡先一覧</h2>
+<% @support_histories.each do |support_history| %>
+
+ <table style="border-collapse: collapse; margin: 0 auto;">
+    <tr>
+      <th style="border: 1px solid black; padding: 2px 10px;">名前</th>
+      <th style="border: 1px solid black; padding: 2px 10px;">メールアドレス</th>
+      <th style="border: 1px solid black; padding: 2px 10px;">郵便番号</th>
+      <th style="border: 1px solid black; padding: 2px 10px;">都道府県</th>
+      <th style="border: 1px solid black; padding: 2px 10px;">市区町村</th>
+      <th style="border: 1px solid black; padding: 2px 10px;">番地</th>
+      <th style="border: 1px solid black; padding: 2px 10px;">ビル、部屋番号</th>
+      <th style="border: 1px solid black; padding: 2px 10px;">電話番号</th>
+      <th style="border: 1px solid black; padding: 2px 10px;">支援日時</th>
+    </tr>
+    <tr>
+        <td style="border: 1px solid black; padding: 2px 10px;"><%= support_history.user_name %></td>
+        <td style="border: 1px solid black; padding: 2px 10px;"><%= support_history.user.email %></td>
+        <td style="border: 1px solid black; padding: 2px 10px;"><%= support_history.shipping_postal_code %></td>
+        <td style="border: 1px solid black; padding: 2px 10px;"><%= I18n.t("activerecord.enums.support_history.shipping_prefecture.#{support_history.shipping_prefecture}") if support_history.shipping_prefecture %></td>
+        <td style="border: 1px solid black; padding: 2px 10px;"><%= support_history.shipping_city %></td>
+        <td style="border: 1px solid black; padding: 2px 10px;"><%= support_history.shipping_address_line1 %></td>
+        <td style="border: 1px solid black; padding: 2px 10px;"><%= support_history.shipping_address_line2 %></td>
+        <td style="border: 1px solid black; padding: 2px 10px;"><%= support_history.shipping_phone_number %></td>
+        <td style="border: 1px solid black; padding: 2px 10px;"><%= support_history.created_at.strftime("%Y/%m/%d %k:%M") %></td>
+    </tr>
+  </table>
+<% end %>
