@@ -1,4 +1,5 @@
 class NotificationsController < ApplicationController
+
   def show
     @notifications = Notification.where(receiver: current_user).order(created_at: :desc)
     if params[:target] == "supporter"

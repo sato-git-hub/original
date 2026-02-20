@@ -40,3 +40,25 @@ li {
 .address-input {
   width: 600px;
 }
+
+.selector{
+position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid; border-radius: 0.25rem; background-color: white; display: inline-block;
+}
+
+.notification-list-panel{
+  display: none;
+  position: fixed;
+  top: 100px;
+  left: 0;
+  width: 100%;
+  z-index: 50; 
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+
+  background-color: #fff; 
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+}
+
+.notification-list-panel.active{
+  display: block;
+}
