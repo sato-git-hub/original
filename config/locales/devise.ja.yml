@@ -1,0 +1,33 @@
+ja:
+  devise:
+    registrations:
+      signed_up: "アカウント登録が完了しました。"
+      updated: "アカウント情報を変更しました。"
+      destroyed: "アカウントを削除しました。またのご利用をお待ちしております。"
+    sessions:
+      signed_in: "ログインしました。"
+      signed_out: "ログアウトしました。"
+      already_signed_out: "既にログアウト済みです。"
+    failure:
+      unauthenticated: "ログインまたは登録が必要です。"
+      invalid: "メールアドレスまたはパスワードが違います。"
+
+  errors:
+    messages:
+      not_saved:
+        one: "1件のエラーが発生したため %{resource} は保存されませんでした。"
+        other: "%{count}件のエラーが発生したため %{resource} は保存されませんでした。"
+  
+  activerecord:
+    attributes:
+      user:
+        current_password: "現在のパスワード"
+        password: "パスワード"
+        password_confirmation: "パスワード（確認用）"
+        email: "メールアドレス"
+        name: "ユーザー名"
+    errors:
+      messages:
+        blank: "を入力してください"
+        confirmation: "とパスワードの入力が一致しません"
+        too_short: "は%{count}文字以上で入力してください"

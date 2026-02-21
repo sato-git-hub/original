@@ -1,16 +1,14 @@
 
-      <p class="text-2xl text-black font-bold text-center mb-5">
-        <%=document%>
-      </p>
-
       <!-- ユーザー名 -->
       <div class="md:flex md:items-center mb-6">
         <div class="md:w-1/3">
           <%= f.label :name, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
             ユーザー名<br>
-            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
-              必須
-            </span>
+            <% unless f.object.persisted? %>
+              <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+                必須
+              </span>
+            <% end %>
           <% end %>
         </div>
 
@@ -26,9 +24,11 @@
         <div class="md:w-1/3">
           <%= f.label :email, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
             メールアドレス<br>
-            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
-              必須
-            </span>
+            <% unless f.object.persisted? %>
+              <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+                必須
+              </span>
+            <% end %>
           <% end %>
         </div>
 
@@ -39,20 +39,23 @@
         </div>
       </div>
 
-
+      
       <div class="md:flex md:items-center mb-6">
         <div class="md:w-1/3">
           <%= f.label :password, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
             パスワード<br>
-            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
-              必須
-            </span>
+            <% unless f.object.persisted? %>
+              <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+                必須
+              </span>
+            <% end %>
           <% end %>
         </div>
 
         <div class="md:w-2/3">
           <%= f.password_field :password,
-            placeholder: "6文字以上",
+            autocomplete: "new-password",
+            placeholder: (@minimum_password_length ? "#{@minimum_password_length}文字以上" : "変更する場合のみ入力"),
             class: "bg-gray-200 appearance-none border-2 border-gray-400 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" %>
         </div>
       </div>
@@ -62,15 +65,18 @@
         <div class="md:w-1/3">
           <%= f.label :password_confirmation, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
             パスワード(確認用)<br>
-            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
-              必須
-            </span>
+            <% unless f.object.persisted? %>
+              <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+                必須
+              </span>
+            <% end %>
           <% end %>
         </div>
 
         <div class="md:w-2/3">
           <%= f.password_field :password_confirmation,
-            placeholder: "",
+            autocomplete: "new-password",
+            placeholder: "確認のためパスワードを再入力",
             class: "bg-gray-200 appearance-none border-2 border-gray-400 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" %>
         </div>
       </div>
@@ -119,23 +125,61 @@
       </div>
 <div>
 <h2 class="mb-6 font-bold md:text-center mb-3 ">アイコン画像</h2>
-<%= f.label :avatar,
-  "画像を選択",
-  class: "inline-block cursor-pointer rounded-md bg-neutral-900 px-6 py-2 text-white hover:bg-neutral-700 transition ml-40 mb-7"%>
 
-<span class="ml-3 text-sm text-gray-600" id="file-name">
-  選択されていません
-</span>
-<%= f.file_field :avatar, id: "user_avatar",
-  class: "hidden", onchange: "avatarImage(this);", accept: "image/jpeg,image/gif,image/png"%>
+<div data-controller="image-preview" class="flex flex-col items-center w-full mb-15">
+  
+  <%# 画像表示エリア %>
+  <div data-image-preview-target="preview" class="flex flex-col items-center justify-center mb-6">
+    <% if user.avatar.attached? && user.avatar.persisted? %>
+      <div class="mb-4">
+        <%= image_tag user.avatar, class: "w-[100px] h-[100px] object-cover rounded shadow-md" %>
+      </div>
+
+      <%# 削除チェックボックス（画像の下に配置） %>
+      <div class="flex items-center justify-center bg-gray-100 px-3 py-1 text-sm">
+        <%= check_box_tag :remove_avatar, "true", false, class: "mr-2 cursor-pointer" %>
+        <%= label_tag :remove_avatar, "この画像を削除", class: "text-gray-600 cursor-pointer text-xs" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# ファイル選択ボタンエリア %>
+  <div class="text-center">
+    <%= f.label :avatar, "画像を選択", 
+          class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-300 px-6 py-2 hover:bg-gray-500 transition shadow-sm"%>
+    <%= f.file_field :avatar,
+          class: "hidden", 
+          data: { action: "change->image-preview#preview"},
+          accept: "image/jpeg,image/gif,image/png" %>
+  </div>
+
 </div>
 
+<% if f.object.persisted? %>
+  <div class="md:flex md:items-center mb-6">
+        <div class="md:w-1/3">
+          <%= f.label :current_password, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+            現在のパスワード<br>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
+              必須
+            </span>
+          <% end %>
+        </div>
+
+        <div class="md:w-2/3">
+          <%= f.password_field :current_password,
+            autocomplete: "new-password",
+            placeholder: "ユーザー情報を変更するためには現在のパスワードを入力してください",
+            class: "bg-gray-200 appearance-none border-2 border-gray-400 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" %>
+        </div>
+      </div>
+<% end %>
 
       <!-- 送信ボタン -->
       <div class="flex justify-center">
         <button
           type="submit"
-          class="py-3 px-14 font-bold rounded-3xl bg-blue-400 text-white hover:shadow-teal-md transition-all">
+          class="py-3 px-14 font-bold rounded bg-blue-400 text-white hover:shadow-teal-md transition-all">
           送信
         </button>
       </div>

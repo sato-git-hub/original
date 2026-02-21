@@ -8,5 +8,9 @@ export default class extends Controller {
     const content = this.templateTarget.innerHTML.replace(/NEW_RECORD/g, Date.now())
     //
     this.containerTarget.insertAdjacentHTML('beforeend', content)
+  }remove(event) {
+    event.preventDefault()
+    const nestedFields = event.target.closest(".nested-fields");
+    nestedFields.remove();
   }
 }
