@@ -4,11 +4,6 @@ Rails.application.routes.draw do
 
   # mount Sidekiq::Web => "/sidekiq"
 
-resources :requests, only: [] do
-  scope module: :requests do
-    resource :reward, only: [ :new, :create ]
-  end
-end
 
 resources :users
 
@@ -23,6 +18,12 @@ namespace :portfolios, only: [] do
 end
 
 resources :portfolios
+
+resources :requests, only: [] do
+  scope module: :requests do
+    resources :rewards, only: [ :new, :show ]
+  end
+end
 
 resources :requests, only: [] do
   scope module: :requests do
@@ -44,6 +45,8 @@ end
 resources :requests, only: [] do # /requests/:id/
   get :delivery_list, to: "support_histories#delivery_list"
 end
+
+resources :support_histories, only: [ :index ]
 
 resources :requests, only: [] do # /requests/
   collection do

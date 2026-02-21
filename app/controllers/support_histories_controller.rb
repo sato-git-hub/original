@@ -29,6 +29,12 @@ class SupportHistoriesController < ApplicationController
     Rails.logger.debug "DEBUG: keyword=#{@support_histories}================================="
   end
 
+  def index
+    @q = current_user.support_histories
+              .ransack(params[:q])
+    @support_histories = @q.result
+  end
+
   private
 
   def support_history_params

@@ -30,6 +30,7 @@ scope :active, -> {
   end
 
   has_many :rewards, dependent: :destroy
+  has_many :supported_requests, through: :support_histories, source: :request
   has_many :notifications, dependent: :destroy
   has_many :support_histories, dependent: :destroy
   belongs_to :user

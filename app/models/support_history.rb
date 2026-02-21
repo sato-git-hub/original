@@ -20,21 +20,24 @@ class SupportHistory < ApplicationRecord
     kumamoto: 43, oita: 44, miyazaki: 45, kagoshima: 46, okinawa: 47
   }
 
- # 0: 準備中, 1: 発送済み 2: 発送不要 3: 到着
- enum :shipping_status, {
-  preparing: 0,
-  shipped: 1,
-  not_required: 2,
-  arrived: 3
-}
-
-
 # validates :shipping_status, inclusion: { in: SupportHistory.shipping_statuses.keys }
 
 with_options if: :needs_shipping? do
   validates :shipping_prefecture, inclusion: { in: SupportHistory.shipping_prefectures.keys }, presence: true
   validates :shipping_city, :shipping_postal_code, :shipping_address_line1, :shipping_phone_number, presence: true
 end
+
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[
+      status
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+  %w[]
+  end
+
 
   private
 

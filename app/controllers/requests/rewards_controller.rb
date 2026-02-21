@@ -5,4 +5,8 @@ class Requests::RewardsController < ApplicationController
     # {"rewards_attributes" => { "0" => { "title" => "" }}を生成
     @request.rewards.build
   end
+
+  def show
+    @reward = Reward.find(params[:id])
+  end
 end
