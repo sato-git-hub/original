@@ -1,11 +1,11 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
+  devise_for :users, controllers: {
+  registrations: 'users/registrations'
+}
 
   # mount Sidekiq::Web => "/sidekiq"
-
-
-resources :users
 
 resource :notification, only: [ :show ]
 
@@ -56,10 +56,7 @@ resources :requests, only: [] do # /requests/
 end
 
 resources :requests
-
-get "login", to: "sessions#new"
-post "login", to: "sessions#create"
-delete "logout", to: "sessions#destroy"
+resources :users, only: [ :show ]
 end
 
 # docker compose exec web bundle exec rails routes

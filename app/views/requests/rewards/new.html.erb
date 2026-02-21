@@ -9,13 +9,20 @@
     <% end %>
 
     <template data-nested-form-target="template">
+      <div class="nested-fields relative">
+      <button type="button" data-action="nested-form#remove" class="text-gray-300 cursor-pointer rounded hover:bg-gray-500 hover:text-gray-300 "style="position: absolute; bottom: 0; right:0; padding: 10px; font-weight: bold; font-size: 15px; margin-bottom: 20px;">削除</button>
       <%= f.fields_for :rewards, Reward.new, child_index: "NEW_RECORD" do |reward_f| %>
         <%= render "shared/reward_form", reward_f: reward_f %>
       <% end %>
+      </div>
     </template>
 
   </div>
-  <button type="button" data-action="nested-form#add" class="">リターンを追加する</button>
-  <%= f.submit "リターンを確定して承認", class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-blue-400 px-6 py-2 hover:bg-blue-500 mb-20"%>
+  <button type="button" data-action="nested-form#add" class="inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-400 px-6 py-2 hover:bg-gray-500 mb-20">リターンを追加する</button>
+
+  <hr class= "border border-gray-300">
+  <h2 class=" tracking-wide text-gray-700 text-lg font-bold mb-2 text-center">リクエスト達成条件</h2>
+  
+  <%= f.submit "確定して承認", class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-blue-400 px-6 py-2 hover:bg-blue-500 mb-20"%>
 </div>
 <% end %>
