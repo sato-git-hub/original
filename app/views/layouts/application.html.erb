@@ -24,8 +24,14 @@
   </head>
 <body class="min-h-screen">
 <% if show_header? %>
+  <div data-controller="notification">
   <%= render "shared/header" %>
   <div class="pt-25"></div>
+  <div data-notification-target="list" class="notification-list-panel">
+  <%= turbo_frame_tag "notifications_list" do %>
+  <% end %>
+  </div>
+  </div>
 <% end %>
   <main class="max-w-6xl mx-auto px-4 py-8"> 
       <% flash.each do |key, message| %>

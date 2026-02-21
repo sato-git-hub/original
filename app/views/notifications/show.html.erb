@@ -1,16 +1,19 @@
-<%= form_with url: notification_path, method: :get, local: true do |f| %>
+<%= turbo_frame_tag "notifications_list" do %>
+<div class="max-w-2xl mx-auto">
+<%= form_with url: notification_path, method: :get, data: {  
+  turbo_frame: "notifications_list" }, class: "selector"  do |f| %>
   <%= f.select :target, 
     [ ["依頼したリクエスト", "supporter"], ["依頼されたリクエスト", "creator"] ], 
     { include_blank: "すべて", selected: params[:target] }, 
-    { onchange: "this.form.submit()" } 
+    { onchange: "requestSubmit()" } 
   %>
 <% end %>
 
-<div class="max-w-2xl mx-auto">
+<div style="margin-top: 100px;">
 <% @notifications.each do |notification| %>
-  <div class="flex flex-col hover:bg-gray-100 block py-3 rounded">
+  <div class="flex flex-col hover:bg-gray-100 block pt-3 rounded">
   <% if notification.supporter? %>
-    <p>
+    <p class="mb-5">
     <%if notification.approved?%>
       依頼が承認され、リクエストの公開が開始されました
     <%elsif notification.decline?%>
@@ -31,7 +34,7 @@
     </p>
 
   <% elsif notification.creator? %>
-    <p>
+    <p class="mb-5">
     <%if notification.submit?%>
       リクエストが届きました
     <%elsif notification.success_finished?%> 
@@ -44,13 +47,13 @@
     </p>
   <% end %>
 
-<div class="flex justify-between">
+<div class="flex justify-between mt-7">
 <p><%=notification.created_at.strftime('%Y/%m/%d %k:%M')%></p>
 <div id="<%= notification.id %>">
 <%if notification.checked %>
-<p>既読</p>
+  <p>既読</p>
 <%else%>
-<%= button_to "既読にする",
+  <%= button_to "既読にする",
       notification_checked_path(notification), class: "font-bold",
       method: :patch
       %>
@@ -60,4 +63,6 @@
 </div>
 <hr class="border-gray-200 my-4">
 <% end %> 
+</div>
+<% end %>
 </div>
