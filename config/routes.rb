@@ -1,17 +1,11 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
-  # 本番環境では devise 等で認証をかけないと誰でも見れてしまうので注意！
-  mount Sidekiq::Web => "/sidekiq"
 
-resources :requests, only: [] do
-  scope module: :requests do
-    resource :reward, only: [ :new, :create ]
-  end
-end
+  # mount Sidekiq::Web => "/sidekiq"
+
 
 resources :users
-resource :payment, only: [ :create, :update ]
 
 resource :notification, only: [ :show ]
 
@@ -19,14 +13,17 @@ resources :notifications, only: [] do
   patch :checked
 end
 
-resource :setting, only: [ :show ]
-
-
 namespace :portfolios, only: [] do
     resource :publish, only: [ :update ]
 end
 
 resources :portfolios
+
+resources :requests, only: [] do
+  scope module: :requests do
+    resources :rewards, only: [ :new, :show ]
+  end
+end
 
 resources :requests, only: [] do
   scope module: :requests do
@@ -44,6 +41,12 @@ end
 resources :requests, only: [] do # /requests/:id/
   resources :support_histories, only: [ :new, :create ]
 end
+
+resources :requests, only: [] do # /requests/:id/
+  get :delivery_list, to: "support_histories#delivery_list"
+end
+
+resources :support_histories, only: [ :index ]
 
 resources :requests, only: [] do # /requests/
   collection do

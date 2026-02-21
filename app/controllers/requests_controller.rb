@@ -6,15 +6,14 @@ class RequestsController < ApplicationController
   before_action :ensure_draft!, only: [ :edit, :update ]
   # 受け取ったリクエスト一覧
   def incoming
-    # クリエーターとして関わるリクエスト #requestモデルにて received_requestsがrequestsテーブルのcreator_id == current_user.id
     @q = Request.ransack(params[:q])
     @requests = @q.result.where(creator: current_user).where.not(status: [ :draft, :creator_declined ]).order(updated_at: :desc)
   end
 
   def dashboard
-      @q = Request.ransack(params[:q])
-      # Request.where(status: 1)
-      @requests = @q.result.where(user: current_user).order(updated_at: :desc)
+    @q = Request.ransack(params[:q])
+    # Request.where(status: 1)
+    @requests = @q.result.where(user: current_user).order(updated_at: :desc)
   end
 
   def index

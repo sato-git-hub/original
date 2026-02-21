@@ -30,6 +30,7 @@ scope :active, -> {
   end
 
   has_many :rewards, dependent: :destroy
+  has_many :supported_requests, through: :support_histories, source: :request
   has_many :notifications, dependent: :destroy
   has_many :support_histories, dependent: :destroy
   belongs_to :user
@@ -50,7 +51,8 @@ scope :active, -> {
   creator_declined: 3, # クリエーターがリクエストを拒否
   succeeded: 4,
   finished: 5,
-  success_finished: 6
+  success_finished: 6,
+  completed: 7
 }
   # リクエスト画像
   has_many_attached :request_images
@@ -89,6 +91,12 @@ scope :active, -> {
     raise "invalid state" unless submit?
     update!(status: :creator_declined)
     self.notifications.create!(action: :decline, receiver: self.user, target: :supporter)
+  end
+
+  def complete!
+    raise "invalid state" unless success_finished?
+    update!(status: :completed)
+    self.notifications.create!(action: :completed, receiver: self.creator, target: :creator)
   end
 
   def mark_success_if_reached!

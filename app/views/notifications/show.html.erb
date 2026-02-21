@@ -15,17 +15,21 @@
   <% if notification.supporter? %>
     <p class="mb-5">
     <%if notification.approved?%>
-      依頼が承認され、リクエストの公開が開始されました
-    <%elsif notification.decline?%>
+      <%= link_to request_path(notification.request) do%>
+      <p>依頼が承認され、リクエストの公開が開始されました</p>
+      <% end %>
+    <% elsif notification.decline?%>
       依頼したリクエストが拒否されました
-    <%elsif notification.success_finished?%> 
-      支援したリクエストが達成金額に到達して、終了しました
-    <%elsif notification.succeeded?%>
-      支援したリクエストが達成金額に到達しました。
+    <% elsif notification.success_finished?%> 
+      支援したリクエストが達成金額に到達して、終了しました。クリエーターからの連絡をお待ちください。
+    <% elsif notification.succeeded?%>
+      <%= link_to request_path(notification.request) do%>
+      <p>支援したリクエストが達成金額に到達しました。</p>
+      <% end %>
     <%elsif notification.failed_finished?%>
       支援したリクエストが達成金額に到達せず、終了しました
     <%elsif notification.paid?%>
-      リクエストへの支払いが完了しました
+      支援したリクエストへの支払いが完了しました
     <%elsif notification.payment_failed?%>
       登録したカードの決済に失敗しました　リターンはキャンセルされました
     <%elsif notification.refunded?%>
@@ -38,7 +42,9 @@
     <%if notification.submit?%>
       リクエストが届きました
     <%elsif notification.success_finished?%> 
-      依頼されたリクエストが達成金額に到達して、終了しました。 リクエストされたイラストの作成をお願いします。
+      <%= link_to request_delivery_list_path(notification.request) do %>
+       <p>依頼されたリクエストが達成金額に到達して、終了しました。 リクエストされたイラストの作成をお願いします。</p>
+      <% end %>
     <%elsif notification.succeeded?%>
       依頼されたリクエストが達成金額に到達しました。
     <%elsif notification.failed_finished?%>

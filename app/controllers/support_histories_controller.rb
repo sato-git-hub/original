@@ -22,14 +22,32 @@ class SupportHistoriesController < ApplicationController
       redirect_to @request, alert: e.message
   end
 
+  def delivery_list
+    @request = Request.find(params[:request_id])
+    Rails.logger.debug "DEBUG: keyword=#{@request.support_histories}========================="
+    @support_histories = @request.support_histories
+    Rails.logger.debug "DEBUG: keyword=#{@support_histories}================================="
+  end
+
+  def index
+    @q = current_user.support_histories
+              .ransack(params[:q])
+    @support_histories = @q.result
+  end
+
   private
 
   def support_history_params
-  params.require(:support_history).permit(:shipping_postal_code, :shipping_prefecture, :shipping_city, :shipping_address_line1, :shipping_address_line2, :shipping_phone_number)
+  params.require(:support_history).permit(:user_name, :shipping_postal_code, :shipping_prefecture, :shipping_city, :shipping_address_line1, :shipping_address_line2, :shipping_phone_number)
   end
 
   def authorize_request_publish!
     @request = Request.find(params[:request_id])
     redirect_to current_user, alert: "公開期間が終了したリクエストです" unless @request.approved? || @request.succeeded?
+  end
+
+  def authenticate_creator!
+    @request = Request.find(params[:request_id])
+    redirect_to current_user, alert: "不正なアクセスです" unless @request.creator == current_user
   end
 end
