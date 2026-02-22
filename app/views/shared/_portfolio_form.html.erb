@@ -1,0 +1,53 @@
+<div class="lg:max-w-200 mx-auto  ">
+    <%= form_with model: @portfolio do |f| %>
+      <div>
+        <%=f.label :title, "タイトル", class:"block tracking-wide text-gray-700 text-base font-bold mb-5"%>
+        <%=f.text_field :title, required: true, class:"mx-auto block appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none bg-white"%>
+      </div>
+      <div class="mb-5">
+        <%=f.label :body, "自己紹介", class:"block tracking-wide text-gray-700 text-base font-bold mb-5"%>
+        <%=f.text_area :body, required: true, class: "mx-auto  block h-100 appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4  leading-tight focus:outline-none bg-white resize-none"%>
+      </div>
+   
+           <% if @portfolio.images.attached? %>
+            <p class="font-bold text-base my-5">現在投稿中の画像</p>
+            <ul style= "border: 1px solid #474747;" class="flex flex-wrap items-center gap-4 p-4 bg-white rounded mb-5">
+              <% @portfolio.images.each do |image| %>
+              <li >
+                <div class="inline-block">
+                  <%= check_box_tag "remove_image_ids[]", image.id, false, id: "remove_image_#{image.id}", class:"inline-block"%>
+                  <%= label_tag "remove_image_#{image.id}", "削除", class: "inline-block" %>
+                </div>
+                <div style= "width: 200px; height: 150px">
+                  <%= image_tag image, style: "width: 100%; height: 100%", class: "object-contain rounded"%>
+                </div>
+              </li>
+              <% end %>
+            </ul>
+            <% end %>
+      <div data-controller="image-preview">
+            <p  data-image-preview-target="title" class="font-bold my-5 text-base hidden">追加する画像</p>
+            <div data-image-preview-target="preview" class="border hidden p-4 bg-white rounded flex flex-wrap items-center gap-4 mb-4"></div>
+     
+        <div class="mb-5">
+          <%= f.label :images, "画像を追加", 
+            class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-300 px-6 py-2 hover:bg-gray-500 transition shadow-sm"%>
+      <%= f.file_field :images,
+          class: "hidden", 
+          data: { action: "change->image-preview#preview"},
+          multiple: true,
+          accept: "image/jpeg,image/gif,image/png" %>
+        </div>
+      </div>
+
+
+    <div class="flex items-center gap-2 mb-5">
+     <%= f.check_box :published, 
+      { checked: @portfolio.published?, class: "h-4 w-4 rounded border-gray-300" }, 
+      "true", 
+      "false" %>
+      <%= f.label :published, "ポートフォリオを公開する(リクエストが送られるようになります)" %>
+    </div>
+
+    <%= f.submit "保存", class: "py-3 px-14 font-bold rounded bg-blue-400 text-white hover:shadow-teal-md transition-all cursor-pointer"%>
+    <% end %>

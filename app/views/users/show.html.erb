@@ -49,7 +49,11 @@
     class: "block py-3 hover:bg-gray-100 rounded" %>
   <hr class="border-gray-200">
   
-  <%= link_to "ログアウト", "/logout", data: { turbo_method: :delete },
+  <%= link_to "登録情報編集", edit_user_registration_path,
+    class: "block py-3 hover:bg-gray-100 rounded"%> 
+  <hr class="border-gray-200">
+
+  <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete },
     class: "block py-3 hover:bg-gray-100 rounded"%> 
   <hr class="border-gray-200">
   </nav>

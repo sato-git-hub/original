@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   registrations: 'users/registrations'
 }
 
+root "requests#index"
+
   # mount Sidekiq::Web => "/sidekiq"
 
 resource :notification, only: [ :show ]

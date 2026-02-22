@@ -50,9 +50,9 @@ class RequestsController < ApplicationController
     @request.creator = @creator
     if @request.save
         @request.submit! if params[:commit] == "send"
-        redirect_to current_user
+        redirect_to current_user,notice: "処理に成功しました"
     else
-      flash.now[:alert] = "作成に失敗しました"
+      flash.now[:alert] = "処理に失敗しました"
       render :new, status: :unprocessable_entity
     end
   end
@@ -79,14 +79,29 @@ class RequestsController < ApplicationController
   end
 
   def update
-    # ActiveStorage_Attachmentsテーブルのnameがrequest_imagesでidが送られてきたidのレコードに絞り込む。それに一つ一つpurge
-    @request.request_images
-            .where(id: params[:remove_image_ids])
-            .each(&:purge)
-    # 送られてくるのはチェックしたもの
-    @request.update!(request_params.except(:request_images)) if @request.request_images.attached?
-    @request.update!(request_params) unless @request.request_images.attached?
-    redirect_to dashboard_requests_path, notice: "更新に成功しました"
+    ActiveRecord::Base.transaction do
+
+      if params[:remove_image_ids].present?
+        attachments = @request.request_images.where(id: params[:remove_image_ids])
+        if @request.request_images.attachments.count - attachments.count <= 0
+          raise StandardError, "画像は少なくとも1枚必要です"
+        end
+        attachments.each(&:purge)
+      end
+
+      @request.update!(request_params.except(:request_images))
+
+      if request_params[:request_images].present?
+          @request.request_images.attach(request_params[:request_images]) 
+      end
+
+    end
+
+    redirect_to current_user, notice: "更新しました"
+
+  rescue => e
+    flash.now[:alert] = e.message
+    render :edit, status: :unprocessable_entity
   end
 
   def destroy

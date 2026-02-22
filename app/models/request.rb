@@ -1,6 +1,5 @@
 class Request < ApplicationRecord
   before_save :set_search_conf
-  # validate :editable_only_when_draft, on: :update
 
   scope :search, ->(keyword) {
     keywords = keyword.split(/[ 　]+/)
@@ -42,7 +41,6 @@ scope :active, -> {
   # allow_destroy: true　親モデルのフォームで子モデルの削除を許可 params[:_destroy]というデータが送られてきたら
   # reject_if: :all_blank 空の子モデルを自動的に拒否　送られてきたハッシュの中身がすべて空（nilや空文字）だった場合無視
   accepts_nested_attributes_for :rewards, allow_destroy: true, reject_if: :all_blank
-
 
     enum :status, {
   draft: 0, # 下書き

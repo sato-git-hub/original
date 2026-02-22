@@ -18,14 +18,14 @@
 </div>
 
 <% @requests.each do |request| %>
-  <%=request.status%>
+
   <% if request.submit? %>
 
       <div class="max-w-200 mx-auto flex items-center mb-4">
       <%= link_to request.user do %>
       <%= user_avatar(request.user, size: :sm)%>
       <% end %>
-      <p class="font-bold md:text-lg mb-2"><%= request.user.name %>よりリクエストが届きました</p>
+      <p class="font-bold md:text-lg mb-2"><%= request.user.name %>より<%= request.target_amount %>円でリクエストが届きました</p>
       </div>
 
     <div class="bg-[#f0f2f4] border border-[#d9dee5] mx-auto max-w-200 md:px-4 rounded mb-6 py-4">

@@ -13,9 +13,10 @@ class PortfoliosController < ApplicationController
   def create
     @portfolio = current_user.build_portfolio(portfolio_params)
     if @portfolio.save
-      redirect_to current_user
+      redirect_to current_user, notice: "ポートフォリオを作成しました"
     else
-      render :new, alert: "作成に失敗しました", status: :unprocessable_entity
+      flash.now[:alert] = "ポートフォリオの作成に失敗しました"
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -27,14 +28,34 @@ class PortfoliosController < ApplicationController
     @portfolio = current_user.portfolio
   end
 
- def update
-    @portfolio = current_user.portfolio
-    if @portfolio.update(portfolio_params)
-      redirect_to current_user
-    else
-      render :edit, alert: "更新に失敗しました", status: :unprocessable_entity
+  def update
+    ActiveRecord::Base.transaction do
+
+      @portfolio = current_user.portfolio
+      if params[:remove_image_ids].present?
+        attachments = @portfolio.images.where(id: params[:remove_image_ids])
+        if @portfolio.images.attachments.count - attachments.count <= 0
+          raise StandardError, "画像は少なくとも1枚必要です"
+        end
+        attachments.each(&:purge)
+      end
+
+      @portfolio.update!(portfolio_params.except(:images))
+
+      if portfolio_params[:images].present?
+          @portfolio.images.attach(portfolio_params[:images]) 
+      end
+
     end
- end
+
+    redirect_to @portfolio, notice: "ポートフォリオを更新しました"
+
+  rescue => e
+    flash.now[:alert] = e.message
+    render :edit, status: :unprocessable_entity
+  end
+
+
 
   private
 
@@ -56,6 +77,6 @@ class PortfoliosController < ApplicationController
   end
 
   def portfolio_params
-    params.require(:portfolio).permit(:title, :body, images: [])
+    params.require(:portfolio).permit(:title, :body, :published, images: [])
   end
 end
