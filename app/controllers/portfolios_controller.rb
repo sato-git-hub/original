@@ -77,6 +77,6 @@ class PortfoliosController < ApplicationController
   end
 
   def portfolio_params
-    params.require(:portfolio).permit(:title, :body, :published, images: [])
+    params.require(:portfolio).permit(:title, :body, :published, :minimum_supporters, :minimum_amount, images: [])
   end
 end

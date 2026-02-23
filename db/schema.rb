@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_21_045057) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_22_095710) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -39,6 +39,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_21_045057) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "creator_settings", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "minimum_amount", default: 1000, null: false
+    t.integer "minimum_supporters", default: 3, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_creator_settings_on_user_id"
+  end
+
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.boolean "checked", default: false, null: false
     t.bigint "receiver_id", null: false
@@ -60,6 +69,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_21_045057) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.boolean "published", default: false, null: false
+    t.integer "minimum_amount", default: 1000, null: false
+    t.integer "minimum_supporters", default: 1, null: false
     t.index ["user_id"], name: "index_portfolios_on_user_id", unique: true
   end
 
@@ -134,6 +145,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_21_045057) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "creator_settings", "users"
   add_foreign_key "notifications", "requests"
   add_foreign_key "notifications", "users", column: "receiver_id"
   add_foreign_key "notifications", "users", column: "sender_id"
