@@ -3,17 +3,24 @@
 
 <div>
   <%= f.label :title, "タイトル", class: "inline-block tracking-wide text-base font-bold mb-2"%>
-  <span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+  <% unless f.object.persisted? %>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+          <% end %>
   <%= f.text_field :title, required: true, class: "appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"%>
 </div>
 <div>
   <%= f.label :body,  "リクエストする内容", class: "inline-block tracking-wide text-base font-bold mb-2"%>
-  <span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+  <% unless f.object.persisted? %>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+          <% end %>
   <%= f.text_area :body, required: true, class: "no-resize appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 h-48 resize-none"%>
 </div>
 
 <div class = "mb-4">
-    <%= f.label :target_amount, "予算", class: "font-bold text-base my-5" %><span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+    <%= f.label :target_amount, "予算", class: "font-bold text-base my-5" %>
+    <% unless f.object.persisted? %>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+          <% end %>
     <div class="flex flex-col gap-4">
     <div class="flex items-center gap-4">
       <%= f.range_field :target_amount, 
@@ -59,6 +66,9 @@
         <div class="mb-5">
           <%= f.label :request_images, "画像を追加", 
             class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-300 px-6 py-2 hover:bg-gray-500 transition shadow-sm"%>
+          <% unless f.object.persisted? %>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+          <% end %>
           <%= f.file_field :request_images,
           class: "hidden", 
           data: { action: "change->image-preview#preview"},

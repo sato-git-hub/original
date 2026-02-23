@@ -9,6 +9,8 @@ root "requests#index"
 
   # mount Sidekiq::Web => "/sidekiq"
 
+resource :deposit, only: [:new, :create, :edit, :update, :show]
+
 resource :notification, only: [ :show ]
 
 resources :notifications, only: [] do

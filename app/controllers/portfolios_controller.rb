@@ -1,8 +1,10 @@
 class PortfoliosController < ApplicationController
   before_action :portfolio_set!, only: [ :show ]
+  before_action :redirect_if_deposit_exists, only: [ :new, :create, :edit, :update ]
   before_action :authorize_portfolio!, only: [ :edit, :update ]
   before_action :redirect_if_portfolio_exists, only: [ :new, :create ]
   before_action :redirect_unless_portfolio_exists, only: [ :edit ]
+  
   def index
     @portfolios = Portfolio.where(published: true)
   end
@@ -60,7 +62,11 @@ class PortfoliosController < ApplicationController
   private
 
   def portfolio_set!
-       @portfolio = Portfolio.find(params[:id])
+    @portfolio = Portfolio.find(params[:id])
+  end
+
+  def redirect_if_deposit_exists
+    redirect_to unless current_user.deposit
   end
 
   def authorize_portfolio!

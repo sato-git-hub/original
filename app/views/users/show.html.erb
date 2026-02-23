@@ -53,6 +53,9 @@
     class: "block py-3 hover:bg-gray-100 rounded"%> 
   <hr class="border-gray-200">
 
+  <%= link_to "振込口座情報", current_user.deposit ? edit_deposit_path(current_user.deposit) : new_deposit_path, class: "block py-3 hover:bg-gray-100 rounded" %>
+  <hr class="border-gray-200">
+  
   <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete },
     class: "block py-3 hover:bg-gray-100 rounded"%> 
   <hr class="border-gray-200">

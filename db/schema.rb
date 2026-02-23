@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_22_095710) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_23_022211) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -46,6 +46,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_22_095710) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_creator_settings_on_user_id"
+  end
+
+  create_table "deposits", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "bank_name", null: false
+    t.string "account_number", null: false
+    t.string "account_holder", null: false
+    t.string "branch_name", null: false
+    t.string "radio_group", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_deposits_on_user_id"
   end
 
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -146,6 +158,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_22_095710) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "creator_settings", "users"
+  add_foreign_key "deposits", "users"
   add_foreign_key "notifications", "requests"
   add_foreign_key "notifications", "users", column: "receiver_id"
   add_foreign_key "notifications", "users", column: "sender_id"

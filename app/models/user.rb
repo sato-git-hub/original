@@ -4,6 +4,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  has_one :deposit, dependent: :destroy
   has_many :received_notifications,
             class_name: "Notification",
             foreign_key: :receiver_id,
