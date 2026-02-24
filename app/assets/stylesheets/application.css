@@ -34,8 +34,7 @@ li {
   list-style: none;
  }
 
-.select-reward,
-.reward-desc,
+
 .card-select,
 .address-input {
   width: 600px;
@@ -61,4 +60,78 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 
 .notification-list-panel.active{
   display: block;
+}
+
+.portfolio-grid {
+  display: grid;
+  gap: 16px; /* アイテム間の隙間 */
+  width: 100%;
+  padding: 10px;
+  
+  /* デフォルト（スマホ）: 1列 */
+  grid-template-columns: repeat(1, 1fr);
+}
+
+/* レスポンシブ: 576px以上で2列 */
+@media (min-width: 576px) {
+  .portfolio-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* レスポンシブ: 768px以上で3列 */
+@media (min-width: 768px) {
+  .portfolio-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* レスポンシブ: 1024px以上で4列 */
+@media (min-width: 1024px) {
+  .portfolio-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.portfolio-card {
+  width: 100%;
+  margin-bottom: 24px; /* カード同士の上下の間隔 */
+  min-width: 0;
+}
+
+/* 画像の上にある情報エリア */
+.portfolio-info {
+  display: flex;
+  align-items: center;
+  padding: 8px 4px; /* 左右に少し余白 */
+  gap: 10px;        /* アイコンと名前の距離 */
+}
+
+/* アバターのサイズを調整 */
+.creator-avatar img {
+  width: 32px;      /* インスタ風のサイズ */
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ユーザー名のスタイル */
+.creator-name {
+  font-size: 14px;
+  font-weight: 600; /* 少し太めにするとインスタっぽい */
+  color: #262626;
+  text-decoration: none;
+}
+
+/* 画像の設定（前回の内容を維持） */
+.portfolio-image-container {
+  width: 100%;
+}
+
+.portfolio-img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 4px; /* 角丸を少し控えめにするとよりインスタ風 */
 }

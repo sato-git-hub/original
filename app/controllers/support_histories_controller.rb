@@ -1,21 +1,17 @@
 class SupportHistoriesController < ApplicationController
   before_action :authorize_request_publish!, only: [ :new, :create ]
   def new
-    @reward = Reward.find(params[:reward_id])
+
     @support_history = SupportHistory.new
   end
 
   def create
-    # 新規を選んだ場合、
-    reward = Reward.find(params[:reward_id])
     
-    support_history = @request.support_histories.build(support_history_params) if reward.has_shipping?
-    support_history = @request.support_histories.build unless reward.has_shipping?
-    support_history.reward = reward
+    support_history = @request.support_histories.build
     support_history.user = current_user
-    support_history.amount = reward.amount
-    support_history.save!
-    @request.support!(user: current_user, reward_id: params[:reward_id], payjp_token: params["payjp-token"])
+    support_history.save!(support_history_params)
+    Rails.logger.debug "DEBUG: keyword=#{support_history.inspect}========================="
+    @request.support!(user: current_user, amount: support_history_params[:amount], payjp_token: params["payjp-token"])
 
     redirect_to @request, notice: "支援が完了しました"
     rescue => e
@@ -38,7 +34,7 @@ class SupportHistoriesController < ApplicationController
   private
 
   def support_history_params
-  params.require(:support_history).permit(:user_name, :shipping_postal_code, :shipping_prefecture, :shipping_city, :shipping_address_line1, :shipping_address_line2, :shipping_phone_number)
+    params.require(:support_history).permit(:amount)
   end
 
   def authorize_request_publish!

@@ -23,11 +23,6 @@ end
 
 resources :portfolios
 
-resources :requests, only: [] do
-  scope module: :requests do
-    resources :rewards, only: [ :new, :show ]
-  end
-end
 
 resources :requests, only: [] do
   scope module: :requests do

@@ -12,7 +12,7 @@ ja:
       unauthenticated: "ログインまたは登録が必要です。"
       invalid: "メールアドレスまたはパスワードが違います。"
       not_found_in_database: "メールアドレスまたはパスワードパスワードが違います。ご確認ください。"
-
+      unconfirmed: "メールによる確認が完了していません。届いたメール内のリンクをクリックして、アカウントを有効化してください。"
   errors:
     messages:
       not_saved:

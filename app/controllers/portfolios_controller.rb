@@ -66,7 +66,8 @@ class PortfoliosController < ApplicationController
   end
 
   def redirect_if_deposit_exists
-    redirect_to unless current_user.deposit
+    # 存在しなければ 銀行口座登録
+    redirect_to new_deposit_path unless current_user.deposit
   end
 
   def authorize_portfolio!

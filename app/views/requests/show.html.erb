@@ -48,45 +48,6 @@
 <div class="flex w-full">
 <div class="bg-white p-4 mb-5 basis-2/3"><%=simple_format(@request.body)%></div>
 
-<section class="flex flex-col basis-1/3">
-<% @rewards.each do |reward|%>
-  <div class="bg-[#f0f2f4] mb-5 px-3 pt-4 pb-2 rounded shadow-[0_4px_#e4e4e4]">
-    <div class="flex gap-2 items-center">
-      <% if reward.reward_image.attached? %>
-        <%= image_tag reward.reward_image.variant(resize_to_fill: [160, 120, { gravity: 'Center' }], 
-        format: :jpeg, 
-        quality: 85,
-        strip: true), class: "rounded flex-shrink-0"%>
-      <% else %>
-        <div class="flex bg-gray-300 h-10 items-center justify-center flex-shrink-0"><%= reward.title %></div>
-      <% end %>  
-
-      <div class="flex-1">
-        <p class="font-bold text-lg"><%=reward.amount%>円</p>
-        <h3 class="font-bold"><%=reward.title%></h3>
-        <span>支援者数 <%=reward.support_histories.count%>人</span>
-        <span>在庫数 <%= reward.stock.present? ? (reward.stock - reward.support_histories.count) : "無制限" %></span>
-        <% if reward.stock.nil? %>
-        <% (reward.stock - reward.support_histories.count) > 0 if reward.stock.present?%>
-          <%= link_to "このリターンを選択する", new_request_support_history_path(@request, reward_id: reward.id), class: "inline-block bg-blue-500 rounded text-white py-2 px-4", local: true, data: { turbo: false }%>
-        <% elsif (reward.stock - reward.support_histories.count) > 0 %>
-          <%= link_to "このリターンを選択する", new_request_support_history_path(@request, reward_id: reward.id), class: "inline-block bg-blue-500 rounded text-white py-2 px-4", local: true, data: { turbo: false }%>
-        <% else %>
-          <span class="inline-block bg-gray-400 rounded text-white py-2 px-4">売り切れ</span>
-        <% end %>
-      </div>
-  </div>
-    
-<div data-controller="toggle">
-  <button type="button" data-action="click->toggle#toggle" class="font-bold hover:text-gray-500 border-gray-400">
-    リターン概要
-  </button>
-<div data-toggle-target="content" class="hidden"><%=simple_format(reward.body)%></div>
-</div>
-
-  </div>
-<% end %>
-</section>
 </div>
 
 </div>

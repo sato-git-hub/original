@@ -62,8 +62,6 @@ class RequestsController < ApplicationController
     # Support_history.new(request: @request)と同じ意味
     @support_history = @request.support_histories.build
 
-    @rewards = @request.rewards
-
     # 支援者履歴テーブルからこのリクエストのレコードだけ
     # user_idごとの合計amount順に
     @top_supporters = User

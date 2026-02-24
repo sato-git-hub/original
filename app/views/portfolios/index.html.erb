@@ -1,29 +1,32 @@
-<% @portfolios.each do |portfolio| %>
+<div class="portfolio-grid">
+  <% @portfolios.each do |portfolio| %>
+    <div class="portfolio-card">
 
-  <li>
-    <div class="flex justify-between items-center px-4 py-4">
-      <%= link_to user_path(portfolio.user), class: "flex items-center py-2 px-4" do %>
-        <%= user_avatar(portfolio.user) %>
-        <p class="pl-4 text-lg font-bold"><%= portfolio.user.name %></p>
-      <% end %>
+      <div class="portfolio-info">
+        <div class="creator-avatar">
+          <%= user_avatar(portfolio.user) %>
+        </div>
+        <span class="creator-name"><%= portfolio.user.name %></span>
+      </div>
       
-      <%= link_to "リクエストを送る", new_request_path(portfolio_id: portfolio.id) ,class: "bg-gray-300 py-2 px-4 rounded" %>
-    </div>
-
-    <div class="swiper h-200">
-      <div class="swiper-wrapper">
-        <% if portfolio.images.attached? %>
-          <% portfolio.images.each do |image| %>
-          <div class="swiper-slide"><%= image_tag image, class: "bg-black w-full h-full object-contain select-none",
-            draggable: false %></div>
-          <% end %>
-        <% else %>
-            <div class="bg-gray-500 rounded text-center">画像なし</div>
+      <div class="portfolio-image-container">
+        <% if portfolio.images.count > 1 %>
+          <div class="swiper">
+            <div class="swiper-wrapper">
+              <% portfolio.images.each do |image| %>
+                <div class="swiper-slide">
+                  <%= image_tag image, class: "portfolio-img" %>
+                </div>
+              <% end %>
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+          </div>
+        <% elsif portfolio.images.count == 1 %>
+          <%= image_tag portfolio.images.first, class: "portfolio-img" %>
         <% end %>
       </div>
-      <div class="swiper-button-next"></div>
-      <div class="swiper-button-prev"></div>
-    </div>
-  </li>
-<% end %>
 
+    </div>
+  <% end %>
+</div>

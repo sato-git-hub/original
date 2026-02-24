@@ -12,7 +12,6 @@
 <table style="border-collapse: collapse; margin: 0 auto; table-layout: fixed; width: 100%;">
   <tr>
     <th style="border: 1px solid black; padding: 15px 30px; width: 220px;">支援されたリクエスト</th>
-    <th style="border: 1px solid black; padding: 15px 30px; width: 220px;">選択したリターン</th>
     <th style="border: 1px solid black; padding: 15px 30px; width: 120px;">支援金額</th>
     <th style="border: 1px solid black; padding: 15px 30px; width: 180px;">クリエーター</th>
     <th style="border: 1px solid black; padding: 15px 30px; width: 180px;">支援日時</th>
@@ -24,12 +23,6 @@
         <%= link_to support_history.request.title,
             support_history.request,
             style: "display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align: center;" %>
-      </td>
-
-      <td style="border: 1px solid black; padding: 15px 30px;">
-        <%= link_to support_history.reward.title,
-            request_reward_path(support_history.request, support_history.reward),
-            style: "display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" %>
       </td>
 
       <td style="border: 1px solid black; padding: 15px 30px; text-align: center;">

@@ -28,7 +28,7 @@ scope :active, -> {
   %w[]
   end
 
-  has_many :rewards, dependent: :destroy
+
   has_many :supported_requests, through: :support_histories, source: :request
   has_many :notifications, dependent: :destroy
   has_many :support_histories, dependent: :destroy
@@ -40,7 +40,6 @@ scope :active, -> {
   # assign_attributes、updateがparams[:"0"]つまり{0=>{}}こういうハッシュを受け取れるようにする働き
   # allow_destroy: true　親モデルのフォームで子モデルの削除を許可 params[:_destroy]というデータが送られてきたら
   # reject_if: :all_blank 空の子モデルを自動的に拒否　送られてきたハッシュの中身がすべて空（nilや空文字）だった場合無視
-  accepts_nested_attributes_for :rewards, allow_destroy: true, reject_if: :all_blank
 
     enum :status, {
   draft: 0, # 下書き
@@ -68,16 +67,12 @@ scope :active, -> {
     self.notifications.create!(action: :submit, receiver: self.creator, target: :creator)
   end
 
-  def approve!(request_params)
+  def approve!
     raise "invalid state" unless submit?
     transaction do
-      Rails.logger.debug "DEBUG: keyword=#{request_params}"
       update!(status: :approved, approved_at: Time.current.floor, deadline_at: 2.minutes.from_now)
       # update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
 
-      # 送られてきた番号ハッシュ = 1つのレコード をつくる
-      self.assign_attributes(request_params)
-      self.save!
       # selfはリクエストレコード
       Rails.logger.debug "DEBUG: keyword=#{self.inspect}"
       CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self.id)
@@ -128,11 +123,10 @@ PAYJP_ERROR_CODE = {
     "unacceptable_brand" => "対象のカードブランドが許可されていません"
   }.freeze
 
-def support!(user:, reward_id:, payjp_token:)
+def support!(user:, amount:, payjp_token:)
   raise "支払い情報がありません" if payjp_token.blank? && user.payjp_customer_id.blank?
 
   begin
-    reward = Reward.find(reward_id)
 
     if payjp_token.present?
       customer = Payjp::Customer.create(card: payjp_token)
@@ -143,7 +137,7 @@ def support!(user:, reward_id:, payjp_token:)
     end
 
     charge = Payjp::Charge.create(
-      amount: reward.amount,
+      amount: amount,
       customer: customer_id,
       currency: "jpy",
       capture: false,
@@ -156,10 +150,11 @@ def support!(user:, reward_id:, payjp_token:)
         payjp_charge_id: charge.id,
       )
 
-      self.current_amount += reward.amount
+      self.current_amount += amount
       save!
       mark_success_if_reached!
     end
+    
     rescue Payjp::PayjpError => e
       Rails.logger.debug "DEBUG: keyword=#{e.json_body}"
       error_code = e.json_body.dig(:error, :code)

@@ -41,7 +41,8 @@
 
       <div class="flex justify-center gap-6">
         <%= link_to "承認する",
-          new_request_reward_path(request),
+          approve_request_status_path(request),
+          data: { turbo_method: :patch },
           class: "inline-block bg-gray-500 py-2 text-white px-8 rounded" %>
 
         <%= link_to "拒否する",
