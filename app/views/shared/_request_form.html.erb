@@ -24,14 +24,14 @@
     <div class="flex flex-col gap-4">
     <div class="flex items-center gap-4">
       <%= f.range_field :target_amount, 
-        min: @portfolio.minimum_amount, 
+        min: @creator_setting.minimum_amount, 
         max: 100000, 
         step: 100, 
         class: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer",
         oninput: "target_output.value = this.value" %>
 
       <div class="flex items-center gap-1 font-bold text-lg min-w-[100px]">
-        <output id="target_output"><%= @request.target_amount %></output>
+        <output id="target_output"><%= @creator_setting.minimum_amount %></output>
         <span>円</span>
       </div>
     </div>
@@ -40,7 +40,7 @@
 
 <div class="mb-5">
 <p class= "font-bold text-base my-5">達成に必要な最低支援者数</p> 
-<p style="color: #424242;" class=" bg-gray-300 border px-4 py-2 rounded font-bold inline-block"><%= @portfolio.minimum_supporters %></p><span> 人</span>
+<p style="color: #424242;" class=" bg-gray-300 border px-4 py-2 rounded font-bold inline-block"><%= @creator_setting.minimum_supporters %></p><span> 人</span>
 </div>
 
 <% if @request.request_images.attached? %>

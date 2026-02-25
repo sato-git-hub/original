@@ -7,9 +7,9 @@
   <%= image_tag "default_avatar.jpg", class: "h-auto w-[clamp(30px,18vw,200px)] mb-3" %>
 <% end %>
 <div class = "font-bold text-[clamp(16px,5vw,18px)] mb-3" ><%=@user.name%></div>
-<% if @user.portfolio %>
+<% if @user.creator_setting %>
   <div class = "mb-10 text-[clamp(10px,5vw,12px)] cursor-pointer rounded-[8px] bg-neutral-200 px-3 py-1 text-sm text-neutral-950 transition-colors hover:bg-neutral-100 active:bg-neutral-50">
-    <%= link_to "ポートフォリオ", @user.portfolio %>
+    <%= link_to "ポートフォリオ", @user.creator_setting %>
   </div>
 <% end %>
 
@@ -28,9 +28,9 @@
 </div>
 
 <%if @user == current_user %>
-  <% unless @user.portfolio %>
+  <% unless @user.creator_setting %>
     <div class = "mb-4 text-[clamp(10px,5vw,12px)] cursor-pointer rounded-[8px] bg-neutral-200 px-3 py-1 text-sm text-neutral-950 transition-colors hover:bg-neutral-100 active:bg-neutral-50">
-      <%= link_to "ポートフォリオ作成",  new_portfolio_path %>
+      <%= link_to "ポートフォリオ作成",  new_creator_setting_path %>
     </div>
   <% end %>
 

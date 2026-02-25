@@ -40,13 +40,13 @@ class RequestsController < ApplicationController
 
   def new
     @request = Request.new
-    @portfolio = Portfolio.find(params[:portfolio_id])
+    @creator_setting = CreatorSetting.find(params[:creator_setting_id])
   end
 
   def create
     @request = current_user.requests.build(request_params)
-    @portfolio = Portfolio.find(params[:portfolio_id])
-    @creator = @portfolio.user
+    @creator_setting = CreatorSetting.find(params[:creator_setting_id])
+    @creator = @creator_setting.user
     @request.creator = @creator
     if @request.save
         @request.submit! if params[:commit] == "send"

@@ -1,0 +1,57 @@
+<div class="request-container">
+
+  <h1 class="title">人気のリクエスト</h1>
+
+    <section class="request-area">
+      <ol class="request-card-area">
+        <% @requests.each do |request| %>
+          <li class="card-wrapper">
+            <%= link_to request, class: "card" do %>
+              <div class="request-image-area">
+                <div class="request-image-container">
+                  <%= image_tag request.request_images[0], class: "card-img" %>
+                </div>  
+              </div>
+              <div class="request-body-area">
+                <div class="request-body-container">
+                  <h2 class="name" style="--line: 3; --sp-line: 3;"><%= request.title %></h2>
+                </div>
+              </div>
+              <div class="request-footer-area">
+                <div class="meter-area">
+                  <% percentage = (request.current_amount.to_f / request.target_amount * 100) %>
+                  <p class="success-rate-sp"><%= percentage.round %>%</p>
+                  <div class="meter">
+                    <div class="meter-bar" style="width: <%= percentage.clamp(0,100).round(1) %>%;"></div> 
+                    <p class="success-rate">
+                      <%= percentage.round %><span class="suffix">%</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="footer-area">
+                <div class="footer">
+                  <div class="footer-item total">
+                    <small class="svelte">現在</small>
+                    <%= request.current_amount %>
+                    <span class="suffix svelte-g0kqpm">円</span>
+                  </div>
+                  <div class="footer-item rest">
+                    <small class="svelte">支援者</small>
+                    <%= request.support_histories.count %>
+                    <span class="suffix svelte-g0kqpm">人</span>
+                  </div> 
+                  <div class="footer-item per">
+                    <small class="svelte">残り</small>
+                    <%=  %>
+                    <span class="suffix svelte-g0kqpm"></span>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </li>
+        <% end %>
+      </ol>
+    </section>
+
+</div>

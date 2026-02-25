@@ -1,9 +1,9 @@
-<div class="my-4 font-bold text-xl md:text-2xl pb-4 text-center"><%=@portfolio.title%></div>
+
 
 <div class="swiper h-200">
   <div class="swiper-wrapper">
-    <% if @portfolio.images.attached? %>
-      <% @portfolio.images.each do |image| %>
+    <% if @creator_setting.images.attached? %>
+      <% @creator_setting.images.each do |image| %>
       <div class="swiper-slide"><%= image_tag image, class: "bg-black w-full h-full object-contain select-none",
         draggable: false %></div>
       <% end %>
@@ -13,21 +13,21 @@
   <div class="swiper-button-prev"></div>
 </div>
 
-<div class="bg-white w-full p-4 rounded my-4 "><%=simple_format(@portfolio.body)%></div>
+<div class="bg-white w-full p-4 rounded my-4 "><%=simple_format(@creator_setting.body)%></div>
 
-<% if @portfolio.published %>
-  <%= link_to "リクエストを送る", new_request_path(portfolio_id: @portfolio.id), class: "inline-block bg-gray-300 py-4 px-8 rounded" %>
+<% if @creator_setting.published %>
+  <%= link_to "リクエストを送る", new_request_path(creator_setting_id: @creator_setting.id), class: "inline-block bg-gray-300 py-4 px-8 rounded" %>
 <% end %>
-<% if @portfolio.user == current_user %>
-  <%= link_to "編集", edit_portfolio_path(@portfolio), class: "inline-block bg-gray-300 py-4 px-8 mb-4 rounded" %>
+<% if @creator_setting.user == current_user %>
+  <%= link_to "編集", edit_creator_setting_path(@creator_setting), class: "inline-block bg-gray-300 py-4 px-8 mb-4 rounded" %>
 
-<%= form_with model: @portfolio, url: portfolios_publish_path, method: :patch, data: { controller: "autosave" } do |f| %>
+<%= form_with model: @creator_setting, url: creator_settings_publish_path, method: :patch, data: { controller: "autosave" } do |f| %>
   
   <div class="flex items-center gap-2">
     <%# data-action で 「変化(change)したら save を実行」と指定 %>
     <%#element.addEventListener("change", () => { controller.save() });%>
     <!--チェックを外したらその画像のattachedを外す-->
-    <%= f.check_box :published,{ checked: @portfolio.published?, data: { action: "change->autosave#save" } }, 
+    <%= f.check_box :published,{ checked: @creator_setting.published?, data: { action: "change->autosave#save" } }, 
         "true", "false" %>
     <%= f.label :published, "ポートフォリオを公開する(リクエストが送られるようになります)" %>
   </div>

@@ -1,19 +1,16 @@
 <h2 class="text-2xl text-center font-bold" style="margin: 20px 0;">公開設定</h2> 
 <div class="lg:max-w-200 mx-auto">
-  <%= form_with model: @portfolio do |f| %>
-    <div>
-      <%=f.label :title, "タイトル", class:"block tracking-wide text-base font-bold mb-5"%>
-      <%=f.text_field :title, required: true, class:"mx-auto block appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none bg-white"%>
-    </div>
+  <%= form_with model: creator_setting do |f| %>
+    
     <div class="mb-5">
       <%=f.label :body, "自己紹介", class:"block tracking-wide text-base font-bold mb-5"%>
       <%=f.text_area :body, required: true, class: "mx-auto  block h-100 appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4  leading-tight focus:outline-none bg-white resize-none"%>
     </div>
    
-    <% if @portfolio.images.attached? %>
+    <% if creator_setting.images.attached? %>
     <p class="font-bold text-base my-5">現在選択中の掲載画像</p>
     <ul style= "border: 1px solid #474747;" class="flex flex-wrap items-center gap-4 p-4 bg-white rounded mb-5">
-      <% @portfolio.images.each do |image| %>
+      <% @creator_setting.images.each do |image| %>
         <li >
           <div class="inline-block">
             <%= check_box_tag "remove_image_ids[]", image.id, false, id: "remove_image_#{image.id}", class:"inline-block"%>
@@ -53,7 +50,7 @@
         oninput: "amount_output.value = this.value" %>
     
     <div class="flex items-center gap-1 font-bold text-lg min-w-[100px]">
-      <output id="amount_output"><%= @portfolio.minimum_amount %></output>
+      <output id="amount_output"><%= @creator_setting.minimum_amount %></output>
       <span>円</span>
     </div>
   </div>
@@ -73,7 +70,7 @@
         oninput: "supporters_output.value = this.value" %>
  
     <div class="flex items-center gap-1 font-bold text-lg min-w-[100px]">
-      <output id="supporters_output"><%= @portfolio.minimum_supporters %></output>
+      <output id="supporters_output"><%= @creator_setting.minimum_supporters %></output>
       <span>人</span>
     </div>
   </div>
@@ -81,7 +78,7 @@
 <p class= "font-bold text-base my-5">公開設定</p>
     <div class="flex items-center gap-2 mb-10">
      <%= f.check_box :published, 
-      { checked: @portfolio.published?, class: "h-4 w-4 rounded border-gray-300" }, 
+      { checked: @creator_setting.published?, class: "h-4 w-4 rounded border-gray-300" }, 
       "true", 
       "false" %>
       <%= f.label :published, "公開する(リクエストが送られるようになります)" %>

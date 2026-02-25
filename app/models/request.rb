@@ -54,6 +54,7 @@ scope :active, -> {
   # リクエスト画像
   has_many_attached :request_images
   validates :request_images,
+                    presence: true,
                     content_type: { in: %w[image/jpeg image/gif image/png],
                     message: "png, jpg, jpegいずれかの形式にして下さい" },
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
@@ -70,8 +71,8 @@ scope :active, -> {
   def approve!
     raise "invalid state" unless submit?
     transaction do
-      update!(status: :approved, approved_at: Time.current.floor, deadline_at: 2.minutes.from_now)
-      # update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
+      #update!(status: :approved, approved_at: Time.current.floor, deadline_at: 2.minutes.from_now)
+      update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
 
       # selfはリクエストレコード
       Rails.logger.debug "DEBUG: keyword=#{self.inspect}"

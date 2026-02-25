@@ -28,12 +28,20 @@ body {
 
 * {
   box-sizing: border-box; 
+  border-width: 0;
+  border-style: solid;
+  border-color: var(--un-default-border-color, #e5e7eb);
 }
 
 li {
   list-style: none;
  }
 
+img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+ }
 
 .card-select,
 .address-input {
@@ -62,7 +70,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   display: block;
 }
 
-.portfolio-grid {
+.creator-setting-grid {
   display: grid;
   gap: 16px; /* アイテム間の隙間 */
   width: 100%;
@@ -74,33 +82,33 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 
 /* レスポンシブ: 576px以上で2列 */
 @media (min-width: 576px) {
-  .portfolio-grid {
+  .creator-setting-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 /* レスポンシブ: 768px以上で3列 */
 @media (min-width: 768px) {
-  .portfolio-grid {
+  .creator-setting-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 /* レスポンシブ: 1024px以上で4列 */
 @media (min-width: 1024px) {
-  .portfolio-grid {
+  .creator-setting-grid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-.portfolio-card {
+.creator-setting-card {
   width: 100%;
   margin-bottom: 24px; /* カード同士の上下の間隔 */
   min-width: 0;
 }
 
 /* 画像の上にある情報エリア */
-.portfolio-info {
+.creator-setting-info {
   display: flex;
   align-items: center;
   padding: 8px 4px; /* 左右に少し余白 */
@@ -125,13 +133,196 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 }
 
 /* 画像の設定（前回の内容を維持） */
-.portfolio-image-container {
+.creator-setting-image-container {
   width: 100%;
 }
 
-.portfolio-img {
+.creator-setting-img {
   width: 100%;
   aspect-ratio: 4 / 5;
   object-fit: cover;
   border-radius: 4px; /* 角丸を少し控えめにするとよりインスタ風 */
+}
+
+.request-container {
+  max-width: 1200px;
+  padding: 0 20px 20px;
+  margin: 0 auto;
+}
+
+.request-area {
+  padding: 0 20px;
+}
+
+/* 隙間（gap）などを引いた後に残った全スペース」**を、fr の合計数で割った値 */
+.request-card-area {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px 32px;
+  padding: 20px 0 0;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  container-type: inline-size;
+  overflow: hidden;
+  background-color: #fff;
+  border: 1px solid #f3f3f3;
+  border-radius: 4px;
+  box-shadow: 0 4px #e4e4e4;
+  transition: opacity .2s ease-out;
+}
+
+.card-img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
+.request-image-area,
+.request-footer-area {
+  flex: 0 0;
+}
+
+.request-image-container {
+  position: relative;
+}
+
+.request-body-area {
+  flex: 1 1;
+}
+
+.request-body-container {
+  padding: 12px;
+}
+
+.name {
+  height: calc(1lh * var(--line));
+  height: calc(1.35em * var(--line));
+
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+  color: #4d4a4a;
+  letter-spacing: .05em;
+  text-overflow: ellipsis;
+  word-break: break-all;
+
+  line-clamp: var(--line);
+
+  display: -webkit-box;
+  -webkit-line-clamp: var(--line);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@supports (height: 1lh) {
+    .name.svelte-g3947t {
+        /* 1lhが使える場合のみ、より正確なこちらの高さで上書きする */
+        height: calc(1lh * var(--line));
+    }
+}
+
+.meter-area {
+  padding: 0 12px 10px;
+}
+
+.success-rate-sp {
+  padding-bottom: 4px;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 10px;
+  color: #bbb;
+  text-align: end;
+  letter-spacing: 0;
+}
+
+@media not all and (max-width: 767px) {
+    .success-rate-sp {
+        display: none;
+    }
+  }
+
+.meter {
+  position: relative;
+  width: 100%;
+  height: 15px;
+  overflow: hidden;
+  background-color: #e4e4e4;
+  border-radius: 8px;
+}
+
+.meter-bar {
+  position: absolute;
+  max-width: 100%;
+  height: 100%;
+  text-align: left;
+  background: var(--meter-color, linear-gradient(270deg, #45fff9 0%, #45ff99 17.48%, #d7fa3c 49.56%, #fb8943 69.79%, #fe1e13 100%));
+  border-radius: inherit;
+}
+
+.success-rate {
+  position: absolute;
+  padding: 3px 0 2px 8px;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 10px;
+  color: #fff;
+  letter-spacing: 0;
+}
+
+.suffix {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 10px;
+  letter-spacing: 0;
+}
+
+.svelte {
+  display: block;
+  padding-bottom: 2px;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 15px;
+  color: #666;
+  letter-spacing: 0;
+}
+
+.suffix.svelte-g0kqpm {
+  padding-left: 1px;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 11px;
+  color: #4d4a4a;
+  letter-spacing: 0;
+}
+
+.footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  height: 59px;
+  background: #f6f8fa;
+}
+
+.footer-item {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 12px;
+  color: #4d4a4a;
+  text-align: center;
+  letter-spacing: 0;
+}
+
+.total {
+    width: 36%;
+}
+
+.rest,
+.per {
+  width: 32%;
 }

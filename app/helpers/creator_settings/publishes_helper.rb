@@ -1,0 +1,2 @@
+module CreatorSettings::PublishesHelper
+end

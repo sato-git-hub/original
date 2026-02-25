@@ -5,6 +5,10 @@ Rails.application.routes.draw do
   registrations: 'users/registrations'
 }
 
+if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+end
+
 root "requests#index"
 
   # mount Sidekiq::Web => "/sidekiq"
@@ -17,12 +21,11 @@ resources :notifications, only: [] do
   patch :checked
 end
 
-namespace :portfolios, only: [] do
+namespace :creator_settings, only: [] do
     resource :publish, only: [ :update ]
 end
 
-resources :portfolios
-
+resources :creator_settings, only: [ :index, :new, :create, :edit, :update, :show ]
 
 resources :requests, only: [] do
   scope module: :requests do

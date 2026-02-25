@@ -19,6 +19,7 @@ ja:
         one: "1件のエラーが発生したため %{resource} は保存されませんでした。"
         other: "%{count}件のエラーが発生したため %{resource} は保存されませんでした。"
   
+
   activerecord:
     attributes:
       user:
@@ -32,3 +33,4 @@ ja:
         blank: "を入力してください"
         confirmation: "とパスワードの入力が一致しません"
         too_short: "は%{count}文字以上で入力してください"
+        already_confirmed: "そのアカウントは、すでにメール認証が完了しています"

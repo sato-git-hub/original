@@ -16,7 +16,7 @@ class User < ApplicationRecord
            foreign_key: :creator_id,
            dependent: :destroy
 
-  has_one :portfolio, dependent: :destroy
+  has_one :creator_setting, dependent: :destroy
 
   # 　複数のリクエストを持つ　　user.request
   has_many :requests, dependent: :destroy
