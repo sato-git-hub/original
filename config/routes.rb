@@ -2,6 +2,7 @@ require "sidekiq/web"
 
 Rails.application.routes.draw do
   get "static_pages/after_registration_confirmation"
+
   devise_for :users, controllers: {
   registrations: 'users/registrations',
   confirmations: 'users/confirmations'
@@ -32,6 +33,8 @@ end
 
 resources :creator_settings, only: [ :index, :new, :create, :edit, :update]
 
+
+
 resources :requests, only: [] do
   scope module: :requests do
     resource :status, only: [] do
@@ -44,6 +47,8 @@ resources :requests, only: [] do
     end
   end
 end
+
+resources :portfolios, only: [ :index ]
 
 resources :requests, only: [] do # /requests/:id/
   resources :support_histories, only: [ :new, :create ]
@@ -69,6 +74,7 @@ resources :users, only: [] do
   get :sent_request
   get :supported_request
 end
+
 resources :users, only: [ :show ]
 
 end

@@ -5,10 +5,6 @@ class CreatorSettingsController < ApplicationController
   before_action :authorize_creator_setting!, only: [ :edit, :update ]
   before_action :redirect_if_creator_setting_exists, only: [ :new, :create ]
   before_action :redirect_unless_creator_setting_exists, only: [ :edit ]
-  
-  def index
-    @creator_settings = CreatorSetting.where(published: true)
-  end
 
   def new
     @creator_setting = CreatorSetting.new
