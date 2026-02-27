@@ -14,8 +14,15 @@
  *= require_self
  */
 
-html {
-  font-size: 14px
+html, body {
+  /* bodyのmargin: 0 auto; を 0 に変更（突き抜け・ズレ防止） */
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  /* 横揺れ防止：中身が突き抜けた時に横スクロールを出さない */
+  overflow-x: hidden; 
+  /* 文字サイズの自動調整をオフ（モバイル用） */
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -25,15 +32,24 @@ body {
   font-feature-settings: 'palt' 1;
   -webkit-font-smoothing: antialiased;
   background-color: #f6f8fa;
-  max-width: 1200px;
-  margin: 0 auto;
+  margin: 0;
+  padding: 0;
 }
 
-* {
-  box-sizing: border-box; 
-  border-width: 0;
-  border-style: solid;
-  border-color: var(--un-default-border-color, #e5e7eb);
+*, ::before, ::after {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: inherit; 
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  margin: 0;
 }
 
 li {
@@ -58,6 +74,22 @@ img {
 
 .flex-box {
   display: flex;
+}
+
+.button {
+  /* text-center */
+  font-weight: bold;       /* font-bold */
+  font-size: 1.125rem;     /* text-lg (18px) */
+  color: #fff;
+  padding: 13px 24px;
+  border-color: var(--bg-color, #e73650);
+  border-color: var(--bg-color, #e73650);
+  border-style: solid;
+  border-radius: 4px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  box-shadow: 0px 4px 8px rgba(33, 35, 37, 0.12);
 }
 
 /* ロゴ */
@@ -223,9 +255,11 @@ img {
 }
 
 /* ヘッダー */
-.user-avatar-container {
-  cursor: pointer;
-}
+
+
+
+
+
 /* ユーザーメニュー */
 
 
@@ -236,14 +270,7 @@ img {
   right: 0;
   background-color: #fff;
   padding: 32px;
-}
-
-.user-menu-layout {
- 
-}
-
-.user-menu-container {
-
+  z-index: 50;
 }
 
 .menu-border {
@@ -377,7 +404,6 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   transition: opacity .2s ease-out;
 }
 
-
 .request-image-area,
 .request-footer-area,
 .creator-image-area {
@@ -419,7 +445,6 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 
 @supports (height: 1lh) {
     .name.svelte-g3947t {
-        /* 1lhが使える場合のみ、より正確なこちらの高さで上書きする */
         height: calc(1lh * var(--line));
     }
 }
@@ -551,7 +576,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 }
 
 .tag {
-  background-color: #f14668;
+  background-color: var(--bg_color, #f14668);
   color: #fff;
   width: 50px;
   position: absolute;
@@ -574,8 +599,10 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   font-size: 1.8em;
 }
 
+/* リクエスト画面 */
+/* クリエーターカード */
 .creator-card {
-  width: 500px;
+  width: 300px;
 }
 
 .creator-name {
@@ -584,19 +611,16 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   flex-shrink: 1;
   display: block; 
   min-width: 0;
-  /* ルール2: 親の幅を絶対に超えない壁を作る */
   width: 100%;
   max-width: 100%;
-  /* 2. はみ出た文字を隠す */
   overflow: hidden;
   
-  /* 3. 改行させない（1行に強制する） */
+  /* 改行させない */
   white-space: nowrap;
   
-  /* 4. はみ出た部分を "..." に変える */
+  /* はみ出た部分を "..." に変える */
   text-overflow: ellipsis;
 
-  /* 見た目の調整（必要に応じて） */
   text-align: center; 
 
 }
@@ -606,10 +630,9 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   background-color: #fff;
   position: relative;
   padding: 0 40px;
-  /* flexの設定を「上揃え」に変更する */
   display: flex;
   flex-direction: column;
-  align-items: center;    /* 横は真ん中 */
+  align-items: center;
   justify-content: flex-start;
   min-width: 0;
 }
@@ -618,9 +641,8 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 
 }
 
-.creator-avatar-container {
+.avatar-container {
   transform: translateY(-50%);
-  
 }
 
 .creator-avatar-image {
@@ -629,23 +651,63 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 }
 
 /* ユーザー画面 */
-.main-view {
 
-    position: relative;
-    width: 100%;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-    background-color: black;
-    height: 50vw;
-    max-height: 640px;
-    min-height: 176px;
+.column {
+  display: block;
+  flex-basis: 0;
+  flex-grow: 1;
+  flex-shrink: 1;
+  padding: .75rem;
+}
+.main-view {
+  position: relative;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-color: black;
+  height: 50vw;
+  max-height: 640px;
+  min-height: 176px;
+}
+
+.user-body-container {
+  max-width: 1200px;
+  padding: 0 32px;
+  margin: 0 auto;
+  height: 180px;
 }
 
 .user-avatar {
   background-color: #fff;
   border: 5px solid #fff;
   border-radius: 50%;
+}
+.user-body-area {
+  width: 100%;
+  height: 100%;
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+  padding: .75rem;
+}
+.user-body-area.user-name {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: center;
+  margin-top: 20px; 
+}
+
+.break-words {
+}
+
+/* ユーザー画面　リクエスト作成 */
+.request-box {
+  background-color: #fff;
+  width: 300px;
+  height: 300px;
+  padding: 20px;
 }
 
 .user-content-menu {

@@ -31,7 +31,7 @@ namespace :creator_settings, only: [] do
     resource :publish, only: [ :update ]
 end
 
-resources :creator_settings, only: [ :index, :new, :create, :edit, :update]
+resource :creator_setting, only: [ :new, :create, :edit, :update]
 
 
 

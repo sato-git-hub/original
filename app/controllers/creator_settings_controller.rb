@@ -2,7 +2,6 @@ class CreatorSettingsController < ApplicationController
 
   #before_action :creator_setting_set!, only: [ :show ]
   before_action :redirect_if_deposit_exists, only: [ :new, :create, :edit, :update ]
-  before_action :authorize_creator_setting!, only: [ :edit, :update ]
   before_action :redirect_if_creator_setting_exists, only: [ :new, :create ]
   before_action :redirect_unless_creator_setting_exists, only: [ :edit ]
 
@@ -21,7 +20,7 @@ class CreatorSettingsController < ApplicationController
   end
 
   def edit
-
+    @creator_setting = current_user.creator_setting
   end
 
   def update
@@ -58,17 +57,13 @@ class CreatorSettingsController < ApplicationController
     redirect_to new_deposit_path unless current_user.deposit
   end
 
-  def authorize_creator_setting!
-      @creator_setting = CreatorSetting.find(params[:id])
-      raise ActiveRecord::RecordNotFound unless creator_setting.user == current_user
-  end
 
   def redirect_if_creator_setting_exists
-    redirect_to edit_creator_setting_path(current_user.creator_setting), alert: "ポートフォリオはすでに作成されています" if current_user.creator_setting
+    redirect_to edit_creator_setting_path, alert: "ポートフォリオはすでに作成されています" if current_user.creator_setting
   end
 
   def redirect_unless_creator_setting_exists
-    redirect_to new_creator_setting_path, alert: "先にポートフォリオを作成してください" unless current_user.creator_setting
+    redirect_to new_creator_setting_path, alert: "ポートフォリオを作成してください" unless current_user.creator_setting
   end
 
   def creator_setting_params

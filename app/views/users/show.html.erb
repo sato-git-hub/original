@@ -4,10 +4,22 @@
   <div class="main-view"></div>
 <% end %>
 
+<%= current_user.avatar.present? %>
 
-<%= user_avatar(@user, 180, class:"user-avatar") %>
+<div class="user-body-container">
+  <div class="flex items-start">
+    <div class="avatar-container flex-shrink-0"><%= user_avatar(@user, 180, class:"user-avatar") %></div>
+    <div class="user-body-area column flex-1 min-w-0">
+      <h1 class="user-name text-2xl font-bold"><%= @user.name %></h1>
 
-<div class = "font-bold text-[clamp(16px,5vw,18px)] mb-3" ><%=@user.name%></div>
+      <p class="break-words">
+        ここに長い自己紹介が入ります。どんなに長くても、
+        flex-1 と min-w-0 のおかげでアバターを潰さず、
+        
+      </p>
+    </div>
+  </div>
+</div>
 
 <div class="flex space-x-4 mb-7">
   <%= link_to @user.twitter, target: "_blank" do %>
@@ -66,6 +78,12 @@
 
 
 <%= turbo_frame_tag "user_content" do %>
-こんちは
+
+<div class="flex gap-4">
+  <div class="request-box">
+    <div class="button" style= "--bg-color: red;">こんにちは</div>
+  </div>
+  <div class="flex-1">こにこに</div>
+</div>
 <% end %>
 </div>
