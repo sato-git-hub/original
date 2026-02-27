@@ -1,6 +1,6 @@
 class CreatorSettingsController < ApplicationController
 
-  before_action :creator_setting_set!, only: [ :show ]
+  #before_action :creator_setting_set!, only: [ :show ]
   before_action :redirect_if_deposit_exists, only: [ :new, :create, :edit, :update ]
   before_action :authorize_creator_setting!, only: [ :edit, :update ]
   before_action :redirect_if_creator_setting_exists, only: [ :new, :create ]
@@ -9,6 +9,7 @@ class CreatorSettingsController < ApplicationController
   def index
     @creator_settings = CreatorSetting.where(published: true)
   end
+
   def new
     @creator_setting = CreatorSetting.new
   end
@@ -16,15 +17,11 @@ class CreatorSettingsController < ApplicationController
   def create
     @creator_setting = current_user.build_creator_setting(creator_setting_params)
     if @creator_setting.save
-      redirect_to current_user, notice: "ポートフォリオを作成しました"
+      redirect_to current_user, notice: "処理に成功しました"
     else
-      flash.now[:alert] = "ポートフォリオの作成に失敗しました"
+      flash.now[:alert] = "処理に失敗しました"
       render :new, status: :unprocessable_entity
     end
-  end
-
-  def show
-    @creator = @creator_setting.user
   end
 
   def edit
@@ -59,10 +56,6 @@ class CreatorSettingsController < ApplicationController
   end
 
   private
-
-  def creator_setting_set!
-    @creator_setting = CreatorSetting.find(params[:id])
-  end
 
   def redirect_if_deposit_exists
     # 存在しなければ 銀行口座登録

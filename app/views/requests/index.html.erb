@@ -8,8 +8,8 @@
           <li class="card-wrapper">
             <%= link_to request, class: "card" do %>
               <div class="request-image-area">
-                <div class="request-image-container">
-                  <%= image_tag request.request_images[0], class: "card-img" %>
+                <div class="image-container">
+                  <%= image_tag request.request_images[0], class: "card-image" %>
                 </div>  
               </div>
               <div class="request-body-area">
@@ -50,8 +50,14 @@
               </div>
             <% end %>
           </li>
+
+
+
+
+
         <% end %>
       </ol>
     </section>
 
 </div>
+

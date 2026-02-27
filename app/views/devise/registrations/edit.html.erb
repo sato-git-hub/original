@@ -20,5 +20,7 @@
 
 </div>
 
-
+<%- if controller_name != 'confirmations' %>
+  <%= link_to "確認メールが届かない場合はこちら", new_user_confirmation_path(resource_name) %><br />
+<% end %>
 

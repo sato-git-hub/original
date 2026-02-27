@@ -1,17 +1,13 @@
-<div class = "flex flex-col items-center text-center">
-<%if @user.avatar.attached?  %>
-  <%= image_tag @user.avatar.variant(
-  resize_to_fill: [300, 300, { gravity: "North" }]
-  ), class: "h-auto w-[clamp(30px,18vw,200px)] rounded-full mb-4" %>
+<% if @user.creator_setting&.images&.attached? %>
+  <div class="main-view" style="background-images: url('<%= url_for(@user.creator_setting.images[0]) %>');"></div>
 <% else %>
-  <%= image_tag "default_avatar.jpg", class: "h-auto w-[clamp(30px,18vw,200px)] mb-3" %>
+  <div class="main-view"></div>
 <% end %>
+
+
+<%= user_avatar(@user, 180, class:"user-avatar") %>
+
 <div class = "font-bold text-[clamp(16px,5vw,18px)] mb-3" ><%=@user.name%></div>
-<% if @user.creator_setting %>
-  <div class = "mb-10 text-[clamp(10px,5vw,12px)] cursor-pointer rounded-[8px] bg-neutral-200 px-3 py-1 text-sm text-neutral-950 transition-colors hover:bg-neutral-100 active:bg-neutral-50">
-    <%= link_to "ポートフォリオ", @user.creator_setting %>
-  </div>
-<% end %>
 
 <div class="flex space-x-4 mb-7">
   <%= link_to @user.twitter, target: "_blank" do %>
@@ -27,37 +23,49 @@
   <% end if @user.instagram? %>
 </div>
 
-<%if @user == current_user %>
-  <% unless @user.creator_setting %>
-    <div class = "mb-4 text-[clamp(10px,5vw,12px)] cursor-pointer rounded-[8px] bg-neutral-200 px-3 py-1 text-sm text-neutral-950 transition-colors hover:bg-neutral-100 active:bg-neutral-50">
-      <%= link_to "ポートフォリオ作成",  new_creator_setting_path %>
-    </div>
-  <% end %>
+<%= @user.creator_setting&.body %>
+<div data-controller="user" class="">
+  <nav class="flex">
+    <%= link_to "ホーム", user_path(@user),
+    class: "user-content-menu",
+    data: { 
+    user_target: "link",
+    action: "click->user#border", 
+    turbo_frame: "user_content" } 
+    %>
 
-
-  <nav class="flex flex-col">
-  <%= link_to "受け取ったリクエスト", incoming_requests_path,
-    class: "block py-3 hover:bg-gray-100 rounded" %>
-
-  <hr class="border-gray-200">
-
-  <%= link_to "作成したリクエスト一覧", dashboard_requests_path,
-    class: "block py-3 hover:bg-gray-100 rounded" %>
-  <hr class="border-gray-200">
-
-  <%= link_to "支援したリクエスト一覧", support_histories_path,
-    class: "block py-3 hover:bg-gray-100 rounded" %>
-  <hr class="border-gray-200">
-  
-  <%= link_to "登録情報編集", edit_user_registration_path,
-    class: "block py-3 hover:bg-gray-100 rounded"%> 
-  <hr class="border-gray-200">
-
-  <%= link_to "振込口座情報", current_user.deposit ? edit_deposit_path(current_user.deposit) : new_deposit_path, class: "block py-3 hover:bg-gray-100 rounded" %>
-  <hr class="border-gray-200">
-  
-  <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete },
-    class: "block py-3 hover:bg-gray-100 rounded"%> 
-  <hr class="border-gray-200">
+    <%= link_to "ポートフォリオ", user_portfolio_path(@user),
+    class: "user-content-menu",
+    data: { 
+    user_target: "link",
+    action: "click->user#border", 
+    turbo_frame: "user_content" } 
+    %>
+    <%= link_to "開催中のリクエスト", user_received_request_path(@user),
+    class: "user-content-menu",
+      data: { 
+    user_target: "link",
+    action: "click->user#border", 
+    turbo_frame: "user_content" } 
+    %>
+    <%= link_to "開催中の作成したリクエスト", user_sent_request_path(@user),
+    class: "user-content-menu",
+      data: { 
+    user_target: "link",
+    action: "click->user#border", 
+    turbo_frame: "user_content" } 
+    %>
+    <%= link_to "支援中のリクエスト", user_supported_request_path(@user),
+    class: "user-content-menu",
+      data: { 
+    user_target: "link",
+    action: "click->user#border", 
+    turbo_frame: "user_content" } 
+    %>
   </nav>
+
+
+<%= turbo_frame_tag "user_content" do %>
+こんちは
 <% end %>
+</div>

@@ -9,5 +9,9 @@ export default class extends Controller {
       event.preventDefault() 
       this.listTarget.classList.remove("active")
     }
+    const menuList = document.querySelector(".user-menu")
+    if (menuList && !menuList.classList.contains("hidden")) {
+      menuList.classList.add('hidden')
+    }
   }
 }

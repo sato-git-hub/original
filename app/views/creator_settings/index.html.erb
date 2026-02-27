@@ -3,9 +3,8 @@
     <div class="creator-setting-card">
 
       <div class="creator-setting-info">
-        <div class="creator-avatar">
-          <%= user_avatar(creator_setting.user) %>
-        </div>
+          <%= user_avatar(creator_setting.user, 32) %>
+
         <span class="creator-name"><%= creator_setting.user.name %></span>
       </div>
       

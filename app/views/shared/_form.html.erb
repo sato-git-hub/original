@@ -1,7 +1,7 @@
 
       <div style="display: flex; align-items: center; width: 100%; padding: 10px 0;">
         <div style="width: 180px; flex-shrink: 0; font-weight: 500; font-size: 16px; padding-left: 10px;">
-          <%= f.label :name, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+          <%= f.label :name, class: "block font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
             ユーザー名<br>
             <% unless f.object.persisted? %>
               <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
@@ -21,7 +21,7 @@
       <!-- メールアドレス -->
       <div style="display: flex; align-items: center; width: 100%; padding: 10px 0;">
         <div style="width: 180px; flex-shrink: 0; font-weight: 500; font-size: 16px; padding-left: 10px;">
-          <%= f.label :email, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+          <%= f.label :email, class: "block font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
             メールアドレス<br>
             <% unless f.object.persisted? %>
               <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
@@ -41,7 +41,7 @@
       
       <div style="display: flex; align-items: center; width: 100%; padding: 10px 0;">
         <div style="width: 180px; flex-shrink: 0; font-weight: 500; font-size: 16px; padding-left: 10px;">
-          <%= f.label :password, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+          <%= f.label :password, class: "block font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
             パスワード<br>
             <% unless f.object.persisted? %>
               <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
@@ -62,7 +62,7 @@
 
       <div class="flex items-center mb-10" style="width: 100%; padding: 10px 0;">
         <div style="width: 180px; flex-shrink: 0; font-weight: 500; font-size: 16px; padding-left: 10px;">
-          <%= f.label :password_confirmation, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+          <%= f.label :password_confirmation, class: "block font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
             パスワード(確認用)<br>
             <% unless f.object.persisted? %>
               <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
@@ -84,7 +84,7 @@
 
       <div class="flex items-center" style="width: 100%; padding: 15px 0;">
         <div style="width: 180px; flex-shrink: 0; font-weight: 500; font-size: 16px; padding-left: 10px;">
-          <%= f.label :twitter, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+          <%= f.label :twitter, class: "block font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
             X(URL)<br>
           <% end %>
         </div>
@@ -98,7 +98,7 @@
 
       <div class="flex items-center" style="width: 100%; padding: 15px 0;">
         <div style="width: 180px; flex-shrink: 0; font-weight: 500; font-size: 16px; padding-left: 10px;">
-          <%= f.label :instagram, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+          <%= f.label :instagram, class: "block font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
             Instagram(URL)<br>
           <% end %>
         </div>
@@ -112,7 +112,7 @@
 
       <div class="flex items-center mb-10" style="width: 100%; padding: 15px 0;">
         <div style="width: 180px; flex-shrink: 0; font-weight: 500; font-size: 16px; padding-left: 10px;">
-          <%= f.label :pixiv, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+          <%= f.label :pixiv, class: "block font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
             Pixiv(URL)<br>
           <% end %>
         </div>
@@ -160,7 +160,7 @@
   <% if f.object.persisted? %>
     <div class="flex items-center mb-10" style="width: 100%; padding: 15px 0;">
       <div style="width: 180px; flex-shrink: 0; font-weight: 500; font-size: 16px; padding-left: 10px;">
-        <%= f.label :current_password, class: "block text-black font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
+        <%= f.label :current_password, class: "block font-bold md:text-right mb-1 md:mb-0 pr-4" do %>
           現在のパスワード<br>
           <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
             必須

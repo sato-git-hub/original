@@ -16,6 +16,9 @@ scope :active, -> {
     where("deadline_at > ?", Time.current.floor)
   }
 
+# 1. 公開中（承認済み、または成功）
+scope :publish, -> { where(status: [:approved, :succeeded]) }
+
   def self.ransackable_attributes(auth_object = nil)
     %w[
       title

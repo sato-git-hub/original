@@ -23,7 +23,7 @@
 
       <div class="max-w-200 mx-auto flex items-center mb-4">
       <%= link_to request.user do %>
-      <%= user_avatar(request.user, size: :sm)%>
+      <%= user_avatar(request.user)%>
       <% end %>
       <p class="font-bold md:text-lg mb-2"><%= request.user.name %>より<%= request.target_amount %>円でリクエストが届きました</p>
       </div>

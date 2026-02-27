@@ -1,0 +1,13 @@
+<%= turbo_frame_tag "user_content" do %>
+<% if @creator_setting&.images&.attached? %>
+  <div class="masonry-container">
+    <% @creator_setting.images.each do |image| %>
+      <div class="masonry-item">
+        <%= image_tag image %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p class="text-center">現在投稿されていません</p>
+<% end %>
+<% end %>
