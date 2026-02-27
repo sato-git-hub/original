@@ -25,7 +25,7 @@ class CreatorSettingsController < ApplicationController
   end
 
   def edit
-    @creator_setting = current_user.creator_setting
+
   end
 
   def update
@@ -63,7 +63,7 @@ class CreatorSettingsController < ApplicationController
   end
 
   def authorize_creator_setting!
-      creator_setting = creator_setting.find(params[:id])
+      @creator_setting = CreatorSetting.find(params[:id])
       raise ActiveRecord::RecordNotFound unless creator_setting.user == current_user
   end
 

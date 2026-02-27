@@ -61,3 +61,25 @@
 
 </div>
 
+<div class="creator-card">
+  <%= link_to request.creator, class: "creator-card-wrapper" do %>
+    <div class="creator-image-area">
+      <div class="creator-image-container">
+        <%= image_tag current_user.creator_setting.images[0], class: "card-image", style: "--ratio: 2 / 1;" %>
+        <% if request.creator.creator_setting.published? %>
+          <div class="card-tag-area">
+            <div class="card-tag-container">
+              <div class="tag">募集中</div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="creator-body-area">
+      <div class="creator-avatar-container">
+        <%= user_avatar(request.creator, 60, class: "creator-avatar-image") %>
+      </div>
+      <div class="title creator-name">ddddddddddddddddddddddddddddddddddddddddddddddd</div>
+    </div>
+  <% end %>
+</div>
