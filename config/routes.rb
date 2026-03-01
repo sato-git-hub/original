@@ -12,6 +12,8 @@ if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
 end
 
+get 'user_menu', to: 'users#menu', as: :user_menu
+
 root "requests#index"
 
 # 確認メール送信後

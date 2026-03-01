@@ -1,15 +1,15 @@
+<div class="page-container"> 
+
 <div class="creator-setting-grid">
   <% @portfolios.each do |portfolio| %>
     <div class="creator-setting-card">
-
       <div class="creator-setting-info">
           <%= user_avatar(portfolio.user, 32) %>
-
-        <span class="creator-name"><%= portfolio.user.name %></span>
+        <span class="creator-name-container"><%= portfolio.user.name %></span>
       </div>
       
       <div class="creator-setting-image-container">
-        <% if portfolio.images.count > 1 %>
+        <% if portfolio.images.size > 1 %>
           <div class="swiper">
             <div class="swiper-wrapper">
               <% portfolio.images.each do |image| %>
@@ -21,7 +21,7 @@
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
           </div>
-        <% elsif portfolio.images.count == 1 %>
+        <% elsif portfolio.images.size == 1 %>
           <%= image_tag portfolio.images.first, class: "creator-setting-img" %>
         <% end %>
       </div>
@@ -29,3 +29,4 @@
     </div>
   <% end %>
 </div>
+<div>

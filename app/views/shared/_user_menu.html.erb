@@ -1,36 +1,38 @@
+<%= turbo_frame_tag "user_menu_frame" do %>
 <div class="user-menu-layout">
   <div class="user-menu-container">
-
+  <% deposit = user.deposit %>
   <nav class="flex flex-col">
-  <%= link_to "クリエーター設定", creator_setting_link_path,
-    class: "block py-3 hover:bg-gray-100 rounded" %>
+  <%= link_to "クリエーター設定", creator_setting_link_path(user),
+    class: "block py-3 hover:bg-gray-100 rounded", data: { turbo_frame: "_top" } %>
 
   <hr class="menu-border">
 
   <%= link_to "受け取ったリクエスト", incoming_requests_path,
-    class: "block py-3 hover:bg-gray-100 rounded" %>
+    class: "block py-3 hover:bg-gray-100 rounded", data: { turbo_frame: "_top" } %>
 
   <hr class="menu-border">
 
   <%= link_to "作成したリクエスト一覧", dashboard_requests_path,
-    class: "block py-3 hover:bg-gray-100 rounded" %>
+    class: "block py-3 hover:bg-gray-100 rounded", data: { turbo_frame: "_top" } %>
   <hr class="menu-border">
 
   <%= link_to "支援したリクエスト一覧", support_histories_path,
-    class: "block py-3 hover:bg-gray-100 rounded" %>
+    class: "block py-3 hover:bg-gray-100 rounded", data: { turbo_frame: "_top" } %>
   <hr class="menu-border">
   
   <%= link_to "登録情報編集", edit_user_registration_path,
-    class: "block py-3 hover:bg-gray-100 rounded"%> 
+    class: "block py-3 hover:bg-gray-100 rounded", data: { turbo_frame: "_top" } %> 
   <hr class="menu-border">
 
-  <%= link_to "振込口座情報", current_user.deposit ? edit_deposit_path(current_user.deposit) : new_deposit_path, class: "block py-3 hover:bg-gray-100 rounded" %>
+  <%= link_to "振込口座情報", deposit ? edit_deposit_path(deposit) : new_deposit_path, class: "block py-3 hover:bg-gray-100 rounded", data: { turbo_frame: "_top" } %>
   <hr class="menu-border">
   
-  <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete },
+  <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete, turbo_frame: "_top" },
     class: "block py-3 hover:bg-gray-100 rounded"%> 
   <hr class="menu-border">
   </nav>
 
   </div>
 </div>
+<% end %>

@@ -17,25 +17,29 @@ class RequestsController < ApplicationController
   end
 
   def index
+
+    base_query = Request.where(status: [:approved, :succeeded]).active
     # 全てのリクエストを一覧
-    if params[:q].present? && params[:q][:title_or_search_conf_cont].present?
-      words = params[:q][:title_or_search_conf_cont].split(/[[:space:]]+/)
+    # とどいたparams
+    search_params = params[:q] || {}
+    if search_params[:title_or_search_conf_cont].present?
+
+      words = search_params[:title_or_search_conf_cont].split(/[[:space:]]+/)
       # titleまたはsearch_conf に渡した すべての words を含んでいるレコード
-      @q = Request.ransack(
+
       # formから受け取ったparamsを加工せず、そのまま絞る時は@q = Request.ransack(params[:q])
-      title_or_search_conf_cont: words
-      )
-      # id が同じ Request は1件にまとめられる
-      @requests = @q.result(distinct: true)
-      .where(status: [ :approved, :succeeded? ]).active.order(updated_at: :desc)
-      # .active.where("deadline_at >= ?", Time.current)
+      # 空白で分割して絞り込み検索
+      @q = base_query.ransack(title_or_search_conf_cont: words)
     else
       # 空で渡す
-      @q = Request.ransack({})
-      @requests = @q.result(distinct: true)
-      .where(status: [ :approved, :succeeded? ]).active.order(updated_at: :desc)
+      @q = base_query.ransack(search_params)
       # .active.where("deadline_at >= ?", Time.current)
     end
+
+    @requests = @q.result(distinct: true)
+                .with_attached_request_images
+                .preload(:support_histories, user: { avatar_attachment: :blob }) # ← SELECT * FROM users WHERE id IN (1, 2, 3...)
+                .order(updated_at: :desc)
   end
 
   def new
@@ -58,19 +62,17 @@ class RequestsController < ApplicationController
   end
 
   def show
-    @request = Request.find(params[:id])
-    # Support_history.new(request: @request)と同じ意味
-    @support_history = @request.support_histories.build
 
-    # 支援者履歴テーブルからこのリクエストのレコードだけ
-    # user_idごとの合計amount順に
-    @top_supporters = User
-  .joins(:support_histories)
-  .where(support_histories: { request_id: @request.id })
-  .group("users.id")
-  .select("users.*, SUM(support_histories.amount) AS total_amount")
-  .order("total_amount DESC")
-  .limit(3)
+    @request = Request.preload(
+      :request_images_attachments,
+      creator: [
+        :avatar_attachment, # 作成者のアバター
+        { creator_setting: :images_attachments }
+      ]
+    ).find(params[:id])
+    
+    @support_history = @request.support_histories.build
+    @supporters_count = @request.support_histories.distinct.count(:user_id)
   end
 
   def edit
@@ -81,7 +83,7 @@ class RequestsController < ApplicationController
 
       if params[:remove_image_ids].present?
         attachments = @request.request_images.where(id: params[:remove_image_ids])
-        if @request.request_images.attachments.count - attachments.count <= 0
+        if @request.request_images.attachments.size - attachments.size <= 0
           raise StandardError, "画像は少なくとも1枚必要です"
         end
         attachments.each(&:purge)

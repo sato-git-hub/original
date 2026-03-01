@@ -1,5 +1,12 @@
 class UsersController < ApplicationController
  
+  def menu
+
+    @user = User.includes(:deposit, :creator_setting).find(current_user.id)
+    # レイアウト（ヘッダーやフッター）を除いた、中身だけを返す
+    render partial: 'shared/user_menu', locals: { user: @user }, layout: false
+  end
+
   def show
     @user = User.find(params[:id])
   end
@@ -16,8 +23,12 @@ class UsersController < ApplicationController
 
   def sent_request
     @user = User.find(params[:user_id])
-    @sent_requests = @user.requests.publish.active
+    @sent_requests = @user.requests
+    .with_attached_request_images
+    .publish
+    .active
   end
+
 
   def remember_me
     true
