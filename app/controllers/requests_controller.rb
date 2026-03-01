@@ -17,7 +17,7 @@ class RequestsController < ApplicationController
   end
 
   def index
-
+    Rails.logger.debug "=============================================#{params[:q]}"
     base_query = Request.where(status: [:approved, :succeeded]).active
     # 全てのリクエストを一覧
     # とどいたparams
@@ -26,10 +26,18 @@ class RequestsController < ApplicationController
 
       words = search_params[:title_or_search_conf_cont].split(/[[:space:]]+/)
       # titleまたはsearch_conf に渡した すべての words を含んでいるレコード
-
+Rails.logger.debug "=============================================#{words}"
       # formから受け取ったparamsを加工せず、そのまま絞る時は@q = Request.ransack(params[:q])
       # 空白で分割して絞り込み検索
-      @q = base_query.ransack(title_or_search_conf_cont: words)
+      keywords = words.reduce({}) do |hash, word|
+        hash[word] = {title_or_search_conf_cont: word}
+        hash
+      end
+      Rails.logger.debug "=============================================#{keywords}"
+      @q = base_query.ransack({ combinator: 'and', groupings: keywords })
+      
+      
+      Rails.logger.debug "=============================================#{@q}"
     else
       # 空で渡す
       @q = base_query.ransack(search_params)

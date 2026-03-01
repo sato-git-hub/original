@@ -3,7 +3,7 @@
   <div class="masonry-container">
     <% @creator_setting.images.each do |image| %>
       <div class="masonry-item">
-        <%= image_tag image %>
+        <%= image_tag default_image(image) %>
       </div>
     <% end %>
   </div>

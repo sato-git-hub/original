@@ -5,7 +5,7 @@
   <%= request.target_amount %>
   <% if request.request_images.attached? %>
     <% request.request_images.each do |request_image| %>
-      <%= image_tag request_image %>
+      <%= image_tag default_image(request_image) %>
     <% end %>
   <%end%>
 <%end%>

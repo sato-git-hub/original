@@ -5,7 +5,7 @@ module UsersHelper
 
     # 2. 画像パスの決定
     image_path = if user.avatar.attached?
-                   user.avatar
+                   user.avatar.variant(resize_to_limit: [180, 180])
                  else
                    "default_avatar.jpg"
                  end

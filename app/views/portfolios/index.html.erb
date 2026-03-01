@@ -14,7 +14,7 @@
             <div class="swiper-wrapper">
               <% portfolio.images.each do |image| %>
                 <div class="swiper-slide">
-                  <%= image_tag image, class: "creator-setting-img" %>
+                  <%= image_tag default_image(image), class: "creator-setting-img" %>
                 </div>
               <% end %>
             </div>
@@ -22,7 +22,7 @@
             <div class="swiper-button-prev"></div>
           </div>
         <% elsif portfolio.images.size == 1 %>
-          <%= image_tag portfolio.images.first, class: "creator-setting-img" %>
+          <%= image_tag default_image(portfolio.images.first), class: "creator-setting-img" %>
         <% end %>
       </div>
 

@@ -8,7 +8,7 @@
               <div class="request-image-area">
                 <div class="image-container">
                   <% if request.request_images.attached? %>
-                      <%= image_tag request.request_images[0], class: "card-image" %>
+                      <%= image_tag default_image(request.request_images[0]), class: "card-image" %>
                   <% else %>
                     <%= image_tag "no_image.jpeg", class: "card-image" %>
                   <% end %>

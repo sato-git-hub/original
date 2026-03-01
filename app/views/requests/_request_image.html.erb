@@ -3,7 +3,7 @@
           <div class="swiper-wrapper">
             <% request.request_images.each do |image| %>
               <div class="swiper-slide">
-                <%= image_tag image,
+                <%= image_tag default_image(image),
                   class: "bg-black w-full h-full object-contain select-none",
                   draggable: false %>
               </div>

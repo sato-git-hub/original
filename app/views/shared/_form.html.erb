@@ -130,8 +130,8 @@
     
     <% if user.avatar.attached? && user.avatar.persisted? %>
       <p class="font-bold text-base my-5">現在設定中の画像</p>
-      <div style = "width: 200px; height: 200px"; class="mb-4">
-        <%= image_tag user.avatar, style: "width: 100%; height: 100%; object-fit: cover; object-position: top", class: "rounded-full" %>
+      <div style = "width: 200px; height: 200px;" class="mb-4">
+        <%= user_avatar(user, style: "width: 100%; height: 100%; object-fit: cover; object-position: top")  %>
       </div>
 
       <%# 削除チェックボックス（画像の下に配置） %>
