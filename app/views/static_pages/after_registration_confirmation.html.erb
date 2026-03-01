@@ -1,0 +1,18 @@
+<section class="after-signin">
+
+<h1 class="title after-signin-title ">確認メールを送信しました</h1>
+<p class="after-signin-text">ご入力いただきましたメールアドレス宛に確認メールを送信しました。<br>
+30分以内にメール本文のURLをクリックし、登録手続きを完了してください。</p>
+<p class="subtitle after-signin-text">確認メールが届かない場合</p>
+<ul class="after-signin-list">
+  <li>迷惑メールフォルダに送信されていないか、ご確認ください。</li>
+  <li class="after-signin-list-space">docomo、au、softbankなどのキャリアメールをご利用の方は、
+  @flaag.jp および @flaag.com からのメールが
+  受信できるようにドメイン受信設定されているかご確認ください。</li>
+  <li class="after-signin-list-space"></li>
+</ul>
+<p class="subtitle after-signin-text">上記に当てはまらず、確認メールが届かない場合</p>
+<div class="resend-link-container">
+  <%= link_to "確認メールを再送する", user_confirmation_path(user: { email: @email }), 
+            data: { turbo_method: :post }, class: "resend-link-underlined" %>
+</div>

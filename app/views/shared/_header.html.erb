@@ -1,19 +1,46 @@
-  <header class="bg-white fixed top-0 left-0 h-25 w-full z-10">
-  <div class="flex justify-between container h-full mx-auto items-center">
+  <header class="bg-white h-25">
+  <div class="header-container">
+  <div class="flex justify-between h-full mx-auto items-center">
+  
+    <div class="flaag-icon">
+      <%= link_to root_path do %>
+        <div class="flex-box">
+          <%= image_tag "/flaag.png", class: "flaag-image" %>
+          <h1 class="flaag-text">Flaag</h1>
+        </div>
+       <% end %>
+    </div>
+<% if user_signed_in? %>
   <div class="flex items-center gap-4">
-    <%= link_to user_path(current_user) do %>
-      <%=user_avatar(current_user)%>
-    <% end %>
-    
-<%= turbo_stream_from current_user %>
-<div id="notification_bell" class="relative">
-<%= render "notifications/notification_bell", unchecked_count: current_user.received_notifications.where(checked: false).count %>
-</div>
+
+  <%= turbo_stream_from current_user %>
+  <div id="notification_bell" class="relative">
+  <%= render "notifications/notification_bell", unchecked_count: current_user.received_notifications.where(checked: false).count %>
+  </div>
     <nav>
       <ul class="flex">
-        <li><%= link_to "クリエーターを探す", portfolios_path %></li>
+        <li ><%= "リクエストを送るには" %></li>
+        <li class="ml-4"><%= link_to "クリエーターを探す", portfolios_path %></li>
         <li class="ml-4"><%= link_to "リクエストを探す", requests_path %></li>
       </ul>
     </nav>
+    <div data-controller="menu" class="relative">
+      <div data-action="click->menu#toggle" class="cursor-pointer">
+        <%= user_avatar(current_user) %>
+      </div>
+      <div data-menu-target="panel" class="user-menu hidden">
+        <%= turbo_frame_tag "user_menu_frame", src: user_menu_path, loading: :lazy do %>
+          <div class="p-4 text-center text-gray-500">
+            Loading...
+          </div>
+        <% end %>
+      </div>
     </div>
+
+
+    
+    </div>
+    </div>
+  <% end %>
+  </div>
   </header>

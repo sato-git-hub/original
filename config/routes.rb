@@ -1,11 +1,27 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
+  get "static_pages/after_registration_confirmation"
+
   devise_for :users, controllers: {
-  registrations: 'users/registrations'
+  registrations: 'users/registrations',
+  confirmations: 'users/confirmations'
 }
 
-  # mount Sidekiq::Web => "/sidekiq"
+if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+end
+
+get 'user_menu', to: 'users#menu', as: :user_menu
+
+root "requests#index"
+
+# 確認メール送信後
+get 'after_registration_confirmation', to: 'static_pages#after_registration_confirmation'
+
+# mount Sidekiq::Web => "/sidekiq"
+
+resource :deposit, only: [:new, :create, :edit, :update, :show]
 
 resource :notification, only: [ :show ]
 
@@ -13,17 +29,13 @@ resources :notifications, only: [] do
   patch :checked
 end
 
-namespace :portfolios, only: [] do
+namespace :creator_settings, only: [] do
     resource :publish, only: [ :update ]
 end
 
-resources :portfolios
+resource :creator_setting, only: [ :new, :create, :edit, :update]
 
-resources :requests, only: [] do
-  scope module: :requests do
-    resources :rewards, only: [ :new, :show ]
-  end
-end
+
 
 resources :requests, only: [] do
   scope module: :requests do
@@ -37,6 +49,8 @@ resources :requests, only: [] do
     end
   end
 end
+
+resources :portfolios, only: [ :index ]
 
 resources :requests, only: [] do # /requests/:id/
   resources :support_histories, only: [ :new, :create ]
@@ -56,7 +70,15 @@ resources :requests, only: [] do # /requests/
 end
 
 resources :requests
+resources :users, only: [] do
+  get :portfolio
+  get :received_request
+  get :sent_request
+  get :supported_request
+end
+
 resources :users, only: [ :show ]
+
 end
 
 # docker compose exec web bundle exec rails routes

@@ -1,0 +1,61 @@
+<%= turbo_frame_tag "user_content" do %>
+  <% if @sent_requests.present? %>
+    <section class="request-area">
+      <ol class="request-card-area">
+        <% @sent_requests.each do |request| %>
+          <li class="card-wrapper">
+            <%= link_to request, class: "card" do %>
+              <div class="request-image-area">
+                <div class="image-container">
+                  <% if request.request_images.attached? %>
+                      <%= image_tag default_image(request.request_images[0]), class: "card-image" %>
+                  <% else %>
+                    <%= image_tag "no_image.jpeg", class: "card-image" %>
+                  <% end %>
+                </div>
+              </div>
+              <div class="request-body-area">
+                <div class="request-body-container">
+                  <h2 class="name" style="--line: 3; --sp-line: 3;"><%= request.title %></h2>
+                </div>
+              </div>
+              <div class="request-footer-area">
+                <div class="meter-area">
+                  <% percentage = (request.current_amount.to_f / request.target_amount * 100) %>
+                  <p class="success-rate-sp"><%= percentage.round %>%</p>
+                  <div class="meter">
+                    <div class="meter-bar" style="width: <%= percentage.clamp(0,100).round(1) %>%;"></div> 
+                    <p class="success-rate">
+                      <%= percentage.round %><span class="suffix">%</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="footer-area">
+                <div class="footer">
+                  <div class="footer-item total">
+                    <small class="svelte">現在</small>
+                    <%= request.current_amount %>
+                    <span class="suffix svelte-g0kqpm">円</span>
+                  </div>
+                  <div class="footer-item rest">
+                    <small class="svelte">支援者</small>
+                    <%= request.support_histories.count %>
+                    <span class="suffix svelte-g0kqpm">人</span>
+                  </div> 
+                  <div class="footer-item per">
+                    <small class="svelte">残り</small>
+                    <%=  %>
+                    <span class="suffix svelte-g0kqpm"></span>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </li>
+        <% end %>
+      </ol>
+    </section>
+  <% else %>  
+    <p class="text-center pt-8">現在投稿されていません</p>
+  <% end %>
+<% end %>

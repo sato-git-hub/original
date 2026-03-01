@@ -1,4 +1,6 @@
 
+
+<div class="page-container">
 <%= search_form_for @q, url: requests_path, method: :get, local: true do |f| %>
   <%= f.label :title_or_search_conf_cont, "タイトル", class:"block font-bold text-base"%>
   <div class="flex mb-15">
@@ -7,57 +9,65 @@
   </div>
 <% end %>
 
-<div class="text-center"><%= "現在公開されているリクエストはありません" if @requests.blank? %></div>
-<% @requests.each do |request| %>
-<li class="bg-[#f0f2f4] border border-[#d9dee5] mx-auto max-w-200 text-center rounded p-4 mb-4">
-  <h2 class="font-bold text-lg text-center mb-4"><%= request.title %></h2>
-    <div class="flex w-full gap-4">
-
-      <div class="basis-1/3">
-        <%= link_to request_path(request), class: "block h-full" do %>
-          <% if request.request_images.attached? %>
-            <div class="h-52 bg-black">
-              <%= image_tag request.request_images[0],
-                  class: "w-full h-full object-contain" %>
-            </div>
-          <% else %>
-            <div class="h-52 flex items-center justify-center bg-gray-300">
-              <p>画像が読み込めませんでした</p>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-
-      <% percentage = (request.current_amount.to_f / request.target_amount * 100) %>
-      <section class="basis-2/3 bg-white rounded shadow-[0_4px_#e4e4e4] p-5">
-        <p class="text-center font-bold">現在の支援総額</p>
-        <p class="text-center text-2xl font-bold">
-          <%= request.current_amount %>円
-        </p>
-
-        <div class="flex text-xs md:text-sm justify-between">
-          <p><%= percentage.round %>%</p>
-          <p>
-            <% if request.deadline_at > Time.current %>
-              残り <%= distance_of_time_in_words(Time.current, request.deadline_at) %>
-            <% else %>
-              終了
+  <h1 class="title">人気のリクエスト</h1>
+  
+    <section class="request-area">
+      <ol class="request-card-area">
+        <% @requests.each do |request| %>
+          <li class="card-wrapper">
+            <%= link_to request, class: "card" do %>
+              <div class="request-image-area">
+                <div class="image-container">
+                  <%= image_tag default_image(request.request_images[0]), class: "card-image" %>
+                </div>  
+              </div>
+              <div class="request-body-area">
+                <div class="request-body-container">
+                  <h2 class="name" style="--line: 3; --sp-line: 3;"><%= request.title %></h2>
+                </div>
+              </div>
+              <div class="request-footer-area">
+                <div class="meter-area">
+                  <% percentage = (request.current_amount.to_f / request.target_amount * 100) %>
+                  <p class="success-rate-sp"><%= percentage.round %>%</p>
+                  <div class="meter">
+                    <div class="meter-bar" style="width: <%= percentage.clamp(0,100).round(1) %>%;"></div> 
+                    <p class="success-rate">
+                      <%= percentage.round %><span class="suffix">%</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="footer-area">
+                <div class="footer">
+                  <div class="footer-item total">
+                    <small class="svelte">現在</small>
+                    <%= request.current_amount %>
+                    <span class="suffix svelte-g0kqpm">円</span>
+                  </div>
+                  <div class="footer-item rest">
+                    <small class="svelte">支援者</small>
+                    <%= request.support_histories.size %>
+                    <span class="suffix svelte-g0kqpm">人</span>
+                  </div> 
+                  <div class="footer-item per">
+                    <small class="svelte">残り</small>
+                    <%=  %>
+                    <span class="suffix svelte-g0kqpm"></span>
+                  </div>
+                </div>
+              </div>
             <% end %>
-          </p>
-        </div>
+          </li>
 
-        <div class="w-full h-4 bg-gray-200 rounded">
-          <div
-            class="h-4 bg-green-400 rounded"
-            style="width: <%= percentage.clamp(0, 100).round(1) %>%">
-          </div>
-        </div>
 
-        <div class="flex text-xs md:text-sm justify-between mt-2">
-          <p>支援者 <%= request.support_histories.distinct.count(:user_id) %> 人</p>
-          <p>目標 <%= request.target_amount %>円</p>
-        </div>
-      </section>
-    </div>
-  </li>
-<% end %>
+
+
+
+        <% end %>
+      </ol>
+    </section>
+
+</div>
+
+<div class="aa"><div>

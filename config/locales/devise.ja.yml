@@ -11,13 +11,15 @@ ja:
     failure:
       unauthenticated: "ログインまたは登録が必要です。"
       invalid: "メールアドレスまたはパスワードが違います。"
-
+      not_found_in_database: "メールアドレスまたはパスワードパスワードが違います。ご確認ください。"
+      unconfirmed: "メールによる確認が完了していません。届いたメール内のリンクをクリックして、アカウントを有効化してください。"
   errors:
     messages:
       not_saved:
         one: "1件のエラーが発生したため %{resource} は保存されませんでした。"
         other: "%{count}件のエラーが発生したため %{resource} は保存されませんでした。"
   
+
   activerecord:
     attributes:
       user:
@@ -31,3 +33,4 @@ ja:
         blank: "を入力してください"
         confirmation: "とパスワードの入力が一致しません"
         too_short: "は%{count}文字以上で入力してください"
+        already_confirmed: "そのアカウントは、すでにメール認証が完了しています"

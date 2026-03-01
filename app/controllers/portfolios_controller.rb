@@ -1,61 +1,21 @@
 class PortfoliosController < ApplicationController
-  before_action :portfolio_set!, only: [ :show ]
-  before_action :authorize_portfolio!, only: [ :edit, :update ]
-  before_action :redirect_if_portfolio_exists, only: [ :new, :create ]
-  before_action :redirect_unless_portfolio_exists, only: [ :edit ]
   def index
-    @portfolios = Portfolio.where(published: true)
-  end
-  def new
-    @portfolio = Portfolio.new
-  end
 
-  def create
-    @portfolio = current_user.build_portfolio(portfolio_params)
-    if @portfolio.save
-      redirect_to current_user
+    base_query = CreatorSetting.where(published: true)
+    search_params = params[:q] || {}
+    if search_params[:user_id_cont].present?
+      words = search_params[:user_id_cont].split(/[[:space:]]+/)
+      @q = base_query.ransack(user_id_cont: words)
     else
-      render :new, alert: "作成に失敗しました", status: :unprocessable_entity
+      @q = base_query.ransack(search_params)
     end
-  end
-
-  def show
-    @creator = @portfolio.user
-  end
-
-  def edit
-    @portfolio = current_user.portfolio
-  end
-
- def update
-    @portfolio = current_user.portfolio
-    if @portfolio.update(portfolio_params)
-      redirect_to current_user
-    else
-      render :edit, alert: "更新に失敗しました", status: :unprocessable_entity
-    end
- end
-
-  private
-
-  def portfolio_set!
-       @portfolio = Portfolio.find(params[:id])
-  end
-
-  def authorize_portfolio!
-      portfolio = Portfolio.find(params[:id])
-      raise ActiveRecord::RecordNotFound unless portfolio.user == current_user
-  end
-
-  def redirect_if_portfolio_exists
-    redirect_to edit_portfolio_path(current_user.portfolio), alert: "ポートフォリオはすでに作成されています" if current_user.portfolio
-  end
-
-  def redirect_unless_portfolio_exists
-    redirect_to new_portfolio_path, alert: "先にポートフォリオを作成してください" unless current_user.portfolio
-  end
-
-  def portfolio_params
-    params.require(:portfolio).permit(:title, :body, images: [])
+    #クエリ　ユーザーidと紐付けた画像
+    @portfolios = @q.result
+    #以下ではリクエストが複数画像を持っている場合関係テーブルが膨らむのではないか
+    .with_attached_images
+    #@q.resultで条件絞り込んだcreator_settingオブジェクトを取得　#user_id等が含まれる
+    #user_idからbelong_to userによりuser_idの参照ユーザーオブジェクト
+    #ここをincludesにするとuserが複数画像をavatarを持っていた場合に関係テーブルが膨らむ　今回はユーザーとアバターが1対１なのでincludesにすることでeager_loadになり　userとその画像が一度のクエリで取得できるので問題ない
+    .preload(user: { avatar_attachment: :blob })
   end
 end

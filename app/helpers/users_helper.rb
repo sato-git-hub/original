@@ -1,22 +1,23 @@
 module UsersHelper
-    def user_avatar(user, size: :base)
-      size_class = {
-        sm: "w-15",
-        base: "w-20",
-        lg: "w-30"
-      }[size]
-    if user.avatar.attached?
-      image_tag(
-        user.avatar.variant(
-          resize_to_fill: [ 300, 300, { gravity: "North" } ]
-        ),
-        class: "h-auto #{size_class} rounded-full"
-      )
-    else
-      image_tag(
-        "default_avatar.jpg",
-        class: "h-auto #{size_class} rounded-full"
-      )
-    end
+  def user_avatar(user, size = 50, **options)
+    # 1. クラスの合体（基本クラス + 引数で渡された任意のクラス）
+    combined_classes = "user-avatar-helper #{options[:class]}".strip
+
+    # 2. 画像パスの決定
+    image_path = if user.avatar.attached?
+                   user.avatar.variant(resize_to_limit: [180, 180])
+                 else
+                   "default_avatar.jpg"
+                 end
+
+    # 3. image_tag の生成
+    # style属性に --size: 80px; のような形で数値を渡す
+    image_tag(
+      image_path,
+      class: combined_classes,
+      style: "--size: #{size}px;"
+    )
   end
 end
+
+# <%=user_avatar(@user, 80, class:"user-avatar")%>

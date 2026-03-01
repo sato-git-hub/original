@@ -1,26 +1,60 @@
-<h2>Log in</h2>
-
+<div class="login-container">
+<div class="layout-signin">
 <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+  <h2 class="title signin-title">ログイン</h2>
+  <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <p><%= f.password_field :password, autocomplete: "current-password" %></p>
-  </div>
+      <!-- メールアドレス -->
+      <div class="form-container">
+        <div class="label-container">
+          <%= f.label :email do %>
+            メールアドレス
+          <% end %>
+        </div>
+        <div>
+          <%= f.email_field :email,
+            autofocus: true, 
+            autocomplete: "email",
+            placeholder: "例) example@gmail.com",
+            class: "input" %>
+        </div>
+      </div>
 
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <p><%= f.check_box :remember_me %></p>
-      <p><%= f.label :remember_me %></p>
-    </div>
+      
+      <div class="form-container">
+        <div class="label-container">
+          <%= f.label :password do %>
+            パスワード
+          <% end %>
+        </div>
+        <div>
+          <%= f.password_field :password,
+            autocomplete: "current-password",
+            placeholder: (@minimum_password_length ? "#{@minimum_password_length}文字以上" : "変更する場合のみ入力"),
+            class: "input" %>
+        </div>
+      </div>
+
+      <div>
+         <%= f.submit "ログイン", class: "button", style: "--bg-color: #3c76ff;"%>
+      </div>
   <% end %>
 
-  <div class="actions">
-    <%= f.submit "Log in" %>
+  <div class="login-link-container">
+    <%= link_to "新規登録はこちら", new_user_registration_path, class: "login-link-underlined" %>
   </div>
-<% end %>
+</div>
 
-<%= render "devise/shared/links" %>
+</div>
+</div>
+
+
+
+
+
+      
+
+
+
+
+

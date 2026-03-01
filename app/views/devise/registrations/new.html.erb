@@ -1,11 +1,97 @@
-<div class="container mx-auto px-4 py-8">
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <h2 class="text-2xl text-black font-bold text-center mb-5">新規登録</h2>
-    <%= render "devise/shared/error_messages", resource: resource %>
-  <%= render partial: "shared/form", locals: {f: f, user: resource} %>
+<div class="signin-container">
+<div class="layout-signin">
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
-  <div class="text-center">
-    <%= link_to "ログインはこちら", new_user_session_path, class: "inline-block" %>
+  <h2 class="title signin-title">新規登録</h2>
+  
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="form-container">
+        <div class="label-container">
+          <%= f.label :name do %>
+            ユーザー名
+            <% unless f.object.persisted? %>
+              <span class="badge-red">
+                必須
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+        <div>
+          <%= f.text_field :name,
+            placeholder: "ユーザー名",
+            class: "input"%>
+        </div>
+      </div>
+
+      <!-- メールアドレス -->
+      <div class="form-container">
+        <div class="label-container">
+          <%= f.label :email do %>
+            メールアドレス
+            <% unless f.object.persisted? %>
+              <span class="badge-red">
+                必須
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+        <div>
+          <%= f.email_field :email,
+            placeholder: "例) example@gmail.com",
+            class: "input" %>
+        </div>
+      </div>
+
+      
+      <div class="form-container">
+        <div class="label-container">
+          <%= f.label :password do %>
+            パスワード
+            <% unless f.object.persisted? %>
+              <span class="badge-red">
+                必須
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+        <div>
+          <%= f.password_field :password,
+            autocomplete: "new-password",
+            placeholder: (@minimum_password_length ? "#{@minimum_password_length}文字以上" : "変更する場合のみ入力"),
+            class: "input" %>
+        </div>
+      </div>
+
+      <div class="form-container">
+        <div class="label-container">
+          <%= f.label :password_confirmation do %>
+            パスワード(確認用)
+            <% unless f.object.persisted? %>
+              <span class="badge-red">
+                必須
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+        <div>
+          <%= f.password_field :password_confirmation,
+            autocomplete: "new-password",
+            placeholder: "確認のためパスワードを再入力",
+            class: "input" %>
+        </div>
+      </div>
+
+      <div>
+         <%= f.submit "新規会員登録", class: "button" %>
+      </div>
+
+  <div class="login-link-container">
+    <%= link_to "ログインはこちら", new_user_session_path, class: "login-link-underlined" %>
+  </div>
+
+  <% end %>
   </div>
 </div>
-<% end %>
+
+

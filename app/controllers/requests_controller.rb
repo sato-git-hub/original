@@ -17,76 +17,99 @@ class RequestsController < ApplicationController
   end
 
   def index
+    Rails.logger.debug "=============================================#{params[:q]}"
+    base_query = Request.where(status: [:approved, :succeeded]).active
     # 全てのリクエストを一覧
-    if params[:q].present? && params[:q][:title_or_search_conf_cont].present?
-      words = params[:q][:title_or_search_conf_cont].split(/[[:space:]]+/)
+    # とどいたparams
+    search_params = params[:q] || {}
+    if search_params[:title_or_search_conf_cont].present?
+
+      words = search_params[:title_or_search_conf_cont].split(/[[:space:]]+/)
       # titleまたはsearch_conf に渡した すべての words を含んでいるレコード
-      @q = Request.ransack(
+Rails.logger.debug "=============================================#{words}"
       # formから受け取ったparamsを加工せず、そのまま絞る時は@q = Request.ransack(params[:q])
-      title_or_search_conf_cont: words
-      )
-      # id が同じ Request は1件にまとめられる
-      @requests = @q.result(distinct: true)
-      .where(status: [ :approved, :succeeded? ]).active.order(updated_at: :desc)
-      # .active.where("deadline_at >= ?", Time.current)
+      # 空白で分割して絞り込み検索
+      keywords = words.reduce({}) do |hash, word|
+        hash[word] = {title_or_search_conf_cont: word}
+        hash
+      end
+      Rails.logger.debug "=============================================#{keywords}"
+      @q = base_query.ransack({ combinator: 'and', groupings: keywords })
+      
+      
+      Rails.logger.debug "=============================================#{@q}"
     else
       # 空で渡す
-      @q = Request.ransack({})
-      @requests = @q.result(distinct: true)
-      .where(status: [ :approved, :succeeded? ]).active.order(updated_at: :desc)
+      @q = base_query.ransack(search_params)
       # .active.where("deadline_at >= ?", Time.current)
     end
+
+    @requests = @q.result(distinct: true)
+                .with_attached_request_images
+                .preload(:support_histories, user: { avatar_attachment: :blob }) # ← SELECT * FROM users WHERE id IN (1, 2, 3...)
+                .order(updated_at: :desc)
   end
 
   def new
     @request = Request.new
-    @portfolio = Portfolio.find(params[:portfolio_id])
+    @creator_setting = CreatorSetting.find(params[:creator_setting_id])
   end
 
   def create
     @request = current_user.requests.build(request_params)
-    @portfolio = Portfolio.find(params[:portfolio_id])
-    @creator = @portfolio.user
+    @creator_setting = CreatorSetting.find(params[:creator_setting_id])
+    @creator = @creator_setting.user
     @request.creator = @creator
     if @request.save
         @request.submit! if params[:commit] == "send"
-        redirect_to current_user
+        redirect_to current_user,notice: "処理に成功しました"
     else
-      flash.now[:alert] = "作成に失敗しました"
+      flash.now[:alert] = "処理に失敗しました"
       render :new, status: :unprocessable_entity
     end
   end
 
   def show
-    @request = Request.find(params[:id])
-    # Support_history.new(request: @request)と同じ意味
+
+    @request = Request.preload(
+      :request_images_attachments,
+      creator: [
+        :avatar_attachment, # 作成者のアバター
+        { creator_setting: :images_attachments }
+      ]
+    ).find(params[:id])
+    
     @support_history = @request.support_histories.build
-
-    @rewards = @request.rewards
-
-    # 支援者履歴テーブルからこのリクエストのレコードだけ
-    # user_idごとの合計amount順に
-    @top_supporters = User
-  .joins(:support_histories)
-  .where(support_histories: { request_id: @request.id })
-  .group("users.id")
-  .select("users.*, SUM(support_histories.amount) AS total_amount")
-  .order("total_amount DESC")
-  .limit(3)
+    @supporters_count = @request.support_histories.distinct.count(:user_id)
   end
 
   def edit
   end
 
   def update
-    # ActiveStorage_Attachmentsテーブルのnameがrequest_imagesでidが送られてきたidのレコードに絞り込む。それに一つ一つpurge
-    @request.request_images
-            .where(id: params[:remove_image_ids])
-            .each(&:purge)
-    # 送られてくるのはチェックしたもの
-    @request.update!(request_params.except(:request_images)) if @request.request_images.attached?
-    @request.update!(request_params) unless @request.request_images.attached?
-    redirect_to dashboard_requests_path, notice: "更新に成功しました"
+    ActiveRecord::Base.transaction do
+
+      if params[:remove_image_ids].present?
+        attachments = @request.request_images.where(id: params[:remove_image_ids])
+        if @request.request_images.attachments.size - attachments.size <= 0
+          raise StandardError, "画像は少なくとも1枚必要です"
+        end
+        attachments.each(&:purge)
+      end
+
+      @request.update!(request_params.except(:request_images))
+
+      if request_params[:request_images].present?
+          @request.request_images.attach(request_params[:request_images]) 
+      end
+
+    end
+
+    redirect_to current_user, notice: "更新しました"
+
+  rescue => e
+    flash.now[:alert] = e.message
+    render :edit, status: :unprocessable_entity
   end
 
   def destroy

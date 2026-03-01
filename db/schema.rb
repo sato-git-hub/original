@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_21_045057) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_24_010628) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -39,6 +39,29 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_21_045057) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "creator_settings", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.text "body", null: false
+    t.bigint "user_id", null: false
+    t.boolean "published", default: false, null: false
+    t.integer "minimum_amount", default: 1000, null: false
+    t.integer "minimum_supporters", default: 1, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_creator_settings_on_user_id", unique: true
+  end
+
+  create_table "deposits", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "bank_name", null: false
+    t.string "account_number", null: false
+    t.string "account_holder", null: false
+    t.string "branch_name", null: false
+    t.string "radio_group", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_deposits_on_user_id"
+  end
+
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.boolean "checked", default: false, null: false
     t.bigint "receiver_id", null: false
@@ -51,16 +74,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_21_045057) do
     t.index ["receiver_id"], name: "index_notifications_on_receiver_id"
     t.index ["request_id"], name: "index_notifications_on_request_id"
     t.index ["sender_id"], name: "index_notifications_on_sender_id"
-  end
-
-  create_table "portfolios", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "title", null: false
-    t.text "body", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.boolean "published", default: false, null: false
-    t.index ["user_id"], name: "index_portfolios_on_user_id", unique: true
   end
 
   create_table "requests", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -81,18 +94,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_21_045057) do
     t.index ["user_id"], name: "index_requests_on_user_id"
   end
 
-  create_table "rewards", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "request_id", null: false
-    t.string "title", null: false
-    t.text "body", null: false
-    t.integer "amount", null: false
-    t.integer "stock"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "has_shipping", default: false, null: false
-    t.index ["request_id"], name: "index_rewards_on_request_id"
-  end
-
   create_table "support_histories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "request_id", null: false
@@ -101,7 +102,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_21_045057) do
     t.datetime "updated_at", null: false
     t.string "payjp_charge_id", default: "", null: false
     t.integer "status", default: 0, null: false
-    t.bigint "reward_id", null: false
     t.string "shipping_postal_code"
     t.integer "shipping_prefecture"
     t.string "shipping_city"
@@ -110,7 +110,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_21_045057) do
     t.string "shipping_phone_number"
     t.string "user_name"
     t.index ["request_id"], name: "index_support_histories_on_request_id"
-    t.index ["reward_id"], name: "index_support_histories_on_reward_id"
     t.index ["user_id"], name: "index_support_histories_on_user_id"
   end
 
@@ -128,20 +127,24 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_21_045057) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "creator_settings", "users"
+  add_foreign_key "deposits", "users"
   add_foreign_key "notifications", "requests"
   add_foreign_key "notifications", "users", column: "receiver_id"
   add_foreign_key "notifications", "users", column: "sender_id"
-  add_foreign_key "portfolios", "users"
   add_foreign_key "requests", "users"
   add_foreign_key "requests", "users", column: "creator_id"
-  add_foreign_key "rewards", "requests"
   add_foreign_key "support_histories", "requests"
-  add_foreign_key "support_histories", "rewards"
   add_foreign_key "support_histories", "users"
 end

@@ -1,43 +1,56 @@
 <!DOCTYPE html>
-<html lang="ja" style="--rounded-btn: 0.2rem; --rounded-box: 0.2rem">
-  <head>
-    <title><%= content_for(:title) || "Original" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<html lang="ja">
+<head>
+  <!-- 基本設定 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="mobile-web-app-capable" content="yes">
 
-    <%= yield :head %>
+  <title>flaag | イラスト クラウドファンディング　絵　ギャラリー</title>
+  <meta name="description" content="イラストレーターに少額からイラストを依頼できるイラストクラウドファンディング">
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
-    
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <!--application.css-->
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
-    <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
-    <script src="https://kit.fontawesome.com/9a71256c57.js" crossorigin="anonymous"></script>
-  </head>
+  <!-- Rails -->
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= yield :head %>
+
+  <!-- Favicon（統一） -->
+  <link rel="icon" href="/flaag.png" type="image/png">
+  <link rel="apple-touch-icon" href="/flaag.png">
+
+  <!-- Swiper -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+
+  <!-- Tailwind -->
+  <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+
+  <!-- Application CSS -->
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+
+  <!-- JS -->
+  <%= javascript_importmap_tags %>
+
+  <!-- 外部ライブラリ -->
+  <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8" defer></script>
+  <script src="https://kit.fontawesome.com/9a71256c57.js" crossorigin="anonymous" defer></script>
+</head>
+
 <body class="min-h-screen">
-<% if show_header? %>
   <div data-controller="notification">
-  <%= render "shared/header" %>
-  <div class="pt-25"></div>
-  <div data-notification-target="list" class="notification-list-panel">
-  <%= turbo_frame_tag "notifications_list" do %>
-  <% end %>
+    <%= render "shared/header" %>
+    <div data-notification-target="list" class="notification-list-panel">
+      <%= turbo_frame_tag "notifications_list" do %><% end %>
+    </div>
   </div>
-  </div>
-<% end %>
-  <main class="max-w-6xl mx-auto px-4 py-8"> 
-      <% flash.each do |key, message| %>
-        <div class="flash <%= key %>"><%= message %></div>
-      <% end %>
+
+
+      <div data-controller="flash">
+        <% flash.each do |key, message| %>
+          <div class="flash <%= key %> bg-gray-500 text-white text-base rounded py-2 px-3" style="position: fixed; z-index: 50;"><%= message %></div>
+        <% end %>
+      </div>
       <%= yield %>
-  </main>
+
 </body>
+
 </html>

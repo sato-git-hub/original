@@ -7,9 +7,20 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
   # end
 
   # POST /resource/confirmation
-  # def create
+   def create
+
+    self.resource = resource_class.send_confirmation_instructions(resource_params)
+    yield resource if block_given?
+
+    if successfully_sent?(resource)
+
+      flash.now[:notice] = "確認メールを再送しました。"
+      render turbo_stream: turbo_stream.prepend("flash", partial: "shared/flash_messages")
+    else
+      respond_with(resource)
+    end
   #   super
-  # end
+   end
 
   # GET /resource/confirmation?confirmation_token=abcdef
   # def show

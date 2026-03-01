@@ -2,8 +2,9 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable, :confirmable
 
+  has_one :deposit, dependent: :destroy
   has_many :received_notifications,
             class_name: "Notification",
             foreign_key: :receiver_id,
@@ -15,7 +16,7 @@ class User < ApplicationRecord
            foreign_key: :creator_id,
            dependent: :destroy
 
-  has_one :portfolio, dependent: :destroy
+  has_one :creator_setting, dependent: :destroy
 
   # 　複数のリクエストを持つ　　user.request
   has_many :requests, dependent: :destroy

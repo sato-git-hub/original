@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
@@ -20,12 +21,19 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # PUT /resource
-   def update
-      if params[:remove_avatar].present? && current_user.avatar.attached?
-        current_user.avatar.purge
-      end
-     super
-   end
+  def update
+    if params[:remove_avatar].present? && current_user.avatar.attached?
+      current_user.avatar.purge
+    end
+    super
+  end
+
+  protected
+    def after_inactive_sign_up_path_for(resource)
+      session[:registered_email] = resource.email
+      after_registration_confirmation_path
+    end
+
 
   # DELETE /resource
   # def destroy

@@ -9,22 +9,37 @@
 <% if @support_histories.blank? %>
 <div class="text-center"><%= "現在支援しているリクエストはありません" %></div>
 <% else %>
- <table style="border-collapse: collapse; margin: 0 auto;">
-    <tr>
-      <th style="border: 1px solid black; padding: 15px 30px;">支援されたリクエスト</th>
-      <th style="border: 1px solid black; padding: 15px 30px;">選択したリターン</th>
-      <th style="border: 1px solid black; padding: 15px 30px;">支援金額</th>
-      <th style="border: 1px solid black; padding: 15px 30px;">クリエーター</th>
-      <th style="border: 1px solid black; padding: 15px 30px;">支援日時</th>
-    </tr>
+<table style="border-collapse: collapse; margin: 0 auto; table-layout: fixed; width: 100%;">
+  <tr>
+    <th style="border: 1px solid black; padding: 15px 30px; width: 220px;">支援されたリクエスト</th>
+    <th style="border: 1px solid black; padding: 15px 30px; width: 120px;">支援金額</th>
+    <th style="border: 1px solid black; padding: 15px 30px; width: 180px;">クリエーター</th>
+    <th style="border: 1px solid black; padding: 15px 30px; width: 180px;">支援日時</th>
+  </tr>
 
   <% @support_histories.each do |support_history| %>
     <tr>
-    <td style="border: 1px solid black; padding: 15px 30px;"><%= link_to support_history.request.title, support_history.request, style: "border-bottom: 1px solid" %></td>
-    <td style="border: 1px solid black; padding: 15px 30px;"><%= link_to support_history.reward.title, request_reward_path(support_history.request, support_history.reward), style: "border-bottom: 1px solid" %></td>
-    <td style="border: 1px solid black; padding: 15px 30px;"><%= support_history.amount %>円</td>
-    <td style="border: 1px solid black; padding: 15px 30px;"><%= link_to support_history.request.creator.name, support_history.request.creator, style: "border-bottom: 1px solid " %></td>
-    <td style="border: 1px solid black; padding: 15px 30px;"><%= support_history.created_at.strftime("%Y/%m/%d %k:%M") %></td>
+      <td style="border: 1px solid black; padding: 15px 30px;">
+        <%= link_to support_history.request.title,
+            support_history.request,
+            style: "display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align: center;" %>
+      </td>
+
+      <td style="border: 1px solid black; padding: 15px 30px; text-align: center;">
+        <%= support_history.amount %>円
+      </td>
+
+      <td style="border: 1px solid black; padding: 15px 30px; text-align: center;">
+        <%= link_to support_history.request.creator.name,
+            support_history.request.creator,
+            style: "display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" %>
+      </td>
+
+      <td style="border: 1px solid black; padding: 15px 30px; text-align: center;">
+        <%= support_history.created_at.strftime("%Y/%m/%d %H:%M")%>
+      </td>
     </tr>
-    <% end %>
+  <% end %>
+</table>
+
  <% end %>

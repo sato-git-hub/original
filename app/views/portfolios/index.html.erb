@@ -1,29 +1,32 @@
-<% @portfolios.each do |portfolio| %>
+<div class="page-container"> 
 
-  <li>
-    <div class="flex justify-between items-center px-4 py-4">
-      <%= link_to user_path(portfolio.user), class: "flex items-center py-2 px-4" do %>
-        <%= user_avatar(portfolio.user) %>
-        <p class="pl-4 text-lg font-bold"><%= portfolio.user.name %></p>
-      <% end %>
+<div class="creator-setting-grid">
+  <% @portfolios.each do |portfolio| %>
+    <div class="creator-setting-card">
+      <div class="creator-setting-info">
+          <%= user_avatar(portfolio.user, 32) %>
+        <span class="creator-name-container"><%= portfolio.user.name %></span>
+      </div>
       
-      <%= link_to "リクエストを送る", new_request_path(portfolio_id: portfolio.id) ,class: "bg-gray-300 py-2 px-4 rounded" %>
-    </div>
-
-    <div class="swiper h-200">
-      <div class="swiper-wrapper">
-        <% if portfolio.images.attached? %>
-          <% portfolio.images.each do |image| %>
-          <div class="swiper-slide"><%= image_tag image, class: "bg-black w-full h-full object-contain select-none",
-            draggable: false %></div>
-          <% end %>
-        <% else %>
-            <div class="bg-gray-500 rounded text-center">画像なし</div>
+      <div class="creator-setting-image-container">
+        <% if portfolio.images.size > 1 %>
+          <div class="swiper">
+            <div class="swiper-wrapper">
+              <% portfolio.images.each do |image| %>
+                <div class="swiper-slide">
+                  <%= image_tag default_image(image), class: "creator-setting-img" %>
+                </div>
+              <% end %>
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+          </div>
+        <% elsif portfolio.images.size == 1 %>
+          <%= image_tag default_image(portfolio.images.first), class: "creator-setting-img" %>
         <% end %>
       </div>
-      <div class="swiper-button-next"></div>
-      <div class="swiper-button-prev"></div>
-    </div>
-  </li>
-<% end %>
 
+    </div>
+  <% end %>
+</div>
+<div>

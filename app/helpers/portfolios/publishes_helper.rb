@@ -1,2 +1,0 @@
-module Portfolios::PublishesHelper
-end

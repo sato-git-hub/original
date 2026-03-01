@@ -22,7 +22,8 @@ class ApplicationController < ActionController::Base
       :instagram,
       :pixiv,
       :avatar,
-      :remove_avatar
+      :remove_avatar,
+      :sign_in, keys: [:remember_me]
     ])
   end
 

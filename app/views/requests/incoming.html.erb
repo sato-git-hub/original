@@ -18,14 +18,14 @@
 </div>
 
 <% @requests.each do |request| %>
-  <%=request.status%>
+
   <% if request.submit? %>
 
       <div class="max-w-200 mx-auto flex items-center mb-4">
       <%= link_to request.user do %>
-      <%= user_avatar(request.user, size: :sm)%>
+      <%= user_avatar(request.user)%>
       <% end %>
-      <p class="font-bold md:text-lg mb-2"><%= request.user.name %>よりリクエストが届きました</p>
+      <p class="font-bold md:text-lg mb-2"><%= request.user.name %>より<%= request.target_amount %>円でリクエストが届きました</p>
       </div>
 
     <div class="bg-[#f0f2f4] border border-[#d9dee5] mx-auto max-w-200 md:px-4 rounded mb-6 py-4">
@@ -41,7 +41,8 @@
 
       <div class="flex justify-center gap-6">
         <%= link_to "承認する",
-          new_request_reward_path(request),
+          approve_request_status_path(request),
+          data: { turbo_method: :patch },
           class: "inline-block bg-gray-500 py-2 text-white px-8 rounded" %>
 
         <%= link_to "拒否する",

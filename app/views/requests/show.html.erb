@@ -1,92 +1,57 @@
+<div class="page-container request-page-container">
 
-<div class="swiper md:h-100">
-  <div class="swiper-wrapper">
-    <% if @request.request_images.attached? %>
-      <% @request.request_images.each do |image| %>
-      <div class="swiper-slide"><%= image_tag image, class: "bg-black w-full h-full object-contain select-none",
-        draggable: false %></div>
-      <% end %>
-    <% else %>
-    <div class="h-100 w-full flex items-center bg-gray-300 justify-center"><p>画像が読み込めませんでした</p></div>
-    <% end %>
-  </div>
-  <div class="swiper-button-next"></div>
-  <div class="swiper-button-prev"></div>
-</div>
-
-<p class="mb-4 font-bold text-xl md:text-2xl my-4 text-center"><%=@request.title%></p>
-<% percentage = (@request.current_amount.to_f / @request.target_amount * 100) %>
-
-<section class="bg-white rounded shadow-[0_4px_#e4e4e4] p-5 mb-4">
-<p class="text-center font-bold">現在の支援総額</p>
-<p class="text-center text-2xl font-bold"><%=@request.current_amount%>円</p>
-<div class="flex md:text-sm text-xs justify-between">
-  <p><%= percentage.round %>%</p>
-  <p>
-  <% if @request.deadline_at > Time.current %>
-    <%= distance_of_time_in_words(Time.current, @request.deadline_at) %>
-  <% else %>
-    終了
-  <% end %>
-  </p>
-</div>
-<div class="w-52 h-4 bg-gray-200 rounded w-full">
-  <div class="h-4 bg-green-400 rounded " style="width:<%= percentage.clamp(0,100).round(1) %>%"></div>
-</div>
-<div class="flex md:text-sm text-xs justify-between">
-<p>現在の支援者数 <%=@request.support_histories.distinct.count(:user_id)%> 人</p>
-<p>目標金額 <%=@request.target_amount%>円</p>
-</div>
-</section>
-
-
-<div class="bg-[#f0f2f4] border border-[#d9dee5] mx-auto text-center max-w-300 rounded p-4 mb-4">
-<h4 class="text-base text-orange font-bold">All-or-Nothing方式</h4>
-<p>目標金額に達成しなかった場合、全額返金されます</p>
-</div>
-
-<div class="flex w-full">
-<div class="bg-white p-4 mb-5 basis-2/3"><%=simple_format(@request.body)%></div>
-
-<section class="flex flex-col basis-1/3">
-<% @rewards.each do |reward|%>
-  <div class="bg-[#f0f2f4] mb-5 px-3 pt-4 pb-2 rounded shadow-[0_4px_#e4e4e4]">
-    <div class="flex gap-2 items-center">
-      <% if reward.reward_image.attached? %>
-        <%= image_tag reward.reward_image.variant(resize_to_fill: [160, 120, { gravity: 'Center' }], 
-        format: :jpeg, 
-        quality: 85,
-        strip: true), class: "rounded flex-shrink-0"%>
-      <% else %>
-        <div class="flex bg-gray-300 h-10 items-center justify-center flex-shrink-0"><%= reward.title %></div>
-      <% end %>  
-
-      <div class="flex-1">
-        <p class="font-bold text-lg"><%=reward.amount%>円</p>
-        <h3 class="font-bold"><%=reward.title%></h3>
-        <span>支援者数 <%=reward.support_histories.count%>人</span>
-        <span>在庫数 <%= reward.stock.present? ? (reward.stock - reward.support_histories.count) : "無制限" %></span>
-        <% if reward.stock.nil? %>
-        <% (reward.stock - reward.support_histories.count) > 0 if reward.stock.present?%>
-          <%= link_to "このリターンを選択する", new_request_support_history_path(@request, reward_id: reward.id), class: "inline-block bg-blue-500 rounded text-white py-2 px-4", local: true, data: { turbo: false }%>
-        <% elsif (reward.stock - reward.support_histories.count) > 0 %>
-          <%= link_to "このリターンを選択する", new_request_support_history_path(@request, reward_id: reward.id), class: "inline-block bg-blue-500 rounded text-white py-2 px-4", local: true, data: { turbo: false }%>
-        <% else %>
-          <span class="inline-block bg-gray-400 rounded text-white py-2 px-4">売り切れ</span>
+  <div class="request-top-container">
+    <div class="request-top-body-container">
+      <div>
+        <%= image_tag default_image(@request.request_images.first), class: "card-image request-top-image bg-black"%>
+      </div>
+      <div class="request-title-container flex justify-center">
+        <h1 class="title text-center"><%= @request.title %></h1>
+      </div>
+    </div>
+    <div class="request-top-amount-container">
+      <div class="flex gap-2">
+        <span class="">¥</span>
+        <span class="">現在の支援総額</span>
+      </div>
+      <div class="current-amount">
+        <%= @request.current_amount %>
+        <span class="text-2xl pl-1">円</span>
+      </div>
+      <div class="request-meter"></div>
+      <div class="flex gap-2">
+        <span>達成まで</span>
+        <%= @request.target_amount - @request.current_amount %><span>円</span>
+      </div>
+      <div class="request-amount-content flex gap-2">
+        <i class="fa-solid fa-users" class=""></i>
+        <span>支援者数</span>
+      </div>
+      <div class="supporters-count">
+        <%= @supporters_count %>
+        <span class="text-2xl pl-1">人</span>
+      </div>
+      <div class="request-amount-content flex gap-2">
+        <i class="fa-solid fa-alarm-clock"></i>
+        <span>残り期間</span>
+      </div>
+      <div class="diff flex gap-2">
+        <% diff = @request.deadline_at - Time.current.floor %>
+        <% days = (diff / 1.day).to_i %>
+        <% hours = (diff / 1.hour % 24).to_i %>
+        <% minutes = (diff / 1.minute % 60).to_i %>
+        
+        <% if days > 0 %>
+          <div><%= days %><span class="text-2xl pl-1">日</span></div>
+        <%end%>
+        <% if hours > 0 %>
+          <div><%= hours %><span class="text-2xl pl-1">時間</span></div>
+        <%end%>
+        <% if minutes > 0 %> 
+          <div><%= minutes %><span class="text-2xl pl-1">分</span></div>
         <% end %>
       </div>
+    </div>
   </div>
-    
-<div data-controller="toggle">
-  <button type="button" data-action="click->toggle#toggle" class="font-bold hover:text-gray-500 border-gray-400">
-    リターン概要
-  </button>
-<div data-toggle-target="content" class="hidden"><%=simple_format(reward.body)%></div>
-</div>
-
-  </div>
-<% end %>
-</section>
-</div>
 
 </div>

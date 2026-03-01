@@ -1,0 +1,89 @@
+<h2 class="text-2xl text-center font-bold" style="margin: 20px 0;">公開設定</h2> 
+<div class="lg:max-w-200 mx-auto">
+  <%= form_with model: creator_setting do |f| %>
+    
+    <div class="mb-5">
+      <%=f.label :body, "自己紹介", class:"block tracking-wide text-base font-bold mb-5"%>
+      <%=f.text_area :body, required: true, class: "mx-auto  block h-100 appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4  leading-tight focus:outline-none bg-white resize-none"%>
+    </div>
+   
+    <% if creator_setting.images.attached? %>
+    <p class="font-bold text-base my-5">現在選択中の掲載画像</p>
+    <ul style= "border: 1px solid #474747;" class="flex flex-wrap items-center gap-4 p-4 bg-white rounded mb-5">
+      <% @creator_setting.images.each do |image| %>
+        <li >
+          <div class="inline-block">
+            <%= check_box_tag "remove_image_ids[]", image.id, false, id: "remove_image_#{image.id}", class:"inline-block"%>
+            <%= label_tag "remove_image_#{image.id}", "削除", class: "inline-block" %>
+          </div>
+          <div style= "width: 200px; height: 150px">
+            <%= image_tag default_image(image), style: "width: 100%; height: 100%", class: "object-contain rounded"%>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+    <% end %>
+    <div data-controller="image-preview">
+      <p  data-image-preview-target="title" class="font-bold my-5 text-base hidden">追加する画像</p>
+      <div data-image-preview-target="preview" class="border hidden p-4 bg-white rounded flex flex-wrap items-center gap-4 mb-4"></div>
+
+      <div class="mb-5">
+        <%= f.label :images, "画像を追加", 
+            class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-300 px-6 py-2 hover:bg-gray-500 transition shadow-sm"%>
+        <%= f.file_field :images,
+          class: "hidden", 
+          data: { action: "change->image-preview#preview"},
+          multiple: true,
+          accept: "image/jpeg,image/gif,image/png" %>
+      </div>
+    </div>
+
+  <div class="flex flex-col gap-4">
+  <%= f.label :minimum_amount, "最低リクエスト金額", class: "font-bold text-base my-5" %>
+  
+  <div class="flex items-center gap-4">
+    <%= f.range_field :minimum_amount, 
+        min: 300, 
+        max: 100000, 
+        step: 100, 
+        class: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer",
+        oninput: "amount_output.value = this.value" %>
+    
+    <div class="flex items-center gap-1 font-bold text-lg min-w-[100px]">
+      <output id="amount_output"><%= @creator_setting.minimum_amount %></output>
+      <span>円</span>
+    </div>
+  </div>
+</div>
+
+
+  <div class="flex flex-col gap-4">
+  <%= f.label :minimum_supporters, "最低支援者数", class: "font-bold text-base my-5" %>
+  
+  <div class="flex items-center gap-4">
+
+    <%= f.range_field :minimum_supporters, 
+        min: 1, 
+        max: 100, 
+        step: 1, 
+        class: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer",
+        oninput: "supporters_output.value = this.value" %>
+ 
+    <div class="flex items-center gap-1 font-bold text-lg min-w-[100px]">
+      <output id="supporters_output"><%= @creator_setting.minimum_supporters %></output>
+      <span>人</span>
+    </div>
+  </div>
+</div>
+<p class= "font-bold text-base my-5">公開設定</p>
+    <div class="flex items-center gap-2 mb-10">
+     <%= f.check_box :published, 
+      { checked: @creator_setting.published?, class: "h-4 w-4 rounded border-gray-300" }, 
+      "true", 
+      "false" %>
+      <%= f.label :published, "公開する(リクエストが送られるようになります)" %>
+    </div>
+    <div class="text-center">
+      <%= f.submit "保存", class: "py-3 px-14 font-bold rounded bg-blue-400 text-white hover:shadow-teal-md transition-all cursor-pointer"%>
+    </div>
+    <% end %>

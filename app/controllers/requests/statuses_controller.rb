@@ -15,11 +15,11 @@ class Requests::StatusesController < ApplicationController
     # submit → approved
     def approve
       begin # 省略可
-
-        @request.approve!(request_params)
+        @request.approve!
         redirect_to incoming_requests_path, notice: "リクエストの公開が開始されました"
       rescue => e
-        Rails.logger.debug "DEBUG: keyword=#{e.message}"
+        Rails.logger.error e.full_message
+        raise e
         redirect_to @creator, alert: "処理に失敗しました"
       end
     end
@@ -51,10 +51,5 @@ class Requests::StatusesController < ApplicationController
       raise ActiveRecord::RecordNotFound unless @creator == current_user
     end
 
-    def request_params
-    # rewards_attributes を許可するのがポイント
-    params.require(:request).permit(
-      rewards_attributes: [ :id, :title, :body, :amount, :stock, :reward_image, :has_shipping, :_destroy ]
-    )
-    end
+
 end

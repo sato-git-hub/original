@@ -1,56 +1,81 @@
-<h2 class=" tracking-wide text-gray-700 text-lg font-bold mb-2 text-center"><%=document%></h2>
+<div class="lg:max-w-200 mx-auto mt-8">
+<h2 class=" tracking-wide text-gray-700 text-lg font-bold mb-5 text-center"><%=document%></h2>
 
 <div>
-<%= f.label :title, "タイトル", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
-<span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
-              必須
-            </span>
-<%= f.text_field :title, required: true, class: "appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"%>
+  <%= f.label :title, "タイトル", class: "inline-block tracking-wide text-base font-bold mb-2"%>
+  <% unless f.object.persisted? %>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+          <% end %>
+  <%= f.text_field :title, required: true, class: "appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"%>
 </div>
 <div>
-<%= f.label :body,  "リクエストする内容", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
-<span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
-              必須
-            </span>
-<%= f.text_area :body, required: true, class: "no-resize appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 h-48 resize-none"%>
+  <%= f.label :body,  "リクエストする内容", class: "inline-block tracking-wide text-base font-bold mb-2"%>
+  <% unless f.object.persisted? %>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+          <% end %>
+  <%= f.text_area :body, required: true, class: "no-resize appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 h-48 resize-none"%>
 </div>
+
 <div class = "mb-4">
-<%= f.label :target_amount, "予算", class: "inline-block tracking-wide text-gray-700 text-xs font-bold mb-2"%>
-<span class=" text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
-              必須
-            </span><br>
-<%= f.number_field :target_amount, required: true, min:1, class: "w-40 h-10 border mr-2 rounded px-2 focus:outline-none"%>
+    <%= f.label :target_amount, "予算", class: "font-bold text-base my-5" %>
+    <% unless f.object.persisted? %>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+          <% end %>
+    <div class="flex flex-col gap-4">
+    <div class="flex items-center gap-4">
+      <%= f.range_field :target_amount, 
+        min: @creator_setting.minimum_amount, 
+        max: 100000, 
+        step: 100, 
+        class: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer",
+        oninput: "target_output.value = this.value" %>
 
+      <div class="flex items-center gap-1 font-bold text-lg min-w-[100px]">
+        <output id="target_output"><%= @creator_setting.minimum_amount %></output>
+        <span>円</span>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div data-controller="image-preview">
-<div data-image-preview-target="preview" class="flex flex-wrap items-center gap-4 mb-4">
-  <% if @request.request_images.attached? %>
+<div class="mb-5">
+<p class= "font-bold text-base my-5">達成に必要な最低支援者数</p> 
+<p style="color: #424242;" class=" bg-gray-300 border px-4 py-2 rounded font-bold inline-block"><%= @creator_setting.minimum_supporters %></p><span> 人</span>
+</div>
+
+<% if @request.request_images.attached? %>
+  <p class="font-bold text-base my-5">現在選択中の画像</p>
+  <ul style= "border: 1px solid #474747;" class="flex flex-wrap items-center gap-4 p-4 bg-white rounded mb-5">
     <% @request.request_images.each do |image| %>
-
-<!--params[:remove_image_ids]で送る, チェックされたimage.idをparamsにいれる, trueでチェックボックスを最初からチェックにする-->
-<!--<input type="checkbox" name="remove_image_ids[]" id="remove_image_ids_" value="62" checked="checked">-->
-    <p class="-mr-3">削除</p>
-    <%= check_box_tag "remove_image_ids[]",
-      image.id,
-      false %>
-      <%= image_tag image, class: "object-cover rounded mb:w-35 w-15"%>
+      <li>
+        <div class="inline-block">
+          <%= check_box_tag "remove_image_ids[]", image.id, false, id: "remove_image_#{image.id}", class:"inline-block"%>
+          <%= label_tag "remove_image_#{image.id}", "削除", class: "inline-block" %>
+        </div>
+        <div style= "width: 200px; height: 150px">
+          <%= image_tag default_image(image), style: "width: 100%; height: 100%", class: "object-contain rounded"%>
+        </div>
+      </li>
     <% end %>
-  <% end %>
-</div>
-
-<div class="mb-4">
-
-<%= f.label :request_images, "画像を選択", 
-  class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-300 px-6 py-2 hover:bg-gray-500"%>
-<span class="mr-2 text-white z-10 bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">
-              必須
-            </span>
-<%= f.file_field :request_images, multiple: true, required: f.object.new_record?,
-  data: { action: "change->image-preview#preview"},
-  accept: "image/jpeg,image/gif,image/png"%>
-</div>
-</div>
+  </ul>
+<% end %>
+      <div data-controller="image-preview">
+            <p  data-image-preview-target="title" class="font-bold my-5 text-base hidden">追加する画像</p>
+            <div data-image-preview-target="preview" class="border hidden p-4 bg-white rounded flex flex-wrap items-center gap-4 mb-4"></div>
+     
+        <div class="mb-5">
+          <%= f.label :request_images, "画像を追加", 
+            class: "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-300 px-6 py-2 hover:bg-gray-500 transition shadow-sm"%>
+          <% unless f.object.persisted? %>
+            <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
+          <% end %>
+          <%= f.file_field :request_images,
+          class: "hidden", 
+          data: { action: "change->image-preview#preview"},
+          multiple: true,
+          accept: "image/jpeg,image/gif,image/png" %>
+        </div>
+      </div>
 
 <button type="submit" class = "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-gray-300 px-6 py-2 hover:bg-gray-500" >
   下書き保存
@@ -58,3 +83,4 @@
 <button type="submit" name="commit" value="send" class = "inline-block tracking-wide text-gray-700 text-xs font-bold cursor-pointer rounded-md bg-blue-400 px-6 py-2 hover:bg-blue-500 mb-20">
   リクエスト送信
 </button>
+</div>
