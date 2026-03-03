@@ -7,7 +7,9 @@ Rails.application.routes.draw do
   registrations: 'users/registrations',
   confirmations: 'users/confirmations'
 }
-
+# 本番時はif Rails.env.development?
+#    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+# end　を消す
 if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
 end
