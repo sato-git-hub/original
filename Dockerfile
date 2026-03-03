@@ -15,10 +15,10 @@ RUN apt-get update -qq && \
     mecab libmecab-dev \
     mecab-ipadic-utf8 && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
-#1と"development"にする
-ENV BUNDLE_DEPLOYMENT="0" \
+# 本番時は1と"development"にする　開発時はBUNDLE_DEPLOYMENT="0"　BUNDLE_WITHOUT=""
+ENV BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT=""
+    BUNDLE_WITHOUT="development"
 
 FROM base AS build
 
@@ -50,7 +50,7 @@ COPY --from=build /rails /rails
 
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
+    chown -R rails:rails log storage tmp public/assets
 USER 1000:1000
 
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]

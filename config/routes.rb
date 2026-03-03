@@ -7,10 +7,9 @@ Rails.application.routes.draw do
   registrations: 'users/registrations',
   confirmations: 'users/confirmations'
 }
-
-if Rails.env.development?
-    mount LetterOpenerWeb::Engine, at: "/letter_opener"
-end
+# 本番時はif Rails.env.development?
+#    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+# end　を消す
 
 get 'user_menu', to: 'users#menu', as: :user_menu
 
