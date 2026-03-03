@@ -5,7 +5,7 @@ services:
     image: original-app:latest
     volumes:
       # イメージ内の /rails/public を、共有ボリューム rails_public に書き出す
-      - ./public:/rails/public
+      - rails_public:/rails/public
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -e production -b 0.0.0.0 -p 3000"
     env_file:
       - .env
@@ -25,7 +25,7 @@ services:
       # - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro # /etc/nginx/conf.d/ というフォルダの中にある .conf という名前のファイルを全部読んで
       # ro　コンテナ側から勝手にファイルを書き換えないでね
        # 共有ボリューム rails_public を、Nginxの公開ディレクトリにマウントする
-       - ./public:/usr/share/nginx/html:ro
+       - rails_public:/usr/share/nginx/html:ro
       # あらかじめ中身を書いたファイルを準備しておく default.conf
        - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
        - ./certbot/www:/var/www/certbot
@@ -47,6 +47,10 @@ services:
       RAILS_ENV: production
     depends_on:
       - redis
+
+volumes:
+  # 名前付きボリュームを定義
+  rails_public:
 
 # 本番環境では　 docker-compose up -d web nginx redis worker
 # certbotは立ち上げない
