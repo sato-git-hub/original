@@ -10,9 +10,6 @@ Rails.application.routes.draw do
 # 本番時はif Rails.env.development?
 #    mount LetterOpenerWeb::Engine, at: "/letter_opener"
 # end　を消す
-if Rails.env.development?
-    mount LetterOpenerWeb::Engine, at: "/letter_opener"
-end
 
 get 'user_menu', to: 'users#menu', as: :user_menu
 
