@@ -16,9 +16,9 @@ RUN apt-get update -qq && \
     mecab-ipadic-utf8 && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 # 本番時は1と"development"にする　開発時はBUNDLE_DEPLOYMENT="0"　BUNDLE_WITHOUT=""
-ENV BUNDLE_DEPLOYMENT="1" \
+ENV BUNDLE_DEPLOYMENT="0" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+    BUNDLE_WITHOUT=""
 
 FROM base AS build
 
