@@ -1,16 +1,25 @@
-<h2>Resend confirmation instructions</h2>
+<section class="after-signin">
 
-<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<h1 class="title after-signin-title ">無効な認証です。</h1>
+<p class="after-signin-text">恐れ入りますが以下のリンクより、メールの再送をお願いいたします。<br>
+メールが届きましたら30分以内にメール本文のURLをクリックし、登録手続きを完了してください。</p>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %></p>
-  </div>
+<div class="resend-link-container">
+  <%= link_to "確認メールを再送する", user_confirmation_path(user: { email: @email }), 
+            data: { turbo_method: :post }, class: "resend-link-underlined" %>
+</div>
 
-  <div class="actions">
-    <%= f.submit "Resend confirmation instructions" %>
-  </div>
-<% end %>
+<p class="subtitle after-signin-text">確認メールが届かない場合</p>
 
-<%= render "devise/shared/links" %>
+<ul class="after-signin-list">
+  <li>迷惑メールフォルダに送信されていないか、ご確認ください。</li>
+  <li class="after-signin-list-space">docomo、au、softbankなどのキャリアメールをご利用の方は、
+  @flaag.net からのメールが
+  受信できるようにドメイン受信設定されているかご確認ください。</li>
+  <li class="after-signin-list-space"></li>
+</ul>
+
+<p class="subtitle after-signin-text">上記に当てはまらず、確認メールが届かない場合</p>
+<div class="resend-link-container">
+  <p class="inline-block">解決しない場合は、お手数ですが</p><%= link_to "お問い合わせ", new_contact_path, class: "resend-link-underlined" %><p class="inline-block">までご連絡ください。</p>
+</div>

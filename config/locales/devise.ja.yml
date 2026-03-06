@@ -4,6 +4,8 @@ ja:
       signed_up: "アカウント登録が完了しました。"
       updated: "アカウント情報を変更しました。"
       destroyed: "アカウントを削除しました。またのご利用をお待ちしております。"
+      signed_up_but_unconfirmed: "メールアドレス認証メールを送信しました。ご確認ください。"
+      
     sessions:
       signed_in: "ログインしました。"
       signed_out: "ログアウトしました。"
@@ -13,6 +15,7 @@ ja:
       invalid: "メールアドレスまたはパスワードが違います。"
       not_found_in_database: "メールアドレスまたはパスワードパスワードが違います。ご確認ください。"
       unconfirmed: "メールによる確認が完了していません。届いたメール内のリンクをクリックして、アカウントを有効化してください。"
+      already_authenticated: "既にログインしています。"
   errors:
     messages:
       not_saved:
@@ -34,3 +37,4 @@ ja:
         confirmation: "とパスワードの入力が一致しません"
         too_short: "は%{count}文字以上で入力してください"
         already_confirmed: "そのアカウントは、すでにメール認証が完了しています"
+        confirmation_period_expired: "の期限が切れました。もう一度登録し直してください。"

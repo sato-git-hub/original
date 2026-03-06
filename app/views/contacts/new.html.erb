@@ -1,0 +1,67 @@
+<div class="pt-container" style="--pt:60px">
+<div class="layout-form">
+  <%= form_with url: contacts_path, local: true do |f| %>
+  <h2 class="title signin-title">お問い合わせ</h2>
+
+      <div class="form-container">
+        <div class="label-container">
+          <%= f.label :name do %>
+            氏名
+              <span class="badge-red">
+                必須
+              </span>
+          <% end %>
+        </div>
+        <div>
+          <%= f.text_field :name,
+            placeholder: "山田　太郎",
+            required: true,
+            class: "input"%>
+        </div>
+      </div>
+
+      <!-- メールアドレス -->
+      <div class="form-container">
+        <div class="label-container">
+          <%= f.label :email do %>
+            返信先メールアドレス
+              <span class="badge-red">
+                必須
+              </span>
+          <% end %>
+        </div>
+        <div>
+          <%= f.email_field :email,
+            placeholder: "例) example@gmail.com",
+            required: true,
+            class: "input" %>
+        </div>
+      </div>
+      
+      <div class="form-container">
+        <div class="label-container">
+          <%= f.label :content do %>
+            お問い合わせ内容
+              <span class="badge-red">
+                必須
+              </span>
+          <% end %>
+        </div>
+        <div>
+          <%= f.text_area :content,
+            placeholder: "お問い合わせ内容",
+            required: true,
+            class: "input", 
+            style: "height: 100px;"  %>
+        </div>
+      </div>
+      
+      <div>
+         <%= f.submit "送信", class: "button" %>
+      </div>
+
+  <% end %>
+  </div>
+</div>
+
+

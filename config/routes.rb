@@ -11,12 +11,20 @@ Rails.application.routes.draw do
 #    mount LetterOpenerWeb::Engine, at: "/letter_opener"
 # end　を消す
 
+resources :contacts, only: [:new, :create]
+
 get 'user_menu', to: 'users#menu', as: :user_menu
 
 root "requests#index"
 
 # 確認メール送信後
 get 'after_registration_confirmation', to: 'static_pages#after_registration_confirmation'
+
+# ログインしているとき
+authenticated :user do
+  # ログインしている時だけ、ここが「本当のトップ」になる
+  root 'dashboard#show', as: :signed_in_root
+end
 
 # mount Sidekiq::Web => "/sidekiq"
 

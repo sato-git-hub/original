@@ -44,11 +44,10 @@
   </div>
 
 
-      <div data-controller="flash">
-        <% flash.each do |key, message| %>
-          <div class="flash <%= key %> bg-gray-500 text-white text-base rounded py-2 px-3" style="position: fixed; z-index: 50;"><%= message %></div>
-        <% end %>
-      </div>
+<div id="flash">
+  <%= render 'shared/flash_messages' %>
+</div>
+
       <%= yield %>
 
 </body>

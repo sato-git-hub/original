@@ -24,5 +24,15 @@ module Original
     config.time_zone = "Tokyo"
 
     # config.eager_load_paths << Rails.root.join("extras")
+
+    config.action_mailer.smtp_settings = {
+    address: "email-smtp.ap-northeast-1.amazonaws.com",
+    port: 587,
+    domain: "flaag.net",
+    user_name: ENV["SES_USER"],
+    password: ENV["SES_API_KEY"],
+    authentication: :login,
+    enable_starttls_auto: true
+  }
   end
 end
