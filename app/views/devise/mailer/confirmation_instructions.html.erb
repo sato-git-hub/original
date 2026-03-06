@@ -1,5 +1,26 @@
-<p>Welcome <%= @email %>!</p>
+<div style="font-family: sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto;">
+  <h2 style="color: #2c3e50;">メールアドレスの確認</h2>
+  
+  <p><%= @resource.name %> 様</p>
+  
+  <p>この度は「Flaag」にご登録いただき、誠にありがとうございます！<br>
+  アカウント作成を完了するためには、以下のボタンをクリックしてメールアドレスの認証を行ってください。</p>
 
-<p>You can confirm your account email through the link below:</p>
+  <div style="text-align: center; margin: 30px 0;">
+    <%= link_to 'メールアドレスを認証する', 
+        confirmation_url(@resource, confirmation_token: @token), 
+        style: "background-color: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;" %>
+  </div>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+  <p style="font-size: 0.9em; color: #7f8c8d;">
+    ※このボタンの有効期限は30分です。<br>
+    ※もしこのメールに心当たりがない場合は、お手数ですがこのメールを破棄してください。
+  </p>
+
+  <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+  
+  <p style="font-size: 0.8em; color: #bdc3c7;">
+    Flaag 運営事務局<br>
+    URL: https://flaag.net
+  </p>
+</div>
