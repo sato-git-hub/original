@@ -14,7 +14,6 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
     
     # 送信処理がうまく行ったか
     if successfully_sent?(resource)
-      session.delete(:registered_email)
       flash.now[:notice] = "確認メールを再送しました。"
       #書き換え対象はid=flash 中身はshared/flash_messages
       render turbo_stream: turbo_stream.update("flash", partial: "shared/flash_messages")
@@ -37,12 +36,14 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
     # セッションの作成
       sign_in(resource) 
       redirect_to root_path, notice: "メール認証が完了し、ログインしました！"
+      session.delete(:registered_email)
     else
     # 既に認証済みemailの（already_confirmed）というエラーが含まれているかチェック
     # エラーのメモ帳（errors オブジェクト）には、モデルの属性名（カラム名）がそのまま「見出し」として存在 emailのalready_confirmed
     # すでに認証済み 
       if resource.errors.added? :email, :already_confirmed
         redirect_to root_path, alert: "既に認証済みです"
+        session.delete(:registered_email)
       else
         # それ以外のエラー（期限切れなど）は、通常の再送画面を表示
         render :new, status: :unprocessable_entity
