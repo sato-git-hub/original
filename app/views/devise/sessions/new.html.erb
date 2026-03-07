@@ -1,4 +1,4 @@
-<div class="login-container">
+<div class="pt-container" style="--pt:60px">
 <div class="layout-form">
 <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
   <h2 class="title signin-title">ログイン</h2>
@@ -42,6 +42,10 @@
 
   <div class="login-link-container">
     <%= link_to "新規登録はこちら", new_user_registration_path, class: "login-link-underlined" %>
+  </div>
+
+  <div class="login-link-container">
+    <%= link_to "パスワードを忘れた方はこちら", new_password_path(resource_name), class: "login-link-underlined" %>
   </div>
 </div>
 
