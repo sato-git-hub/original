@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
     @request = @user.received_requests
-    
+    @creator_setting = @user.creator_setting
   end
 
   def portfolio

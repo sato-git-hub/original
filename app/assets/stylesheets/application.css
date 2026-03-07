@@ -63,7 +63,7 @@ img {
  }
 
 .request-box-tbody {
-  
+
 }
 
 tbody {
@@ -603,6 +603,10 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   width: 300px;
 }
 
+.creator-avatar-container{
+  transform: translateY(-50%);
+}
+
 .creator-name {
   margin-top: -20px;
   max-width: 100%;
@@ -672,8 +676,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 .user-body-container {
   max-width: 1200px;
   padding: 0 32px;
-  margin: 0 auto;
-  height: 180px;
+  margin: 0 auto 50px;
 }
 
 .user-avatar {
@@ -687,6 +690,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   margin-bottom: 1.5rem;
   margin-top: 1.5rem;
   padding: .75rem;
+  padding-right: 35px;
 }
 .user-body-area.user-name {
   width: 100%;
@@ -704,8 +708,9 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 .request-box {
   background-color: #fff;
   width: 300px;
-  height: 300px;
   padding: 20px;
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .user-content-menu {
@@ -754,6 +759,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   background-color: #fff;
   border-radius: 5px;
   box-shadow: #e4e4e4 0 4px;
+  height: 448px;
 }
 
 .request-top-image {
