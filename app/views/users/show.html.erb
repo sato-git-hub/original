@@ -4,18 +4,15 @@
   <div class="main-view"></div>
 <% end %>
 
-<%= current_user.avatar.present? %>
 
 <div class="user-body-container">
   <div class="flex items-start">
     <div class="avatar-container flex-shrink-0"><%= user_avatar(@user, 180, class:"user-avatar") %></div>
     <div class="user-body-area column flex-1 min-w-0">
-      <h1 class="user-name text-2xl font-bold"><%= @user.name %></h1>
+      <h1 class="user-name text-2xl font-bold mb-4"><%= @user.name %></h1>
 
       <p class="break-words">
-        ここに長い自己紹介が入ります。どんなに長くても、
-        flex-1 と min-w-0 のおかげでアバターを潰さず、
-        
+        <%= @user.creator_setting&.body %>
       </p>
     </div>
   </div>
@@ -35,9 +32,9 @@
   <% end if @user.instagram? %>
 </div>
 
-<%= @user.creator_setting&.body %>
+
 <div data-controller="user" class="">
-  <nav class="flex">
+  <nav class="flex justify-center mb-4">
     <%= link_to "ホーム", user_path(@user),
     class: "user-content-menu",
     data: { 
@@ -80,13 +77,16 @@
 
 <div class="flex gap-4">
   <div class="request-box">
+    
+    <ul style="padding: 10px;">
+    <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">作品数</p><p style="flex: 1;">作品数</p></li>
+    <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限</p><p style="flex: 1;">作品数</p></li>
+    <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限厳守率</p><p style="flex: 1;">作品数</p></li>
+    </ul>
     <div class="button" style= "--bg-color: red;">リクエストを送る</div>
-    <li>作品数</li>
-    <li>納品期限</li>
-    <li>納品期限厳守率</li>
-    <li>作品数</li>
   </div>
-  <div class="flex-1">こにこに</div>
-</div>
+
+  <div class="flex-1"></div>
+  </div>
 <% end %>
 </div>

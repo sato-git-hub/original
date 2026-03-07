@@ -62,6 +62,24 @@ img {
   vertical-align: middle;
  }
 
+.request-box-tbody {
+  
+}
+
+tbody {
+    display: table-row-group;
+    vertical-align: middle;
+    unicode-bidi: isolate;
+    border-color: inherit;
+}
+
+tr {
+    display: table-row;
+    vertical-align: inherit;
+    unicode-bidi: isolate;
+    border-color: inherit;
+}
+
 .user-avatar-helper {
   width: var(--size, 50px);
   height: var(--size, 50px);
@@ -81,8 +99,8 @@ img {
 }
 
 .page-container {
-  max-width: 1200px;
-  padding: 0 20px 20px;
+  max-width: var(--mw, 1200px);
+  padding: var(--pt, 0) var(--pl, 20px) var(--pr, 20px) var(--pt, 20px);
   margin: 0 auto;
 }
 
@@ -290,7 +308,6 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   display: grid;
   gap: 16px; 
   width: 100%;
-  padding: 10px;
   
   /* デフォルト（スマホ）: 1列 */
   grid-template-columns: repeat(1, 1fr);
@@ -708,29 +725,6 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 
 .user-content-menu.active {
   border-bottom: 4px solid #FF0000; 
-}
-
-/* ユーザー画面　ポートフォリオ */
-/* 親要素：列の数と隙間を決める */
-.masonry-container {
-  column-count: 3;    /* 列の数（スマホなら1か2、PCなら3〜4） */
-  column-gap: 16px;   /* 画像同士の横の隙間 */
-  width: 100%;
-}
-
-/* 子要素：途中で改行されないようにする */
-.masonry-item {
-  display: inline-block; /* これが重要！ */
-  width: 100%;
-  margin-bottom: 16px;   /* 画像同士の縦の隙間 */
-  break-inside: avoid;   /* 画像が途中で次の列に分割されるのを防ぐ */
-}
-
-.masonry-item img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 8px; /* 角丸にするとPinterestっぽさが出ます */
 }
 
 /* リクエスト画面 */

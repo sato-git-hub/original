@@ -1,6 +1,6 @@
 <h2 class="text-2xl text-center font-bold" style="margin: 20px 0;">公開設定</h2> 
 <div class="lg:max-w-200 mx-auto">
-  <%= form_with model: creator_setting do |f| %>
+  <%= form_with model: creator_setting, url: creator_setting_path, method: (creator_setting.new_record? ? :post : :patch) do |f| %>
     
     <div class="mb-5">
       <%=f.label :body, "自己紹介", class:"block tracking-wide text-base font-bold mb-5"%>
