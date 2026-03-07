@@ -269,7 +269,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 .notification-list-panel{
   display: none;
   position: fixed;
-  top: 100px;
+  top: 87.5px;
   left: 0;
   width: 100%;
   z-index: 50; 
