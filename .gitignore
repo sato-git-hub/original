@@ -39,3 +39,6 @@
 
 docker-compose.dev.yml
 certbot/
+
+#変更しない限りは入れておく
+Dockerfile

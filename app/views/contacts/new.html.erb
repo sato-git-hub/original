@@ -1,4 +1,4 @@
-<div class="pt-container" style="--pt:60px">
+<div class="pt-container" style="--pt:100px">
 <div class="layout-form">
   <%= form_with url: contacts_path, local: true do |f| %>
   <h2 class="title signin-title">お問い合わせ</h2>
@@ -61,6 +61,10 @@
       </div>
 
   <% end %>
+
+    <p style="font-size: 0.9em; color: #7f8c8d; margin-top: 30px;">
+    ※入力いただいたメールアドレス宛に、2週間以内に返信いたします。<br>
+  </p>
   </div>
 </div>
 
