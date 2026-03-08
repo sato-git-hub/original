@@ -5,7 +5,7 @@
 <% end %>
 
 <div class="user-body-container">
-  <div class="flex items-start">
+  <div class="user-top">
     <div class="avatar-container flex-shrink-0"><%= user_avatar(@user, 180, 400, class:"user-avatar") %></div>
     <div class="user-body-area column flex-1 min-w-0">
       <h1 class="user-name text-2xl font-bold mb-4"><%= @user.name %></h1>
@@ -26,70 +26,71 @@
         <%= @user.creator_setting&.body %>
       </p>
     </div>
-    <div class="request-box"> 
-      <ul style="padding: 10px;">
-        <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">作品数</p><p style="flex: 1;">作品数</p></li>
-        <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限</p><p style="flex: 1;">作品数</p></li>
-        <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限厳守率</p><p style="flex: 1;">作品数</p></li>
-        <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援金額</p><p style="flex: 1;"><%= @creator_setting.minimum_amount%></p></li>
-        <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援者数</p><p style="flex: 1;"><%= @creator_setting.minimum_supporters%></p></li>
-      </ul>
-      <% if @creator_setting.published? %>
-        <div class="button" style= "--bg-color: red;">リクエストを送る</div>
-      <% else %>
-        <div class="button" style= "--bg-color: gray;">受け付けていません</div>
-      <% end %>
-    </div>
   </div>
 </div>
 
-<div data-controller="user" class="">
-  <nav class="flex justify-center mb-4">
-    <%= link_to "ホーム", user_path(@user),
-    class: "user-content-menu",
-    data: { 
-    user_target: "link",
-    action: "click->user#border", 
-    turbo_frame: "user_content" } 
-    %>
+<div class="user-main-container">
+  <div data-controller="user" class="">
+    <nav class="flex justify-center mb-4">
+      <%= link_to "ホーム", user_path(@user),
+      class: "user-content-menu",
+      data: { 
+      user_target: "link",
+      action: "click->user#border", 
+      turbo_frame: "user_content" } 
+      %>
 
-    <%= link_to "ポートフォリオ", user_portfolio_path(@user),
-    class: "user-content-menu",
-    data: { 
-    user_target: "link",
-    action: "click->user#border", 
-    turbo_frame: "user_content" } 
-    %>
-    <%= link_to "開催中のリクエスト", user_received_request_path(@user),
-    class: "user-content-menu",
+      <%= link_to "ポートフォリオ", user_portfolio_path(@user),
+      class: "user-content-menu",
       data: { 
-    user_target: "link",
-    action: "click->user#border", 
-    turbo_frame: "user_content" } 
-    %>
-    <%= link_to "開催中の作成したリクエスト", user_sent_request_path(@user),
-    class: "user-content-menu",
-      data: { 
-    user_target: "link",
-    action: "click->user#border", 
-    turbo_frame: "user_content" } 
-    %>
-    <!--%= link_to "支援中のリクエスト", user_supported_request_path(@user),
-    class: "user-content-menu",
-      data: { 
-    user_target: "link",
-    action: "click->user#border", 
-    turbo_frame: "user_content" } 
-    %-->
-  </nav>
+      user_target: "link",
+      action: "click->user#border", 
+      turbo_frame: "user_content" } 
+      %>
+      <%= link_to "開催中のリクエスト", user_received_request_path(@user),
+      class: "user-content-menu",
+        data: { 
+      user_target: "link",
+      action: "click->user#border", 
+      turbo_frame: "user_content" } 
+      %>
+      <%= link_to "作成したリクエスト", user_sent_request_path(@user),
+      class: "user-content-menu",
+        data: { 
+      user_target: "link",
+      action: "click->user#border", 
+      turbo_frame: "user_content" } 
+      %>
+      <%= link_to "支援したリクエスト", user_supported_request_path(@user),
+      class: "user-content-menu",
+        data: { 
+      user_target: "link",
+      action: "click->user#border", 
+      turbo_frame: "user_content" } 
+      %>
+    </nav>
+    <%= turbo_frame_tag "user_content" do %>
+      <div class="main-menu">
+        <div class="request-box"> 
+          <ul style="padding: 10px;">
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">作品数</p><p style="flex: 1;">作品数</p></li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限</p><p style="flex: 1;">作品数</p></li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限厳守率</p><p style="flex: 1;">作品数</p></li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援金額</p><p style="flex: 1;"><%= @creator_setting.minimum_amount%></p></li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援者数</p><p style="flex: 1;"><%= @creator_setting.minimum_supporters%></p></li>
+          </ul>
+          <% if @creator_setting.published? %>
+            <%= link_to "リクエストを送る", class: "button", style: "--bg-color: red;" %>
+          <% else %>
+            <div class="button" style= "--bg-color: gray;">受け付けていません</div>
+          <% end %>
+        </div>
+        <div class="deliverables">
+          <%= render "shared/deliverables", creator_setting: @creator_setting %>
+        </div>
+      </div>
+    <% end %>
   </div>
+</div>
 
 
-<%= turbo_frame_tag "user_content" do %>
-
-  <div class="flex gap-4">
-  
-
-  <div class="flex-1"></div>
-  </div>
-<% end %>

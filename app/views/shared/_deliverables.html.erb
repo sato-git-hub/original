@@ -1,0 +1,23 @@
+<!--creator_settingがcountの枚数の時の　画像の最大幅　-->
+  <% if creator_setting&.images&.attached? %>
+    <% 
+      count = creator_setting.images.size 
+
+      max_width = case
+                  when count == 1 then "400px"
+                  when count == 2 then "800px"
+                  when count == 3 then "1000px"
+                  else "1200px"
+                  end
+    %>
+<!--250pxが何個横幅に入るか-->
+    <div style="column-width: 250px; column-gap: 16px; width: 100%; max-width: <%= max_width %>; margin: 0 auto;">
+      <% creator_setting.images.each do |image| %>
+        <div style="break-inside: avoid; margin-bottom: 16px;">
+          <%= image_tag default_image(image), style: "width: 100%; height: auto; display: block; border-radius: 8px;" %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p style="text-align: center; color: #666; padding: 40px 0;">現在投稿されていません</p>
+  <% end %>
