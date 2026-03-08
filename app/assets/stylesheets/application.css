@@ -770,7 +770,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   }
 
   @media screen and (max-width: 768px) {
-  nav {
+  .user-main-container nav {
     justify-content: flex-start !important; /* 左寄せにする */
     overflow-x: auto;          /* 横スクロールを許可 */
     white-space: nowrap;       /* 改行させない */
