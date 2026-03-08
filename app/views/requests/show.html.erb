@@ -1,19 +1,18 @@
 <div class="page-container" style="--pt: 20px;">
-
   <div class="request-top-container flex">
     <div class="request-left-container">
       <div>
         <%= image_tag default_image(@request.request_images.first), class: "card-image request-top-image bg-black"%>
       </div>
       <div class="request-title-container flex justify-center">
-        <h1 class="title text-center"><%= @request.title %></h1>
+        <h1 class="title text-center">難関大学を目指して勉強に励む受験生<!--%= @request.title %--></h1>
       </div>
     </div>
 
     <div class="request-right-container">
       <div class="side-info-area">
-        <div class="flex gap-2">
-          <span class="">¥</span>
+        <div class="side-info-total flex gap-2 items-center">
+          <i class="fa-solid fa-yen-sign"></i>
           <span class="">現在の支援総額</span>
         </div>
         <div class="current-amount">
@@ -25,36 +24,47 @@
           <span>達成まで</span>
           <%= @request.target_amount - @request.current_amount %><span>円</span>
         </div>
-        <div class="request-amount-content flex gap-2">
-          <i class="fa-solid fa-users" class=""></i>
-          <span>支援者数</span>
-        </div>
-        <div class="supporters-count">
-          <%= @supporters_count %>
-          <span class="text-2xl pl-1">人</span>
-        </div>
-        <div class="request-amount-content flex gap-2">
-          <i class="fa-solid fa-alarm-clock"></i>
-          <span>残り期間</span>
-        </div>
-        <div class="diff flex gap-2">
-          <% diff = @request.deadline_at - Time.current.floor %>
-          <% days = (diff / 1.day).to_i %>
-          <% hours = (diff / 1.hour % 24).to_i %>
-          <% minutes = (diff / 1.minute % 60).to_i %>
-          
-          <% if days > 0 %>
-            <div><%= days %><span class="text-2xl pl-1">日</span></div>
-          <%end%>
-          <% if hours > 0 %>
-            <div><%= hours %><span class="text-2xl pl-1">時間</span></div>
-          <%end%>
-          <% if minutes > 0 %> 
-            <div><%= minutes %><span class="text-2xl pl-1">分</span></div>
-          <% end %>
+      <div class="request-amount-layout">
+        <div class="request-amount-container">
+          <div class="request-amount-content flex gap-2 items-center">
+            <i class="fa-solid fa-users" class=""></i>
+            <span>支援者数</span>
+          </div>
+          <div class="supporters-count">
+            <%= @supporters_count %>
+            <span class="text-2xl pl-1">人</span>
+          </div>
         </div>
         
-        <div class="request-amount-content flex gap-2 mb-4" >
+        <div class="request-amount-container">
+          <div class="request-amount-content flex gap-2 items-center">
+            <i class="fa-solid fa-alarm-clock"></i>
+            <span>残り期間</span>
+          </div>
+          <div class="diff">
+            <% diff = @request.deadline_at - Time.current.floor %>
+            <% days = (diff / 1.day).to_i %>
+            <% hours = (diff / 1.hour % 24).to_i %>
+            <% minutes = (diff / 1.minute % 60).to_i %>
+            
+            <% if days > 0 %>
+              <%= days %>
+              <span class="text-2xl pl-2">日</span>
+            <% else %>
+              <% if hours > 0 %> 
+                <%= hours %>
+                <span class="text-2xl pl-1">時間</span>
+              <% else %>
+                <%= minutes %>
+                <span class="text-2xl pl-1">分</span>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+        <div class="items-center" >
           <i class="fa-solid fa-user-pen"></i>
           <span>リクエストされたクリエーター</span>
         </div>
@@ -80,7 +90,12 @@
             </div>
           <% end %>
         </div>
-      </div>
+    </div>
+  </div>
+  </div>
+  <div class="page-container request-body-container" style="--mw:700px;">
+    <div class="request-body-area">
+      <%=@request.body%>
     </div>
   </div>
 </div>
