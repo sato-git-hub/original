@@ -11,36 +11,35 @@
       <h1 class="user-name text-2xl font-bold mb-4"><%= @user.name %></h1>
       <div class="flex space-x-4 mb-7">
         <%= link_to @user.twitter, target: "_blank" do %>
-          <i class="fa-brands fa-square-x-twitter text-[clamp(20px,6vw,40px)]"></i>
+          <i class="fa-brands fa-square-x-twitter text-2xl"></i>
         <% end if @user.twitter? %>
 
         <%= link_to @user.pixiv, target: "_blank" do %>
-          <i class="fa-brands fa-pixiv text-[#0096FA] text-[clamp(20px,6vw,40px)]"></i>
+          <i class="fa-brands fa-pixiv text-[#0096FA] text-2xl"></i>
         <% end if @user.pixiv? %>
 
         <%= link_to @user.instagram, target: "_blank" do %>
-          <i class="fa-brands fa-instagram text-[#C13584] text-[clamp(20px,6vw,40px)]"></i>
+          <i class="fa-brands fa-instagram text-[#C13584] text-2xl"></i>
         <% end if @user.instagram? %>
       </div>
       <p class="break-words">
         <%= @user.creator_setting&.body %>
       </p>
     </div>
-      <div class="request-box"> 
-    <ul style="padding: 10px;">
-    <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">作品数</p><p style="flex: 1;">作品数</p></li>
-    <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限</p><p style="flex: 1;">作品数</p></li>
-    <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限厳守率</p><p style="flex: 1;">作品数</p></li>
-    <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援金額</p><p style="flex: 1;"><%= @creator_setting.minimum_amount%></p></li>
-    <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援者数</p><p style="flex: 1;"><%= @creator_setting.minimum_supporters%></p></li>
-   
-    </ul>
-    <% if @creator_setting.published? %>
-      <div class="button" style= "--bg-color: red;">リクエストを送る</div>
-    <% else %>
-      <div class="button" style= "--bg-color: gray;">受け付けていません</div>
-    <% end %>
-  </div>
+    <div class="request-box"> 
+      <ul style="padding: 10px;">
+        <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">作品数</p><p style="flex: 1;">作品数</p></li>
+        <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限</p><p style="flex: 1;">作品数</p></li>
+        <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限厳守率</p><p style="flex: 1;">作品数</p></li>
+        <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援金額</p><p style="flex: 1;"><%= @creator_setting.minimum_amount%></p></li>
+        <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援者数</p><p style="flex: 1;"><%= @creator_setting.minimum_supporters%></p></li>
+      </ul>
+      <% if @creator_setting.published? %>
+        <div class="button" style= "--bg-color: red;">リクエストを送る</div>
+      <% else %>
+        <div class="button" style= "--bg-color: gray;">受け付けていません</div>
+      <% end %>
+    </div>
   </div>
 </div>
 
@@ -75,13 +74,13 @@
     action: "click->user#border", 
     turbo_frame: "user_content" } 
     %>
-    <%= link_to "支援中のリクエスト", user_supported_request_path(@user),
+    <!--%= link_to "支援中のリクエスト", user_supported_request_path(@user),
     class: "user-content-menu",
       data: { 
     user_target: "link",
     action: "click->user#border", 
     turbo_frame: "user_content" } 
-    %>
+    %-->
   </nav>
 
 <%= turbo_frame_tag "user_content" do %>

@@ -601,6 +601,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 /* クリエーターカード */
 .creator-card {
   width: 300px;
+  box-shadow: rgba(33, 35, 37, 0.12) 0px 4px 8px;
 }
 
 .creator-avatar-container{
@@ -675,7 +676,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 
 .user-body-container {
   max-width: 1200px;
-  padding: 0 32px;
+  padding: 0 10px;
   margin: 0 auto 50px;
 }
 
@@ -707,8 +708,8 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 /* ユーザー画面　リクエスト作成 */
 .request-box {
   background-color: #fff;
-  width: 300px;
-  padding: 20px;
+  width: 250px;
+  padding: 10px;
   margin-bottom: 1.5rem;
   margin-top: 1.5rem;
 }
@@ -733,33 +734,36 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 }
 
 /* リクエスト画面 */
-.request-page-container {
-  padding-top: 20px;
-}
+
 .request-title-container {
   margin-bottom: 50px;
 }
 
 .request-top-container {
-  display: grid;
-  grid-template-columns: 6fr 4fr;
-  column-gap: 40px;
+  column-gap: 20px;
 }
 
-.request-top-body-container {
+.request-left-container {
   display: flex;
+  flex: 6;
   flex-direction: column;
-  gap: 24px;
 }
 
-.request-top-amount-container {
+.request-right-container {
+  display: flex;
+  flex: 3;
+  flex-direction: column;
+  gap: 16px;
+
+}
+
+.side-info-area{
   gap: 8px;
-  position: relative;
   padding: 20px 24px;
   background-color: #fff;
   border-radius: 5px;
   box-shadow: #e4e4e4 0 4px;
-  height: 448px;
+
 }
 
 .request-top-image {
@@ -770,7 +774,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 .diff,
 .supporters-count,
 .current-amount {
-  font-size: 48px;
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: .03em;
 }
