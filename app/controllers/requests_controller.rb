@@ -52,7 +52,7 @@ Rails.logger.debug "=============================================#{words}"
 
   def new
     @request = Request.new
-    @creator_setting = CreatorSetting.find(params[:creator_setting_id])
+    @creator_setting = CreatorSetting.find(params[:creator_setting])
   end
 
   def create

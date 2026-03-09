@@ -1,8 +1,17 @@
 <div class="page-container" style="--pt: 20px;">
   <div class="request-top-container">
     <div class="request-left-container">
-      <div>
-        <%= image_tag default_image(@request.request_images.first), class: "card-image request-top-image bg-black"%>
+      <div class="gallery-container" data-controller="gallery">
+        <div class="thumbnail-main">
+          <%= image_tag default_image(@request.request_images.first), data: { gallery_target: "main" }, class: "card-image request-top-image bg-black"%>
+        </div>
+        <ul class="thumbnail-list flex gap-2 overflow-x-auto pb-2">
+          <% @request.request_images.each do |image| %>
+            <li class="thumbnail-container ">
+              <%= image_tag default_image(image), class: "thumbnail card-image request-top-image bg-black" %>
+            </li>
+          <% end %>
+        </ul>
       </div>
       <div class="request-title-container flex justify-center">
         <h1 class="title text-center">難関大学を目指して勉強に励む受験生<!--%= @request.title %--></h1>
