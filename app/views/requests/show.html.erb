@@ -104,7 +104,7 @@
   </div>
   <div class="page-container request-body-container" style="--mw:700px;">
     <div class="request-body-area">
-      <%=@request.body%>
+      <%= simple_format(@request.body) %>
     </div>
   </div>
 </div>
