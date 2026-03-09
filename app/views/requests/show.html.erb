@@ -14,7 +14,7 @@
         </ul>
       </div>
       <div class="request-title-container flex justify-center">
-        <h1 class="title text-center">難関大学を目指して勉強に励む受験生<!--%= @request.title %--></h1>
+        <h1 class="title text-center"><%= @request.title %></h1>
       </div>
     </div>
 
@@ -72,9 +72,19 @@
         </div>
       </div>
     </div>
-    <div>
-        <div class="items-center" >
-          <i class="fa-solid fa-user-pen"></i>
+  </div>
+  </div>
+    </div>
+  <div class="page-container request-body-container">
+    <div class="request-top-container">
+      <div class="request-left-container">
+        <div class="request-body-area">
+          <%= simple_format(@request.body) %>
+        </div>
+      </div>
+      <div class="request-right-container">
+        <div class="items-center">
+          <i class="fa-solid fa-paintbrush"></i>
           <span>リクエストされたクリエーター</span>
         </div>
         <div class="creator-card">
@@ -99,14 +109,7 @@
             </div>
           <% end %>
         </div>
+      </div>
     </div>
   </div>
-  </div>
-  <div class="page-container request-body-container" style="--mw:700px;">
-    <div class="request-body-area">
-      <%= simple_format(@request.body) %>
-    </div>
-  </div>
-</div>
-  
-  
+
