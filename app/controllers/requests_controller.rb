@@ -46,7 +46,7 @@ Rails.logger.debug "=============================================#{words}"
 
     @requests = @q.result(distinct: true)
                 .with_attached_request_images
-                .preload(:support_histories, user: { avatar_attachment: :blob }) # ← SELECT * FROM users WHERE id IN (1, 2, 3...)
+                .preload(:support_histories, user: { avatar_attachment: :blob }) 
                 .order(updated_at: :desc)
   end
 
@@ -71,16 +71,16 @@ Rails.logger.debug "=============================================#{words}"
 
   def show
 
-    @request = Request.preload(
-      :request_images_attachments,
+    @request = Request
+      .with_attached_request_images
+      .preload(
       creator: [
-        :avatar_attachment, # 作成者のアバター
-        { creator_setting: :images_attachments }
+      :received_requests,
+      { creator_setting: { images_attachments: :blob } },
+      { avatar_attachment: :blob }
       ]
     ).find(params[:id])
-    
-    @support_history = @request.support_histories.build
-    @supporters_count = @request.support_histories.distinct.count(:user_id)
+
   end
 
   def edit

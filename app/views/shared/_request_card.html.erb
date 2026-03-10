@@ -1,4 +1,3 @@
-
   <% if requests.present?%>  
     <ul class="request-card-box">
       <% requests.each do |request| %>
@@ -28,7 +27,7 @@
                 </div>
                 <div class="request-card-footer-contents">
                   <p class="text-xs">支援者</p>
-                  <p><span class="font-bold text-xs inline-block mr-1"><%=request.support_histories.size%></span><span>人<span></p>
+                  <p><span class="font-bold text-xs inline-block mr-1"><%=request.supporters_count%></span><span>人<span></p>
                 </div>
 
               

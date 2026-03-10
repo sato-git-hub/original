@@ -100,7 +100,7 @@ tr {
 
 .page-container {
   max-width: var(--mw, 1200px);
-  padding: var(--pt, 0) var(--pl, 20px) var(--pr, 20px) var(--pt, 20px);
+  padding: var(--pt, 0) var(--pr, 20px) var(--pb, 0) var(--pl, 20px);
   margin: 0 auto;
 }
 
@@ -110,6 +110,7 @@ tr {
   margin: 0 auto;
   height: 100%;
 }
+
 
 
 .button {
@@ -400,10 +401,10 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 .meter {
   position: relative;
   width: 100%;
-  height: 15px;
+  height: 20px;
   overflow: hidden;
   background-color: #e4e4e4;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .meter-bar {
@@ -496,34 +497,31 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   box-shadow: rgba(33, 35, 37, 0.12) 0px 4px 8px;
   border-radius: 4px;
   overflow: hidden;
+  min-width: 0;
 }
 
-.creator-avatar-container{
+.creator-avatar-container {
   transform: translateY(-50%);
 }
 
-.creator-name {
+.creator-about-container {
   margin-top: -20px;
-  max-width: 100%;
-  flex-shrink: 1;
-  display: block; 
+  text-align: center;
+  max-width: 250px;
   min-width: 0;
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  
-  /* 改行させない */
-  white-space: nowrap;
-  
-  /* はみ出た部分を "..." に変える */
-  text-overflow: ellipsis;
-
-  text-align: center; 
-
 }
 
+
+.creator-name,
+.creator-received-requests{
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+
 .creator-body-area {
-  
+  padding: 10px;
   aspect-ratio: 3 / 1;
   background-color: #fff;
   position: relative;
@@ -531,7 +529,6 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-width: 0;
 }
 
 .creator-avatar-area {
@@ -627,6 +624,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   /* メインメニュー */
   .main-menu{
     display: flex;
+    align-items:flex-start;
     gap: 4px
   }
 
@@ -646,6 +644,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   @media screen and (max-width:768px){
     .main-menu{
       flex-direction: column;
+      align-items: stretch;
     }
 
   }
@@ -692,7 +691,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 /* リクエスト画面 */
 
 .request-title-container {
-  margin: 50px 0;
+
 }
 
 .request-top-container {
@@ -749,13 +748,9 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 }
 
 .request-meter {
-  position: relative;
-  width: 100%;
-  height: 20px;
+
   margin-top: 8px;
-  background-color: #e4e4e4;
-  border-radius: 10px;
-  background: (270deg, #ff4f45 0%, #ff4f45 17.48%, #fa643c 49.56%, #fb8943 69.79%, #ffc13e 100%)
+  
 }
 
 .request-body-container {
@@ -774,31 +769,17 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   .request-right-container{
 
   } 
-  .side-info-total{
+  .request-amount-content,
+  .side-info-total {
     justify-content: center;
   }
-  .current-amount {
+
+  .current-amount,
+  .supporters-count,
+  .diff {
     text-align: center;
   }
-  .request-amount-container{
 
-    font-size: 14px;
-  }
-  .supporters-count span,
-  .supporters-count,
-  .diff,
-  .diff span{
-    font-size: 14px;
-  }
-  .request-amount-content{
-    margin-top: 0;
-    margin-right: 20px;
-  }
-  .request-amount-layout{
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-  }
 }
 
 /* リクエストカード */
@@ -860,6 +841,26 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   aspect-ratio: var(--aspect-ratio, 1 / 1);
   object-fit: contain;
   object-position: var(--object-position, 50% 50%);
+}
+
+/* 決済画面 */
+
+.bottom-fixed{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+@media screen and (max-width: 767px) {
+  .payment-about {
+    flex-direction: column;
+  }
+
+  .payment-amount {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #83838343;
+  }
 }
 
 
