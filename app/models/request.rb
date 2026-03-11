@@ -65,6 +65,14 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
 
   validates :title, :body, :target_amount, presence: true, on: :create
 
+  def supporters_count
+    if support_histories.loaded?
+      support_histories.map(&:user_id).uniq.size
+    else
+      support_histories.distinct.count(:user_id)
+    end
+  end
+
   def submit!
     raise "invalid state" unless draft?
     update!(status: :submit)
@@ -98,6 +106,7 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
 
   def mark_success_if_reached!
     return unless approved?
+    return unless self.creator.creator_setting.minimum_supporters <= self.supporters_count
     return unless target_amount <= current_amount
     update!(status: :succeeded)
     self.notifications.create!(action: :succeeded, receiver: self.user, target: :supporter)
@@ -127,9 +136,9 @@ PAYJP_ERROR_CODE = {
     "unacceptable_brand" => "対象のカードブランドが許可されていません"
   }.freeze
 
-def support!(user:, amount:, payjp_token:)
+def support!(user:, amount:, payjp_token:, support_history:)
   raise "支払い情報がありません" if payjp_token.blank? && user.payjp_customer_id.blank?
-
+  amount = amount.to_i
   begin
 
     if payjp_token.present?
@@ -150,7 +159,7 @@ def support!(user:, amount:, payjp_token:)
 
     transaction do
       lock!
-      support_histories.update!(
+      support_history.update!(
         payjp_charge_id: charge.id,
       )
 

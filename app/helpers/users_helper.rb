@@ -1,11 +1,11 @@
 module UsersHelper
-  def user_avatar(user, size = 50, **options)
+  def user_avatar(user, size = 50, resize = 180, **options)
     # 1. クラスの合体（基本クラス + 引数で渡された任意のクラス）
     combined_classes = "user-avatar-helper #{options[:class]}".strip
 
     # 2. 画像パスの決定
     image_path = if user.avatar.attached?
-                   user.avatar.variant(resize_to_limit: [180, 180])
+                   user.avatar.variant(resize_to_limit: [resize, resize])
                  else
                    "default_avatar.jpg"
                  end

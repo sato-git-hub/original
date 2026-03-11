@@ -9,6 +9,8 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    @request = @user.received_requests
+    @creator_setting = @user.creator_setting
   end
 
   def portfolio
@@ -23,12 +25,9 @@ class UsersController < ApplicationController
 
   def sent_request
     @user = User.find(params[:user_id])
-    @sent_requests = @user.requests
+    @requests = @user.requests
     .with_attached_request_images
-    .publish
-    .active
   end
-
 
   def remember_me
     true

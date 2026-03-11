@@ -1,18 +1,16 @@
 class SupportHistoriesController < ApplicationController
   before_action :authorize_request_publish!, only: [ :new, :create ]
   def new
-
     @support_history = SupportHistory.new
   end
 
   def create
-    
-    support_history = @request.support_histories.build
+    ActiveRecord::Base.transaction do
+    support_history = @request.support_histories.build(support_history_params)
     support_history.user = current_user
-    support_history.save!(support_history_params)
-    Rails.logger.debug "DEBUG: keyword=#{support_history.inspect}========================="
-    @request.support!(user: current_user, amount: support_history_params[:amount], payjp_token: params["payjp-token"])
-
+    support_history.save!
+    @request.support!(user: current_user, amount: support_history_params[:amount], payjp_token: params["payjp-token"], support_history: support_history)
+     end
     redirect_to @request, notice: "支援が完了しました"
     rescue => e
       redirect_to @request, alert: e.message
@@ -42,8 +40,8 @@ class SupportHistoriesController < ApplicationController
     redirect_to current_user, alert: "公開期間が終了したリクエストです" unless @request.approved? || @request.succeeded?
   end
 
-  def authenticate_creator!
-    @request = Request.find(params[:request_id])
-    redirect_to current_user, alert: "不正なアクセスです" unless @request.creator == current_user
-  end
+  #def authenticate_creator!
+    #@request = Request.find(params[:request_id])
+    #redirect_to current_user, alert: "不正なアクセスです" unless @request.creator == current_user
+  #end
 end
