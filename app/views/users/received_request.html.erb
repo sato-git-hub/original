@@ -1,0 +1,5 @@
+<%= turbo_frame_tag "user_content" do %>
+  <div class="request-card-container">
+    <%= render "shared/request_card", requests: @requests %>
+  </div>
+<% end %>

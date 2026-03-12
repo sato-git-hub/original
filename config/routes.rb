@@ -18,6 +18,10 @@ get 'user_menu', to: 'users#menu', as: :user_menu
 
 root "requests#index"
 
+resources :requests, only: [] do
+  resources :deliverables, only: [:new, :create]
+end
+
 # 確認メール送信後
 get 'after_registration_confirmation', to: 'static_pages#after_registration_confirmation'
 
@@ -42,7 +46,6 @@ namespace :creator_settings, only: [] do
 end
 
 resource :creator_setting, only: [ :new, :create, :edit, :update]
-
 
 
 resources :requests, only: [] do

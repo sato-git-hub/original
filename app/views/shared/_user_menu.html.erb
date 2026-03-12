@@ -3,6 +3,10 @@
   <div class="user-menu-container">
   <% deposit = user.deposit %>
   <nav class="flex flex-col">
+
+  <%= link_to "ユーザー画面", current_user,
+    class: "block py-3 hover:bg-gray-100 rounded", data: { turbo_frame: "_top" } %>
+
   <%= link_to "クリエーター設定", creator_setting_link_path(user),
     class: "block py-3 hover:bg-gray-100 rounded", data: { turbo_frame: "_top" } %>
 

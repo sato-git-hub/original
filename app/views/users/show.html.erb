@@ -76,17 +76,22 @@
             <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">作品数</p><p style="flex: 1;">作品数</p></li>
             <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限</p><p style="flex: 1;">作品数</p></li>
             <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限厳守率</p><p style="flex: 1;">作品数</p></li>
-            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援金額</p><p style="flex: 1;"><%= @creator_setting.minimum_amount%></p></li>
-            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援者数</p><p style="flex: 1;"><%= @creator_setting.minimum_supporters%></p></li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援金額</p><p style="flex: 1;"><%= (@creator_setting.present?)? @creator_setting.minimum_amount : "未設定"%></p></li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援者数</p><p style="flex: 1;"><%= (@creator_setting.present?)? @creator_setting.minimum_supporters : "未設定"%></p></li>
           </ul>
-          <% if @creator_setting.published? %>
+
+          <% if @creator_setting&.published? %>
             <%= link_to "リクエストを送る", new_request_path(creator_setting: @creator_setting), data: { turbo_frame: "_top" }, class: "button", style: "--bg-color: red;" %>
           <% else %>
             <div class="button" style= "--bg-color: gray;">受け付けていません</div>
           <% end %>
         </div>
         <div class="deliverables">
+          <% if @creator_setting.present? %>
           <%= render "shared/deliverables", creator_setting: @creator_setting %>
+          <% else %>
+            <p style="text-align: center; color: #666; padding: 40px 0;">作品は現在投稿されていません</p>
+          <% end %>
         </div>
       </div>
     <% end %>
