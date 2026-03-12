@@ -57,7 +57,6 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
   # 納品イラストファイル
   has_one_attached :deliverable
   validates :deliverable,
-                    presence: true,
                     content_type: { in: %w[image/jpeg image/gif image/png],
                     message: "png, jpg, jpegいずれかの形式にして下さい" },
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }

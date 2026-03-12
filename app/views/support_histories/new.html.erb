@@ -1,5 +1,5 @@
 <div class="page-container" style="--mw: 800px; --pt: 100px;">
-<%= form_with model: [@request, @support_history], data: { controller: "card-select" } do |f| %>
+  <%= form_with model: [@request, @support_history], data: { turbo: false } do |f| %>
 
     <h2 class="text-lg font-bold">こちらのクリエーターに支援します</h2>
     <div class="my-8 p-6 border border-gray-200 rounded-xl bg-gray-50 text-center flex justify-center">
@@ -30,57 +30,90 @@
         </div>
     </div>
 
-<h2 class="text-lg font-bold">決済内容</h2>
-<div class="my-8 p-6 border border-gray-200 rounded-xl bg-gray-50 text-center">
-<div class="payment-about flex items-center p-4">
-  <div class="payment-amount flex flex-col flex-1 justify-center items-center" style="80px;">
+    <h2 class="text-lg font-bold">決済内容</h2>
+    <div class="my-8 p-6 border border-gray-200 rounded-xl bg-gray-50 text-center">
+      <div class="payment-about flex items-center p-4">
+        <div class="payment-amount flex flex-col flex-1 justify-center items-center" style="80px;">
 
-      <h2 class="text-gray-700 text-xl font-bold mb-4">決済金額</h2>
-      <div class="flex items-center">
-      <i class="fa-solid fa-yen-sign"></i>
-      <%= f.number_field :amount,
-            required: true,
-            min: 300,
-            class: "border rounded text-center" %>
+          <h2 class="text-gray-700 text-xl font-bold mb-4">決済金額</h2>
+          <div class="flex items-center">
+            <i class="fa-solid fa-yen-sign"></i>
+            <%= f.number_field :amount,
+                  required: true,
+                  min: 300,
+                  class: "border rounded text-center" %>
+          </div>
+        </div>
+
+        <div class="flex flex-col flex-1 justify-center items-center">
+          <h2 class="text-gray-700 text-xl font-bold mb-4"></h2>
+
+          <section class="max-w-fit mx-auto font-bold text-base pb-4">
+            <% if current_user.payjp_customer_id.present? %>
+              <label class="block mb-2 cursor-pointer">
+                <%# 存在したらcheck初期状態からつけた状態で %>
+                <input type="radio" name="payment_type" value="registered" checked 
+                        onclick="selectRegistered()">
+                登録済みのカード（**** **** **** <%= current_user.last4 || "----" %>）で決済する
+              </label>
+            <% end %>
+          
+            <label class="block cursor-pointer">
+              <%# onclick で JS を直接実行してフォームを表示する %>
+              <input type="radio" name="payment_type" value="new" 
+                      <%= current_user.payjp_customer_id.present? ? "" : "checked" %>
+                      onclick="selectNew()">
+              新しいカード情報を入力する
+            </label>
+          </section>
+
+          <script>
+            // Pay.jp でカード入力が完了し、トークンが生成された時に呼ばれる
+            window.onTokenCreated = function(token) {
+              console.log("成功")
+              const submitBtn = document.getElementById('rails-submit-button');
+              submitBtn.disabled = false; // ボタンを押せるようにする
+              submitBtn.style.removeProperty('--bg-color', 'gray'); // グレーアウト解除（クラス名は調整してください）
+            }
+            function selectRegistered(){
+              document.getElementById('new-card-form').style.display='none'
+              const submitBtn = document.getElementById('rails-submit-button');
+              submitBtn.disabled = false;
+              submitBtn.style.removeProperty('--bg-color', 'gray');
+              submitBtn.value = "支援を確定する"
+            }
+
+            function selectNew(){
+              document.getElementById('new-card-form').style.display=''
+              const submitBtn = document.getElementById('rails-submit-button');
+              submitBtn.disabled = true;
+
+              submitBtn.style.setProperty('--bg-color', 'gray');
+              submitBtn.value = "カード情報を入力してください"
+            }
+          </script>
+
+          <%# 新規カード用フォーム（PAY.JPチェックアウト） %>
+          <div id="new-card-form" style="display:;">
+            <script
+              src="https://checkout.pay.jp/"
+              class="payjp-button"
+              data-key="<%= ENV['PAYJP_PUBLIC_KEY'] %>"
+              data-text="カード情報を入力する"
+              data-submit-text="支援を確定する"
+              data-partial="true"
+              data-on-created="onTokenCreated"
+            ></script>
+          </div>
+        </div>
       </div>
-  </div>
-
-<div class="flex flex-col flex-1 justify-center items-center">
-    <h2 class="text-gray-700 text-xl font-bold mb-4"></h2>
-
-    <section class="max-w-fit mx-auto font-bold text-base pb-4">
-      <% if current_user.payjp_customer_id.present? %>
-        <label class="block mb-2 cursor-pointer">
-          <input type="radio" name="payment_type" value="registered" checked data-action="change->card-select#toggle">
-          登録済みのカード（**** **** **** <%= current_user.last4 || "----" %>）で決済する
-        </label>
-      <% end %>
-    
-      <label class="block cursor-pointer">
-        <input type="radio" name="payment_type" value="new" data-action="change->card-select#toggle" <%= current_user.payjp_customer_id.present? ? "" : "checked" %>>
-        新しいカード情報を入力する
-      </label>
-    </section>
-  
-
-    <%# 新規カード用フォーム（PAY.JPチェックアウト） %>
-    <div data-card-select-target="newForm" class="<%= current_user.payjp_customer_id.blank? ? '' : 'hidden' %> flex justify-center">
-      <script
-        src="https://checkout.pay.jp/"
-        class="payjp-button"
-        data-key="<%= ENV['PAYJP_PUBLIC_KEY'] %>"
-        data-text="カード情報を入力する"
-        data-submit-text="支援を確定する"
-        data-partial="true"
-      ></script>
-
-    </div>
-    </div>
-        </div>
-        </div>
-    </div>
     </div>
 
-  <%= f.submit "支援を確定する", class: "fixed t-0 l-0 button w-full", style: "position: fixed; bottom: 0; left: 0;" %>
-<% end %>
+    <%= f.submit "支援を確定する", 
+      id: "rails-submit-button", 
+      class: "fixed button w-full disabled:cursor-not-allowed", 
+      style: "#{current_user.payjp_customer_id.blank? ? '--bg-color: gray;' : ''} position: fixed; bottom: 0; left: 0;",
+      disabled: current_user.payjp_customer_id.blank? %>
+  <% end %>
 </div>
+
