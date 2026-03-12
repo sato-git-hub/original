@@ -31,7 +31,6 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
   %w[]
   end
 
-
   has_many :supported_requests, through: :support_histories, source: :request
   has_many :notifications, dependent: :destroy
   has_many :support_histories, dependent: :destroy
@@ -54,6 +53,15 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
   success_finished: 6,
   completed: 7
 }
+
+  # 納品イラストファイル
+  has_one_attached :deliverable
+  validates :deliverable,
+                    presence: true,
+                    content_type: { in: %w[image/jpeg image/gif image/png],
+                    message: "png, jpg, jpegいずれかの形式にして下さい" },
+                    size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
+
   # リクエスト画像
   has_many_attached :request_images
   validates :request_images,
@@ -61,7 +69,6 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
                     content_type: { in: %w[image/jpeg image/gif image/png],
                     message: "png, jpg, jpegいずれかの形式にして下さい" },
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
-
 
   validates :title, :body, :target_amount, presence: true, on: :create
 

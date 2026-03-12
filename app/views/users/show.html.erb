@@ -87,7 +87,11 @@
           <% end %>
         </div>
         <div class="deliverables">
+          <% if @creator_setting.present? %>
           <%= render "shared/deliverables", creator_setting: @creator_setting %>
+          <% else %>
+            <p style="text-align: center; color: #666; padding: 40px 0;">作品は現在投稿されていません</p>
+          <% end %>
         </div>
       </div>
     <% end %>
