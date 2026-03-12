@@ -4,6 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :confirmable, :recoverable
 
+  # user_idが該当userである支援履歴レコード、そのレコードのrequest_idからrequestインスタンスをとりだす
+
   has_one :deposit, dependent: :destroy
   has_many :received_notifications,
             class_name: "Notification",
@@ -20,7 +22,7 @@ class User < ApplicationRecord
 
   # 　複数のリクエストを持つ　　user.request
   has_many :requests, dependent: :destroy
-
+  has_many :supported_requests, through: :support_histories, source: :request
   has_one_attached :avatar
   validates :avatar, content_type: { in: %w[image/jpeg image/gif image/png],
                     message: "png, jpg, jpegいずれかの形式にして下さい" },

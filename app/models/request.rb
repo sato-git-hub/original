@@ -30,12 +30,13 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
   def self.ransackable_associations(auth_object = nil)
   %w[]
   end
+  # request_idが該当のsupport_historyレコード、そのレコードのuser_idからuserインスタンスを取り出す
 
-  has_many :supported_requests, through: :support_histories, source: :request
   has_many :notifications, dependent: :destroy
   has_many :support_histories, dependent: :destroy
   belongs_to :user
   belongs_to :creator, class_name: "User"
+  has_many :supporters, through: :support_histories, source: :user
   validates :user, :creator, presence: true
 
   # 複数の子要素に対して処理したいとき 「Userの新規登録と同時に、そのUserの最初のPostを1つだけ作る」といったケースでは、使わない

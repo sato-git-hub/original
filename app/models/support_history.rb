@@ -3,6 +3,10 @@ class SupportHistory < ApplicationRecord
   belongs_to :request
   attribute :shipping_status, :integer
 
+  validates :amount,
+  presence: true,
+  numericality: { greater_than_or_equal_to: 300 }
+
   # 0: 仮押さえ中, 1: 支払い完了, 2: キャンセル済み, 3: 決済失敗
   enum :status, { authorized: 0, paid: 1, canceled: 2, failed: 3 }
 

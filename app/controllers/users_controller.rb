@@ -20,13 +20,19 @@ class UsersController < ApplicationController
 
   def received_request
     @user = User.find(params[:user_id])
-    @received_requests = @user.received_requests.publish.active
+    @requests = @user.received_requests.publish
+    .with_attached_request_images
   end
 
   def sent_request
     @user = User.find(params[:user_id])
-    @requests = @user.requests
+    @requests = @user.requests.publish
     .with_attached_request_images
+  end
+
+  def supported_request
+    @user = User.find(params[:user_id])
+    @requests = @user.supported_requests.distinct
   end
 
   def remember_me
