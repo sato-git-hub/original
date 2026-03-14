@@ -1,4 +1,4 @@
-<div class="lg:max-w-200 mx-auto mt-8">
+<div class=page-container>
 <h2 class=" tracking-wide text-gray-700 text-lg font-bold mb-5 text-center"><%=document%></h2>
 
 <div>
@@ -6,7 +6,7 @@
   <% unless f.object.persisted? %>
             <span class="text-white bg-red-500 font-normal text-sm ml-2 p-0.5 rounded-md">必須</span>
           <% end %>
-  <%= f.text_field :title, required: true, class: "appearance-none block w-full text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"%>
+  <%= f.text_field :title, required: true, class: "form-border appearance-none block w-full text-gray-700 rounded py-2 px-4 mb-3 leading-tight focus:outline-none bg-white"%>
 </div>
 <div>
   <%= f.label :body,  "リクエストする内容", class: "inline-block tracking-wide text-base font-bold mb-2"%>

@@ -1,5 +1,8 @@
 class Request < ApplicationRecord
   before_save :set_search_conf
+  # 納品期日が過ぎてないリクエストを絞り込む
+  scope :on_time, -> { where("delivered_at <= delivery_due_date") }
+  # statusが
 
   scope :search, ->(keyword) {
     keywords = keyword.split(/[ 　]+/)
@@ -52,7 +55,8 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
   succeeded: 4,
   finished: 5,
   success_finished: 6,
-  completed: 7
+  expired: 7, # 納品期日を過ぎた
+  completed: 8 # クリエーターが納品を完了(期日内)
 }
 
   # 納品イラストファイル
@@ -94,7 +98,7 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
 
       # selfはリクエストレコード
       Rails.logger.debug "DEBUG: keyword=#{self.inspect}"
-      CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self.id)
+      CloseRequestJob.set(wait_until: self.deadline_at).perform_later(self.id)
       self.notifications.create!(action: :approved, receiver: self.user, target: :supporter)
     end
   end
@@ -103,6 +107,21 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
     raise "invalid state" unless submit?
     update!(status: :creator_declined)
     self.notifications.create!(action: :decline, receiver: self.user, target: :supporter)
+  end
+
+  def success_finished!
+    transaction do
+      # 1. ステータスを更新（本来の enum の動き）
+      update!(status: :success_finished)
+      
+      # 2. 一緒に行いたい処理を追加
+      #delivery_due_dateはリクエストをクリエーターが承認した時に 
+      # request.delivery_due_date = #{request.creator.creator_setting.delivery_deadline}.days.from_now.end_of_day
+      # delivery_due_date.update!
+      # 
+      self.delivery_due_date
+      # self.notifications.create!(action: :, receiver: self.user, target: :supporter)
+    end
   end
 
   def complete!

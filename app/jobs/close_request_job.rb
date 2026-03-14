@@ -1,4 +1,4 @@
-class CloseProjectJob < ApplicationJob
+class CloseRequestJob < ApplicationJob
   queue_as :default
 
   def perform(request_id)
@@ -21,6 +21,7 @@ class CloseProjectJob < ApplicationJob
           end
           support_history.update!(status: :paid)
           request.notifications.create!(receiver: support_history.user, action: :paid, target: :supporter)
+          request.update!(delivery_due_date: Time.current.floor + self.creator.creator_setting.delivery_deadline.days)
         # Payjp::Charge.retrieveまたはcharge.captureで失敗 => リトライ。statusはauthorizedのまま
         rescue Payjp::PayjpError => e
           # e.json_body[:error][:code]rescue nil この処理自体を失敗した時にnilを代入

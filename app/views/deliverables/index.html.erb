@@ -1,0 +1,32 @@
+<div class="deliverable-flex"> 
+  <div class="deliverable-container">
+    <div class="deliverable-grid">
+
+      <% @requests.each do |request| %>
+        <div class="deliverable-left">
+          <li>
+            <%= link_to "text" do %>
+              <p>2週間前に終了</p>
+              
+              <div class="deliverable-content-main">
+                <div class="flex items-center" style="justify-content: space-between">
+                  <h3 class="title" style="--fs: 16px">柚さんの描く白髪の女の子を見たい</h3>
+                  <div class="button-container" style="--w: 100px">
+                    <%= link_to "アップロード", root_path, class: "button", style: "--fs: 14px; --px: 6px; --py: 4px; --display: inline-block;"%>
+                  </div>
+                </div>
+                <small class="text-xs">依頼内容<small>
+              </div>
+            <% end %>
+          </li>
+        </div>
+        <div class="deliverable-right">
+          <% if request.request_images.attached?%>
+            <%= image_tag request.request_images.first %>
+          <% end %>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>

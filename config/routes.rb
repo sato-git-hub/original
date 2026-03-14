@@ -22,6 +22,8 @@ resources :requests, only: [] do
   resources :deliverables, only: [:new, :create]
 end
 
+resources :deliverables, only: [:index]
+
 # 確認メール送信後
 get 'after_registration_confirmation', to: 'static_pages#after_registration_confirmation'
 

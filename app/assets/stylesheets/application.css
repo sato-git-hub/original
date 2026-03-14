@@ -56,15 +56,16 @@ li {
   list-style: none;
  }
 
+span {
+  display: inline-block;
+}
+
 img {
   max-width: 100%;
   height: auto;
   vertical-align: middle;
  }
 
-.request-box-tbody {
-
-}
 
 tbody {
     display: table-row-group;
@@ -117,17 +118,21 @@ tr {
   /* text-center */
   text-align: center;
   font-weight: bold;       /* font-bold */
-  font-size: 1.125rem;     /* text-lg (18px) */
+  font-size: var(--fs, 1.125rem);     /* text-lg (18px) */
   color: #fff;
-  padding: 13px 24px;
+  padding: var(--py, 13px); var(--px, 24px);
   background-color: var(--bg-color, #e73650);
   border-color: var(--bg-color, #e73650);
   border-style: solid;
   border-radius: 4px;
   cursor: pointer;
-  display: block;
+  display: var(--display, block);
   width: 100%;
   box-shadow: 0px 4px 8px rgba(33, 35, 37, 0.12);
+}
+
+.button-container {
+  width: var(--w);
 }
 
 /* ロゴ */
@@ -149,9 +154,26 @@ tr {
   padding: 30px 40px 40px 40px;
 }
 
+/* 画像プレビュー */
+.delete-icon-label {
+  cursor: pointer;
+  opacity: 0.6; /* 通常時は少し薄くしておく */
+  transition: all 0.2s;
+}
+
+.delete-icon-label:hover {
+  opacity: 1;
+}
+
+/* チェックボックスにチェックが入った時、隣のlabel内のアイコンを変化させる */
+.hidden-checkbox:checked + .delete-icon-label {
+  opacity: 1;
+  transform: scale(1.2); /* 少し大きくする */
+}
+
 /* 新規会員登録 */
 
-.signin-title {
+.title-border {
   margin-bottom: 20px;
   border-bottom: 1px solid #e4e4e4;
 }
@@ -164,9 +186,9 @@ tr {
   margin-bottom: 5px;
 }
 
-.badge-red {
+.form-badge {
   color: #fff;               /* text-white */
-  background-color: #ef4444; /* bg-red-500 */
+  background-color: var(--bgc, #ef4444); /* bg-red-500 */
   font-weight: 400;          /* font-normal */
   font-size: 0.875rem;       /* text-sm (14px) */
   margin-left: 0.5rem;       /* ml-2 (8px) */
@@ -179,10 +201,24 @@ tr {
 }
 
 .input {
+  width: var(--w, 100%);
+  padding: var(--py, 1em) var(--px, 1em);
+  border: 1px solid #e4e4e4;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.preview{
+  background-color: #fff;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  padding: 1em;
+}
+
+.input-textarea {
   width: 100%;
   padding: 1em;
   border: 1px solid #e4e4e4;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  height: var(--h, 100px);
 }
 
 
@@ -198,6 +234,14 @@ tr {
   border-bottom: 1px solid currentColor; /* border-b (文字色と同じ色の下線) */
   text-decoration: none;             /* ブラウザ標準の下線を消す */
   color: inherit;                    /* 親の文字色を継承 */
+}
+
+.form-error {
+  text-align: center;       
+  font-size: 0.875rem;        
+  font-style: italic;         
+  margin-bottom: 1rem;        
+  color: red;
 }
 
 /* 新規会員後の案内ページ */
@@ -377,11 +421,6 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   height: 20px;
 }
 
-
-.meter-area {
-  padding: 0 12px 10px;
-}
-
 .success-rate-sp {
   padding-bottom: 4px;
   font-size: 10px;
@@ -401,7 +440,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 .meter {
   position: relative;
   width: 100%;
-  height: 20px;
+  height: var(--h,20px);
   overflow: hidden;
   background-color: #e4e4e4;
   border-radius: 10px;
@@ -487,7 +526,12 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 
 .title {
   font-weight: 600;
-  font-size: 1.8em;
+  font-size: var( --fs, 1.8em);
+}
+
+.label-title {
+  font-weight: 600;
+  font-size: var( --fs, 1em);
 }
 
 /* リクエスト画面 */
@@ -531,9 +575,6 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   justify-content: flex-start;
 }
 
-.creator-avatar-area {
-
-}
 
 
 .creator-avatar-image {
@@ -805,23 +846,35 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   overflow: hidden
 }
 
-.request-card-footer {
+.request-card-top {
   aspect-ratio: 3 / 1;
   background-color: #fff;
 }
 
+.request-card-footer {
+
+  background-color: #d6d6d6;
+}
+
 .request-card-title {
   /* 3行分の空白を確保 */
-  height: calc(1.35em * 3);
+  height: calc(1.35em * 2);
   line-height: 1.3;
   font-size: .9em;
   overflow: hidden;
 }
 
-.request-card-footer-contents-container {
-  display: flex;
-  justify-content: center;
-  padding: 12px;
+.aa{border: 1px solid rgb(222, 219, 219);}
+
+
+.request-card-creator-name {
+  font-weight: bold;
+  font-size: 10px;
+  margin-left: 4px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow:ellipsis;
 }
 
 .request-card-footer-contents {
@@ -878,4 +931,69 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 /* 左矢印のカスタマイズ */
 .swiper-button-prev::after {
   content: "";
+}
+
+/* 納品一覧 */
+
+.deliverable-flex{
+  /* 高さ画面いっぱい */
+  min-height: 100vh;  
+  display: flex;
+  /* flex子要素の高さが全て同じになるように引き伸ばされるが　flex-startにすることで引き伸ばされない＆上基準になる */
+  /* flexの子要素は親いっぱいに広がる */ 
+  /* align-items: flex-startを外すと.deliverable-gridの100%が.deliverable-container(flexの子要素は親いっぱいに広がる)の高さを受け継いで、
+  gridの子要素は親に高さがあるとそれを引き継ぐので.deliverable-leftと.deliverable-rightの高さも決まる*/
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0px 32px 24px;
+}
+
+
+.deliverable-container {
+  flex-grow: 1;
+}
+
+.deliverable-grid {
+  display: grid;
+  /* Gridを使うなら、枠（グリッドトラック）は絶対に必要 ルールが適用されるのはその枠の範囲内だけ */
+  /* 画面の横幅に対して左が440px 右が 残りの幅すべて(最大820px)にしたい*/
+  /* minmax(最小, 最大) 最低でもautoで中身の幅以上820px以内 */
+  /* gridアイテムの配置を指定していない時は */
+  grid-template-columns: 440px minmax(auto, 880px);
+  gap: 20px;
+  height: 100%;
+}
+
+.deliverable-left {
+
+}
+.deliverable-right {
+  background-color: #804eff;
+}
+
+@media (max-width: 991px) {
+    .deliverable-right {
+        display: none;
+    }
+
+    .deliverable-grid {
+        
+        grid-template-columns: 1fr;
+    }
+
+    .deliverable-flex {
+      padding: 0px;
+    }
+}
+
+.deliverable-left li {
+  padding: 16px;
+  border-top: 1px solid rgba(129, 129, 129, 0.716);
+}
+
+.deliverable-content-main {
+
+  padding: 0 20px;
+
+
 }

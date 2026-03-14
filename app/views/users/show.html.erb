@@ -73,11 +73,24 @@
       <div class="main-menu">
         <div class="request-box"> 
           <ul style="padding: 10px;">
-            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">作品数</p><p style="flex: 1;">作品数</p></li>
-            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限</p><p style="flex: 1;">作品数</p></li>
-            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">完成期限厳守率</p><p style="flex: 1;">作品数</p></li>
-            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援金額</p><p style="flex: 1;"><%= (@creator_setting.present?)? @creator_setting.minimum_amount : "未設定"%></p></li>
-            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="flex: 3; font-weight: 550;">最低支援者数</p><p style="flex: 1;"><%= (@creator_setting.present?)? @creator_setting.minimum_supporters : "未設定"%></p></li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;">
+              <p style="font-weight: 550; margin-right: auto;">作品数</p>
+              <% (@user.received_requests.size)? %>
+            </li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;">
+              <p style="font-weight: 550; margin-right: auto;">完成期限</p>
+              <% if (@creator_setting.present?) %>
+                <p style="">
+                  <span style="margin-right: 4px;"><%= @creator_setting.delivery_deadline %></span>
+                  <span class="text-xs">日</span>
+                </p>
+              <% else %>
+                <p style="">未設定</p>
+              <% end %>
+            </li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="font-weight: 550; margin-right: auto;">完成期限厳守率</p><p style=""><span style="margin-right: 4px;">作品数</span><span class="text-xs">日</span></p></li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="font-weight: 550; margin-right: auto;">最低支援金額</p><p style=""><span style="margin-right: 4px;">10000000</span><span class="text-xs">円</span></p></li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="font-weight: 550; margin-right: auto;">最低支援者数</p><p style=""><span style="margin-right: 4px;"><%= (@creator_setting.present?)? @creator_setting.minimum_supporters : "未設定"%></span><span class="text-xs">人</span></p></li>
           </ul>
 
           <% if @creator_setting&.published? %>

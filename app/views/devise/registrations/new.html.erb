@@ -2,7 +2,7 @@
 <div class="layout-form">
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
-  <h2 class="title signin-title">新規登録</h2>
+  <h2 class="title title-border">新規登録</h2>
   
   <%= render "devise/shared/error_messages", resource: resource %>
 
@@ -11,7 +11,7 @@
           <%= f.label :name do %>
             ユーザー名
             <% unless f.object.persisted? %>
-              <span class="badge-red">
+              <span class="form-badge">
                 必須
               </span>
             <% end %>
@@ -30,7 +30,7 @@
           <%= f.label :email do %>
             メールアドレス
             <% unless f.object.persisted? %>
-              <span class="badge-red">
+              <span class="form-badge">
                 必須
               </span>
             <% end %>
@@ -49,7 +49,7 @@
           <%= f.label :password do %>
             パスワード
             <% unless f.object.persisted? %>
-              <span class="badge-red">
+              <span class="form-badge">
                 必須
               </span>
             <% end %>
@@ -68,7 +68,7 @@
           <%= f.label :password_confirmation do %>
             パスワード(確認用)
             <% unless f.object.persisted? %>
-              <span class="badge-red">
+              <span class="form-badge">
                 必須
               </span>
             <% end %>

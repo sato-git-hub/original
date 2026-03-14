@@ -9,7 +9,9 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
-    @request = @user.received_requests
+    @request = @user.received_requests.completed
+    @deliverables = @request.deliverable
+    # 期限が過ぎた
     @creator_setting = @user.creator_setting
   end
 

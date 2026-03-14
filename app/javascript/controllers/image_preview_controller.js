@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["preview", "title"]
+  static targets = ["preview"]
   static values = {
     width: { type: String, default: "150px" }, 
     height: { type: String, default: "auto" },
@@ -11,15 +11,13 @@ export default class extends Controller {
 
   preview(event) {
 //存在する？
-    if (this.previewAreaTarget){
-      const area = this.previewAreaTarget.innerHTML
-    }
     const files = event.target.files
-
-    if(!files) return;
-      if (this.hasTitleTarget) {
-        this.titleTarget.classList.remove("hidden")
-      }
+  
+    if (!files || files.length === 0) {
+    this.previewTarget.innerHTML = ""
+    this.previewTarget.classList.add("hidden")
+    return
+  }
       this.previewTarget.classList.remove("hidden")
       this.previewTarget.innerHTML = ""
     Array.from(files).forEach(file=>{

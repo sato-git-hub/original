@@ -9,6 +9,11 @@ class DeliverablesController < ApplicationController
 
   end
 
+  def index
+    #@requests = current_user.received_requests.success_finished
+    @requests = current_user.received_requests
+  end
+
   private
   def deliverable_params
     params.require(:request).permit(deliverable: [])
