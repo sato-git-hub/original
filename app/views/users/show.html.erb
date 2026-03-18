@@ -75,7 +75,7 @@
           <ul style="padding: 10px;">
             <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;">
               <p style="font-weight: 550; margin-right: auto;">作品数</p>
-              <% (@user.received_requests.size)? %>
+              <p><%= @requests.size %></p>
             </li>
             <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;">
               <p style="font-weight: 550; margin-right: auto;">完成期限</p>
@@ -88,9 +88,39 @@
                 <p style="">未設定</p>
               <% end %>
             </li>
-            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="font-weight: 550; margin-right: auto;">完成期限厳守率</p><p style=""><span style="margin-right: 4px;">作品数</span><span class="text-xs">日</span></p></li>
-            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="font-weight: 550; margin-right: auto;">最低支援金額</p><p style=""><span style="margin-right: 4px;">10000000</span><span class="text-xs">円</span></p></li>
-            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;"><p style="font-weight: 550; margin-right: auto;">最低支援者数</p><p style=""><span style="margin-right: 4px;"><%= (@creator_setting.present?)? @creator_setting.minimum_supporters : "未設定"%></span><span class="text-xs">人</span></p></li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;">
+              <p style="font-weight: 550; margin-right: auto;">完成期限厳守率</p>
+              <% unless @ont == 0 %>
+                <p style="">
+                  <span style="margin-right: 4px;"><%= @ont %></span>
+                  <span class="text-xs">%</span>
+                </p>
+              <% else %>
+                <p>集計中</p>
+              <% end %>
+            </li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;">
+              <p style="font-weight: 550; margin-right: auto;">最低支援金額</p>
+              <% if (@creator_setting.present?) %>
+                <p style="">
+                  <span style="margin-right: 4px;"><%= @creator_setting.minimum_amount %></span>
+                  <span class="text-xs">円</span>
+                </p>
+              <% else %>
+                <p style="">未設定</p>
+              <% end %>
+            </li>
+            <li class="flex mb-4" style="border-bottom: 1px solid rgb(138, 138, 138); padding: 4px; line-height: 1.5;">
+              <p style="font-weight: 550; margin-right: auto;">最低支援者数</p>
+              <% if (@creator_setting.present?) %>
+                <p style="">
+                  <span style="margin-right: 4px;"><%= @creator_setting.minimum_supporters %></span>
+                  <span class="text-xs">人</span>
+                </p>
+              <% else %>
+                <p style="">未設定</p>
+              <% end %>
+            </li>
           </ul>
 
           <% if @creator_setting&.published? %>

@@ -1,12 +1,19 @@
 class CancelRequestJob < ApplicationJob
   queue_as :default
 
-  def perform(request_id)
+  def perform
+    expired_requests =
     Request
       .where(status: :success_finished)
-      .where("delivery_deadline < ?", Time.current.floor)
-      .find_each do |request|
-        request.update!(status: :expired)
-      end
+      .where("delivery_due_date < ?", Time.current.floor)
+
+    count = expired_requests.count
+
+    expired_requests.update_all(status: :expired)
+
+    Rails.logger.info "Expired #{count} requests"
+
   end
 end
+
+

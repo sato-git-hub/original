@@ -1,9 +1,15 @@
 class RequestsController < ApplicationController
-  before_action :set_request, only: [ :edit, :show, :update ]
+  before_action :set_request, only: [ :edit, :show, :update, :preview]
   before_action :authorize_user!, only: [ :update ]
   before_action :authorize_approved_or_succeeded!, only: [ :show ]
 
   before_action :ensure_draft!, only: [ :edit, :update ]
+
+  
+  def preview
+
+  end
+  
   # 受け取ったリクエスト一覧
   def incoming
     @q = Request.ransack(params[:q])
@@ -60,12 +66,16 @@ Rails.logger.debug "=============================================#{words}"
     @creator_setting = CreatorSetting.find(params[:creator_setting_id])
     @creator = @creator_setting.user
     @request.creator = @creator
-    if @request.save
+     Rails.logger.debug "DEBUG: keyword=#{@request}===================================================================="
+    if  @request.save
+
         @request.submit! if params[:commit] == "send"
-        redirect_to current_user,notice: "処理に成功しました"
+        redirect_to current_user, notice: "処理に成功しました"
     else
-      flash.now[:alert] = "処理に失敗しました"
-      render :new, status: :unprocessable_entity
+      
+      #flash.now[:alert] = "処理に失敗しました"
+      #render :new, status: :unprocessable_entity
+
     end
   end
 
@@ -152,5 +162,8 @@ private
 
   def request_params
     params.require(:request).permit(:title, :body, :target_amount, request_images: [])
+    .tap do |whitelisted|
+      whitelisted[:request_images] = whitelisted[:request_images].reject(&:blank?)
+    end
   end
 end

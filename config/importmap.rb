@@ -7,4 +7,4 @@ pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
 pin_all_from "app/javascript/controllers", under: "controllers"
 pin "swiper", to: "https://cdn.jsdelivr.net/npm/swiper@9.4.1/swiper-bundle.esm.browser.min.js"
 # 追加
-pin "swiper_setup", preload: true
+#pin "swiper_setup", preload: true

@@ -2,4 +2,4 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 // import "./swiper_setup"
-import "swiper_setup"
+//import "swiper_setup"

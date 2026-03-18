@@ -1,32 +1,97 @@
+<div data-controller="request-preview">
 <div class="deliverable-flex"> 
-  <div class="deliverable-container">
-    <div class="deliverable-grid">
+  <ul class="deliverable-left">
 
-      <% @requests.each do |request| %>
-        <div class="deliverable-left">
-          <li>
-            <%= link_to "text" do %>
-              <p>2週間前に終了</p>
-              
-              <div class="deliverable-content-main">
-                <div class="flex items-center" style="justify-content: space-between">
-                  <h3 class="title" style="--fs: 16px">柚さんの描く白髪の女の子を見たい</h3>
-                  <div class="button-container" style="--w: 100px">
-                    <%= link_to "アップロード", root_path, class: "button", style: "--fs: 14px; --px: 6px; --py: 4px; --display: inline-block;"%>
-                  </div>
-                </div>
-                <small class="text-xs">依頼内容<small>
+
+
+    <div data-controller="request" class="request-main-container">
+    <nav class="flex">
+      <%= link_to "進行中", requests_path(status: :approve),
+      class: "request-content-menu"%>
+    </nav>
+    </div>
+
+
+    <% @requests.each do |request| %>
+      <li class="parent">
+        <%= link_to preview_request_path(request), class: "request-preview", 
+        data: { turbo_frame: "request_preview", controller: "responsive-link", action:"click->responsive-link#click" } do %>
+          <div>
+            <div class="deliverable-title flex flex-col gap-2 mb-6">
+              <p class="mb-2"><%= l request.deadline_at, format: :simple  %></p>
+              <div class="flex items-center gap-4">
+                <div class="text-sm" style="flex: 0 0 auto;">リクエスト:</div>
+                <div class="title"><%= request.title %></div>
               </div>
-            <% end %>
-          </li>
+              <div class="flex items-center gap-6">
+                <div class="text-sm" style="flex: 0 0 auto;">納品期日:</div>
+                <div class="title"><%= l request.delivery_due_date, format: :simple %></div>
+              </div>
+            </div>
+          </div>
+        <%end%>
+      </li>
+    <% end %>
+  </ul>
+  <div class="deliverable-right" data-request-preview-target="previewArea">
+    <%= turbo_frame_tag "request_preview" do %>
+    <% if @requests.any? %>
+      <div class="bg-[#f0f2f4] border border-[#d9dee5] mx-auto rounded mb-6 py-4">
+        <h2 class="font-bold md:text-lg text-center mb-4">
+          <%= @requests.first.title %>
+        </h2>
+        <%= render "shared/image", images: @requests.first.request_images, object_fit: "contain"%>
+        <div class="bg-white rounded p-3 mt-4">
+          <%= simple_format(@requests.first.body) %>
         </div>
-        <div class="deliverable-right">
-          <% if request.request_images.attached?%>
-            <%= image_tag request.request_images.first %>
-          <% end %>
-        </div>
+      </div>
+      <div class="bg-white p-4">
+        <%= form_with model: @requests.first, url: request_deliverable_path(request_id: @requests.first),  method: :patch, data: { turbo_frame: "_top" }  do |f| %>
+
+          <div class="deliverable-input-area">
+            <div class="mb-4">
+
+              <div class="flex items-center gap-1">
+                <p class="font-bold">納品ファイル(JPEG,JPG,PNGのみ)</p>
+                <span class="form-badge">必須</span>
+              </div>
+              <small>※ ユーザーのホーム画面、サムネイルにも使用されます</small>
+              
+            </div>
+            <%= f.label :deliverable do %>
+              <div class="deliverable-input flex mb-4">
+                <div class="input file-input"></div>
+                <div class="small-button" style="--display: inline-block; --w: auto; flex: 0 0 auto;">ファイルを選択</div>
+              </div>
+              <%= f.file_field :deliverable, class: "hidden",
+              data: { action:"change->request-preview#check"}, 
+              accept: 'image/jpeg, image/gif, image/png, image/webp, .psd' %>
+            <%end%>
+          </div>
+          <div class="deliverable-input-area mb-10">
+            <div class="mb-4">
+              <p class="font-bold">納品ファイル(JPEG,JPG,PNG以外)</p>
+              <small>※ 元データファイル(PSD等)で納品する場合はこちら</small>
+            </div>
+            <%= f.label :deliverable_thumbnail do %>
+              <div class="deliverable-input flex">
+                <div class="input file-input"></div>
+                <div class="small-button" style="--display: inline-block; --w: auto; flex: 0 0 auto;">ファイルを選択</div>
+              </div>
+              <%= f.file_field :deliverable_thumbnail, class: "hidden",
+                data: { action:"change->request-preview#check"},
+                accept: 'image/jpeg, image/gif, image/png, image/webp, .psd' %>
+            <%end%>
+          </div>
+          <%= f.submit "ファイルをアップロード", class: "button"%>
+        <% end %>
+      </div>
+      <% else %>
+       <p>現在納品が必要なリクエストはありません</p>
       <% end %>
 
-    </div>
+    <% end %>
   </div>
 </div>
+</div>
+

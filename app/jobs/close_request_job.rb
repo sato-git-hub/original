@@ -11,8 +11,6 @@ class CloseRequestJob < ApplicationJob
     request.finish_if_expired!
     Rails.logger.debug "DEBUG: keyword=#{request.status}================================================="
     if request.success_finished?
-      request.notifications.create!(receiver: request.user, action: :success_finished, target: :supporter)
-      request.notifications.create!(receiver: request.creator, action: :success_finished, target: :creator)
       request.support_histories.authorized.find_each do |support_history|
         begin
           charge = Payjp::Charge.retrieve(support_history.payjp_charge_id)
@@ -21,7 +19,6 @@ class CloseRequestJob < ApplicationJob
           end
           support_history.update!(status: :paid)
           request.notifications.create!(receiver: support_history.user, action: :paid, target: :supporter)
-          request.update!(delivery_due_date: Time.current.floor + self.creator.creator_setting.delivery_deadline.days)
         # Payjp::Charge.retrieveまたはcharge.captureで失敗 => リトライ。statusはauthorizedのまま
         rescue Payjp::PayjpError => e
           # e.json_body[:error][:code]rescue nil この処理自体を失敗した時にnilを代入
@@ -42,8 +39,6 @@ class CloseRequestJob < ApplicationJob
         end
       end
     else # request.finished?
-      request.notifications.create!(receiver: request.user, action: :failed_finished, target: :supporter)
-      request.notifications.create!(receiver: request.creator, action: :failed_finished, target: :creator)
       request.support_histories.authorized.find_each do |support_history|
         begin
           charge = Payjp::Charge.retrieve(support_history.payjp_charge_id)

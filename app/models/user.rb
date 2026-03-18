@@ -24,8 +24,8 @@ class User < ApplicationRecord
   has_many :requests, dependent: :destroy
   has_many :supported_requests, through: :support_histories, source: :request
   has_one_attached :avatar
-  validates :avatar, content_type: { in: %w[image/jpeg image/gif image/png],
-                    message: "png, jpg, jpegいずれかの形式にして下さい" },
+  validates :avatar, content_type: { in: %w[image/jpeg image/gif image/png image/webp],
+                    message: "png, jpg, jpeg, gif, webp いずれかの形式にして下さい" },
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
 
   validates :email, presence: true, uniqueness: true

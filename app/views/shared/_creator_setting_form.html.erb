@@ -2,14 +2,14 @@
   <h2 class="title title-border" style="margin-bottom: 40px;">クリエーター設定</h2>
   <% if @creator_setting.errors.any? %>
 
-  <div class="form-error" style="color: red;">
-    <ul>
-      <% @creator_setting.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
+    <div class="form-error" style="color: red;">
+      <ul>
+        <% @creator_setting.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
   <%= form_with model: creator_setting, url: creator_setting_path, method: (creator_setting.new_record? ? :post : :patch) do |f| %>
     <div class="form-container">
       <div class="label-container">
@@ -51,14 +51,14 @@
       <% end %>
     </ul>
     <% end %>
-    <div data-controller="image-preview">
+      <div data-controller="image-preview">
           
-            <div class="label-container label-title" data-image-preview-target="title">ポートフォリオに掲載する画像を追加</div>
-<% unless f.object.persisted? %>
-            <span class="form-badge">
-              必須
-            </span>
-          <% end %>
+        <div class="label-container label-title" data-image-preview-target="title">ポートフォリオに掲載する画像を追加</div>
+        <% unless f.object.persisted? %>
+          <span class="form-badge">
+            必須
+          </span>
+        <% end %>
       <div data-image-preview-target="preview" class="preview hidden p-4 flex flex-wrap items-center gap-4 mb-4"></div>
 
       <div class="mb-5">
@@ -68,64 +68,64 @@
           class: "hidden", 
           data: { action: "change->image-preview#preview"},
           multiple: true,
-          accept: "image/jpeg,image/gif,image/png" %>
+          accept: "image/jpeg,image/png,image/webp" %>
       </div>
     </div>
 
-  <div class="flex flex-col gap-4">
-  <%= f.label :minimum_amount, "最低リクエスト金額", class: "font-bold text-base my-5" %>
-  
-  <div class="flex items-center gap-4">
-  <div style="flex: 1;">
-    <%= f.range_field :minimum_amount, 
-        min: 300, 
-        max: 50000, 
-        step: 100, 
-        id: "minimum_amount_range",
-        class: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer",
-        oninput: "minimum_amount_input.value = this.value" %>
+    <div class="flex flex-col gap-4">
+      <%= f.label :minimum_amount, "最低リクエスト金額", class: "font-bold text-base my-5" %>
+    
+      <div class="flex items-center gap-4">
+        <div style="flex: 1;">
+          <%= f.range_field :minimum_amount, 
+              min: 300, 
+              max: 50000, 
+              step: 100, 
+              id: "minimum_amount_range",
+              class: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer",
+              oninput: "minimum_amount_input.value = this.value" %>
+        </div>
+        <div class="flex items-center gap-1">
+          <%= f.number_field :minimum_amount,
+              id: "minimum_amount_input",
+              min: 300,
+              max: 100000,
+              step: 100,
+              class: "input text-right font-bold",
+              style: "--w: 95px; --px: 8px; --py: 4px; margin-right: 4px",
+              oninput: "minimum_amount_range.value = this.value" %>
+          <span>円</span>
+        </div>
+      </div>
     </div>
-    <div class="flex items-center gap-1">
-      <%= f.number_field :minimum_amount,
-          id: "minimum_amount_input",
-          min: 300,
-          max: 100000,
-          step: 100,
-          class: "input text-right font-bold",
-          style: "--w: 95px; --px: 8px; --py: 4px; margin-right: 4px",
-          oninput: "minimum_amount_range.value = this.value" %>
-      <span>円</span>
-    </div>
-  </div>
-</div>
 
+    <div class="flex flex-col gap-4">
+      <%= f.label :minimum_supporters, "最低支援者数", class: "font-bold text-base my-5" %>
+      
+      <div class="flex items-center gap-4">
+        <div style="flex: 1;">
+        <%= f.range_field :minimum_supporters, 
+            min: 1, 
+            max: 100, 
+            step: 1, 
+            id: "minimum_supporters_range",
+            class: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer",
+            oninput: "minimum_supporters_input.value = this.value" %>
+        </div>
+        <div class="flex items-center gap-1">
+          <%= f.number_field :minimum_supporters,
+              id: "minimum_supporters_input",
+              min: 1,
+              max: 100,
+              step: 1,
+              class: "input text-right font-bold",
+              style: "--w: 95px; --px: 8px; --py: 4px; margin-right: 4px",
+              oninput: "minimum_supporters_range.value = this.value" %>
+          <span>人</span>
+        </div>
+      </div>
+    </div>
 
-  <div class="flex flex-col gap-4">
-  <%= f.label :minimum_supporters, "最低支援者数", class: "font-bold text-base my-5" %>
-  
-  <div class="flex items-center gap-4">
-    <div style="flex: 1;">
-    <%= f.range_field :minimum_supporters, 
-        min: 1, 
-        max: 100, 
-        step: 1, 
-        id: "minimum_supporters_range",
-        class: "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer",
-        oninput: "minimum_supporters_input.value = this.value" %>
-    </div>
-    <div class="flex items-center gap-1">
-      <%= f.number_field :minimum_supporters,
-          id: "minimum_supporters_input",
-          min: 1,
-          max: 100,
-          step: 1,
-          class: "input text-right font-bold",
-          style: "--w: 95px; --px: 8px; --py: 4px; margin-right: 4px",
-          oninput: "minimum_supporters_range.value = this.value" %>
-      <span>人</span>
-    </div>
-  </div>
-</div>
 <div class="flex flex-col gap-4">
   <%= f.label :delivery_deadline, "納品期日", class: "font-bold text-base my-5" %>
   
@@ -153,20 +153,28 @@
   </div>
 </div>
 <p class= "font-bold text-base my-5">公開設定</p>
-    <div class="flex items-center gap-2 mb-10">
-     <%= f.check_box :published, 
-      { checked: @creator_setting.published?, class: "h-4 w-4 rounded border-gray-300" }, 
-      "true", 
-      "false" %>
-      <%= f.label :published, "公開する(リクエストが送られるようになります)" %>
-    </div>
+  <div class="flex items-center gap-2 mb-10">
+    <%= f.check_box :published, 
+    { checked: @creator_setting.published?, class: "h-4 w-4 rounded border-gray-300" }, 
+    "true", 
+    "false" %>
+    <%= f.label :published, "公開する(リクエストが送られるようになります)" %>
+  </div>
+
+<p class= "font-bold text-base my-5">確認事項</p>
+  <div class="flex items-center gap-2 mb-10">
+    <%= f.check_box :terms_agreed, 
+    { checked: @creator_setting.persisted?, class: "h-4 w-4 rounded border-gray-300" }, 
+    "true", 
+    "false" %>
+    <%= f.label :terms_agreed, "リクエストのメイン画像に自身の作品が使われることを了承する" %>
+  </div>
+
 
     <%= f.submit "保存", 
       id: "rails-submit-button", 
       class: "fixed button w-full", 
       style: "position: fixed; bottom: 0; left: 0;"%>
-
-
-  
     <% end %>
 
+</div>

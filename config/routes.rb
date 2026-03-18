@@ -19,7 +19,13 @@ get 'user_menu', to: 'users#menu', as: :user_menu
 root "requests#index"
 
 resources :requests, only: [] do
-  resources :deliverables, only: [:new, :create]
+  resource :deliverable, only: [:update]
+end
+
+resources :deliverables, only: [] do
+  member do
+    get :download
+  end
 end
 
 resources :deliverables, only: [:index]
@@ -82,13 +88,23 @@ resources :requests, only: [] do # /requests/
   end
 end
 
+resources :requests do
+  member do
+    get :preview
+  end
+end
+
 resources :requests
+
 resources :users, only: [] do
   get :portfolio
   get :received_request
   get :sent_request
   get :supported_request
+
 end
+
+
 
 resources :users, only: [ :show ]
 

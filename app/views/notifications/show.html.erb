@@ -34,6 +34,8 @@
       登録したカードの決済に失敗しました　リターンはキャンセルされました
     <%elsif notification.refunded?%>
       仮押さえを解除しました。お金は引き落とされていません
+    <%elsif notification.completed?%>
+      支援したリクエストのイラストが完成しました。
     <% end %>
     </p>
 
@@ -49,6 +51,8 @@
       依頼されたリクエストが達成金額に到達しました。
     <%elsif notification.failed_finished?%>
       依頼されたリクエストが達成金額に到達せず、終了しました
+    <%elsif notification.completed?%>
+      イラストの納品が完了しました。
     <% end %>
     </p>
   <% end %>

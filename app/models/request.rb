@@ -1,8 +1,13 @@
 class Request < ApplicationRecord
   before_save :set_search_conf
-  # 納品期日が過ぎてないリクエストを絞り込む
+  # 納品期日前のリクエスト
+  scope :active_deadline, -> { where("delivery_due_date > ?", Time.current.floor) }
+  # 納品期日が過去のリクエスト
+  scope :expired, -> { where("delivery_due_date < ?", Time.current.floor) } 
+  # 納品期日を守ったリクエスト
   scope :on_time, -> { where("delivered_at <= delivery_due_date") }
-  # statusが
+  # 納品期日を守らなかったリクエスト
+  scope :off_time, -> { where("delivered_at > delivery_due_date") }
 
   scope :search, ->(keyword) {
     keywords = keyword.split(/[ 　]+/)
@@ -59,22 +64,36 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
   completed: 8 # クリエーターが納品を完了(期日内)
 }
 
+
   # 納品イラストファイル
+  has_one_attached :deliverable_psd
+  validates :deliverable,
+                    content_type: { in: %w[image/jpeg image/gif image/png image/webp image/vnd.adobe.photoshop ],
+                    message: "psd, png, jpg, jpeg, gif, webp いずれかの形式にして下さい" },
+                    size: { less_than: 500.megabytes, message: " 500MBを超えるファイルはアップロードできません" }
+
+  # 納品イラスト サムネイル用
   has_one_attached :deliverable
   validates :deliverable,
-                    content_type: { in: %w[image/jpeg image/gif image/png],
-                    message: "png, jpg, jpegいずれかの形式にして下さい" },
+                    content_type: { in: %w[image/jpeg image/gif image/png image/webp ],
+                    message: "png, jpg, jpeg, gif, webp いずれかの形式にして下さい" },
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
+
+  with_options on: :step1 do
+    validates :deliverable_thumbnail,
+                      presence: true
+  end
 
   # リクエスト画像
   has_many_attached :request_images
   validates :request_images,
                     presence: true,
-                    content_type: { in: %w[image/jpeg image/gif image/png],
-                    message: "png, jpg, jpegいずれかの形式にして下さい" },
+                    content_type: { in: %w[image/jpeg image/gif image/png image/webp],
+                    message: "png, jpg, jpeg, gif, webp いずれかの形式にして下さい" },
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
 
   validates :title, :body, :target_amount, presence: true, on: :create
+
 
   def supporters_count
     if support_histories.loaded?
@@ -93,8 +112,8 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
   def approve!
     raise "invalid state" unless submit?
     transaction do
-      #update!(status: :approved, approved_at: Time.current.floor, deadline_at: 2.minutes.from_now)
-      update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
+      update!(status: :approved, approved_at: Time.current.floor, deadline_at: 2.minutes.from_now)
+      #update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
 
       # selfはリクエストレコード
       Rails.logger.debug "DEBUG: keyword=#{self.inspect}"
@@ -109,25 +128,31 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
     self.notifications.create!(action: :decline, receiver: self.user, target: :supporter)
   end
 
+  def finished!
+    transaction do
+      update!(status: :finished)
+      self.notifications.create!(action: :finished, receiver: self.user, target: :supporter)
+      self.notifications.create!(action: :finished, receiver: self.creator, target: :creator)
+    end
+  end
+
   def success_finished!
     transaction do
-      # 1. ステータスを更新（本来の enum の動き）
-      update!(status: :success_finished)
-      
-      # 2. 一緒に行いたい処理を追加
-      #delivery_due_dateはリクエストをクリエーターが承認した時に 
-      # request.delivery_due_date = #{request.creator.creator_setting.delivery_deadline}.days.from_now.end_of_day
-      # delivery_due_date.update!
-      # 
-      self.delivery_due_date
+      update!(status: :success_finished, delivery_due_date: Time.current.floor + self.creator.creator_setting.delivery_deadline.days)
+      self.notifications.create!(action: :success_finished, receiver: self.user, target: :supporter)
+      self.notifications.create!(action: :success_finished, receiver: self.creator, target: :creator)
       # self.notifications.create!(action: :, receiver: self.user, target: :supporter)
     end
   end
 
-  def complete!
-    raise "invalid state" unless success_finished?
-    update!(status: :completed)
-    self.notifications.create!(action: :completed, receiver: self.creator, target: :creator)
+  # 納品完了
+  def complete!(deliverable_params)
+    raise "already completed" if completed?
+    transaction do
+      update!(deliverable_params.merge(status: :completed, delivered_at: Time.current.floor))
+      self.notifications.create!(action: :completed, receiver: self.user, target: :supporter)
+      self.notifications.create!(action: :completed, receiver: self.creator, target: :creator)
+    end
   end
 
   def mark_success_if_reached!
@@ -141,11 +166,10 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
 
   def finish_if_expired!
     return unless Time.current.floor >= deadline_at
-    # 期間が過ぎた時にどっちになるか判定
     if succeeded?
-      update!(status: :success_finished)
+      success_finished!
     elsif approved?
-      update!(status: :finished)
+      finished!
     end
   end
 PAYJP_ERROR_CODE = {

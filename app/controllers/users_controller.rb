@@ -9,9 +9,9 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
-    @request = @user.received_requests.completed
-    @deliverables = @request.deliverable
-    # 期限が過ぎた
+    @requests = @user.received_requests.completed.with_attached_deliverable
+    base = @user.received_requests
+    @ont = (base.on_time.count.zero?)? 0 : (base.on_time.count.to_f / (base.off_time.count + base.on_time.count)*100).round
     @creator_setting = @user.creator_setting
   end
 

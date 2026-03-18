@@ -1,21 +1,32 @@
 class DeliverablesController < ApplicationController
-  def new
-    # @request = Request.find(params[:request_id])
-    # フォーム　model:@request
-    #
-  end
 
-  def create
-
+  def update
+    @request = current_user.received_requests.find(params[:request_id])
+    @request.complete!(deliverable_params)
+    redirect_to deliverables_path, notice: "納品が完了しました"
   end
 
   def index
-    #@requests = current_user.received_requests.success_finished
-    @requests = current_user.received_requests
+    @requests = current_user
+    .received_requests
+    .success_finished
+    .active_deadline
+    .with_attached_request_images
+    .order(:delivery_due_date)
+  end
+
+  def download
+    file = 
+   #send_data file.download,
+           # filename: file.filename.to_s,
+            #type: file.content_type,
+            #disposition: "attachment"
+
+            redirect_to rails_blob_path(current_user.avatar, disposition: "attachment")
   end
 
   private
   def deliverable_params
-    params.require(:request).permit(deliverable: [])
+    params.require(:request).permit(deliverable: [], deliverable_psd: [])
   end
 end

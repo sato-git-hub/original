@@ -1,0 +1,54 @@
+<%= turbo_frame_tag "request_preview" do %>
+  <%= link_to "javascript:history.back()", data: { turbo: false } do %>
+    <%= image_tag "kkrn_icon_modoru_16.svg", class: "" %>
+  <% end %>
+  <div class="relative bg-[#f0f2f4] border border-[#d9dee5] mx-auto rounded mb-6 py-4">
+    <h2 class="font-bold md:text-lg text-center mb-4">
+      <%= @request.title %>
+    </h2>
+    <%= render "shared/image", images: @request.request_images, object_fit: "contain"%>
+    <div class="bg-white rounded p-3 mt-4">
+      <%= simple_format(@request.body) %>
+    </div>
+  </div>
+
+  <div class="bg-white p-4">
+    <%= form_with  model: @request, url: request_deliverable_path(@request), method: :patch, data: { turbo: false } do |f| %>
+      <div class="deliverable-input-area">
+        <div class="mb-4">
+          <div class="flex items-center gap-1">
+            <p class="font-bold">納品ファイル(JPEG,JPG,PNGのみ)</p>
+            <span class="form-badge">必須</span>
+          </div>
+          <small>※ ユーザーのホーム画面、サムネイルにも使用されます</small>
+        </div>
+        <%= f.label :deliverable_psd do %>
+          <div class="deliverable-input flex mb-4">
+            <div class="input file-input"></div>
+            <div class="small-button" style="--display: inline-block; --w: auto; flex: 0 0 auto;">ファイルを選択</div>
+          </div>
+          <%= f.file_field :deliverable_psd, class: "hidden",
+          data: { action:"change->request-preview#check"}, 
+          accept: 'image/jpeg, image/gif, image/png, image/webp, .psd' %>
+        <%end%>
+      </div>
+      <div class="deliverable-input-area mb-10">
+        <div class="mb-4">
+          <p class="font-bold">納品ファイル(JPEG,JPG,PNG以外)</p>
+          <small>※ 元データファイル(PSD等)で納品する場合はこちら</small>
+        </div>
+        <%= f.label :deliverable do %>
+          <div class="deliverable-input flex">
+            <div class="input file-input"></div>
+            <div class="small-button" style="--display: inline-block; --w: auto; flex: 0 0 auto;">ファイルを選択</div>
+          </div>
+          <%= f.file_field :deliverable, class: "hidden",
+            data: { action:"change->request-preview#check"},
+            accept: 'image/jpeg, image/gif, image/png, image/webp, .psd' %>
+        <%end%>
+      </div>
+      <%= f.submit "ファイルをアップロード", class: "button"%>
+    <% end %>
+  </div>
+<% end %>
+ 

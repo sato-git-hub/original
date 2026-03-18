@@ -1,45 +1,11 @@
-<%= search_form_for @q, url: support_histories_path, method: :get, class: "mb-15", local: true do |f| %>
-  <%= f.label :status_eq, "ステータス" %>
-  <%= f.select :status_eq,
-    [["支援中", 0], ["決済済み", 1], ["支援失敗", 2], ["決済失敗", 3]],
-    { include_blank: "すべて", selected: params[:q]&.[](:status_eq) }, 
-    { onchange: "this.form.submit();" } %>
+<% @support_histories.each do |support_history| %>
+  <% if support_history.request.completed?%>
+    <%= image_tag support_history.request.deliverable %>
+    <p>リクエストタイトル</p><%= support_history.request.title %>
+    <p>ステータス</p>
+    <%= if support_history.request.status ==  %>
+    <% end %>
+    <%= link_to "ダウンロード", download_deliverable_path(support_history.request), class: "small-button" %>
+  <% end %>
 <% end %>
 
-<% if @support_histories.blank? %>
-<div class="text-center"><%= "現在支援しているリクエストはありません" %></div>
-<% else %>
-<table style="border-collapse: collapse; margin: 0 auto; table-layout: fixed; width: 100%;">
-  <tr>
-    <th style="border: 1px solid black; padding: 15px 30px; width: 220px;">支援されたリクエスト</th>
-    <th style="border: 1px solid black; padding: 15px 30px; width: 120px;">支援金額</th>
-    <th style="border: 1px solid black; padding: 15px 30px; width: 180px;">クリエーター</th>
-    <th style="border: 1px solid black; padding: 15px 30px; width: 180px;">支援日時</th>
-  </tr>
-
-  <% @support_histories.each do |support_history| %>
-    <tr>
-      <td style="border: 1px solid black; padding: 15px 30px;">
-        <%= link_to support_history.request.title,
-            support_history.request,
-            style: "display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align: center;" %>
-      </td>
-
-      <td style="border: 1px solid black; padding: 15px 30px; text-align: center;">
-        <%= support_history.amount %>円
-      </td>
-
-      <td style="border: 1px solid black; padding: 15px 30px; text-align: center;">
-        <%= link_to support_history.request.creator.name,
-            support_history.request.creator,
-            style: "display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" %>
-      </td>
-
-      <td style="border: 1px solid black; padding: 15px 30px; text-align: center;">
-        <%= support_history.created_at.strftime("%Y/%m/%d %H:%M")%>
-      </td>
-    </tr>
-  <% end %>
-</table>
-
- <% end %>
