@@ -139,7 +139,7 @@
             </div>
             <div class="creator-body-area">
               <div class="creator-avatar-container">
-                <%= user_avatar(@request.creator, 60, class: "creator-avatar-image") %>
+                <%= user_avatar(@request.creator, size: 60, class: "creator-avatar-image") %>
               </div>
               <div class="creator-about-container">
                 <div class="creator-name font-bold text-lg"><%= @request.creator.name %></div>

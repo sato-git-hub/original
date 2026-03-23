@@ -18,7 +18,7 @@ html, body {
   /* bodyのmargin: 0 auto; を 0 に変更（突き抜け・ズレ防止） */
   margin: 0;
   padding: 0;
-  font-size: 14px;
+  font-size: 12px;
   /* 横揺れ防止：中身が突き抜けた時に横スクロールを出さない */
   overflow-x: hidden; 
   /* 文字サイズの自動調整をオフ（モバイル用） */
@@ -344,18 +344,32 @@ tr {
 position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid; border-radius: 0.25rem; background-color: white; display: inline-block;
 }
 
+.notification-menu {
+  width: 80%;
+}
+
+.notification-menu-content {
+  padding: 5px 20px;
+  flex:1 0 0;
+}
+
+.notification-menu-content.active {
+  background-color: #ffffff;
+  border-top: 2px solid #ef4846;
+  opacity: 1.0;
+  flex: 1;
+}
+
 .notification-list-panel{
   display: none;
   position: fixed;
-  top: 87.5px;
+  top: 75px;
   left: 0;
   width: 100%;
   z-index: 50; 
-  height: calc(100vh - 100px);
+  height: calc(100vh - 75px);
   overflow-y: auto;
-
-  background-color: #fff; 
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+  background-color: rgb(246, 248, 250);
 }
 
 .notification-list-panel.active{
@@ -541,12 +555,12 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 
 .title {
   font-weight: 600;
-  font-size: var( --fs, 1.8em);
+  font-size: var( --fs, 1.5em);
 }
 
 .label-title {
   font-weight: 600;
-  font-size: var( --fs, 1em);
+  font-size: 1.2em;
 }
 
 /* リクエスト画面 */
@@ -993,7 +1007,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 
 /* 受け取ったリクエスト */
 /* 納品一覧 */
-
+.request-flex,
 .deliverable-flex{
   /* 高さ画面いっぱい */
   min-height: 100vh;  
@@ -1008,24 +1022,29 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
   gap: 24px;
 }
 
-
 .deliverable-container {
   flex-grow: 1;
 }
 
-
+.request-left,
 .deliverable-left {
  flex-grow: 1;
  max-width: 700px;
 }
 
+.request-right,
 .deliverable-right {
   max-width: 100%;
   width: 700px;
 }
 
-.parent {
+.request-list-area {
   container-type: inline-size;
+  padding: 16px;
+  border-top: 1px solid rgba(180, 180, 180, 0.716);
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0px 4px 4px rgba(33, 35, 37, 0.12);
 }
 
 .file-input {
@@ -1039,11 +1058,11 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
     --py: 8px;
 }
 
-.deliverable-title {
+.request-title {
   --fs: 16px
 }
 
-.deliverable-title .title {
+.request-title .title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow:ellipsis;
@@ -1060,6 +1079,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
 }
 
 @media (max-width: 1150px) {
+    .request-right,
     .deliverable-right {
       width: 500px;
     }
@@ -1069,7 +1089,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
     .deliverable-left {
         flex-grow: 1;
     }
-
+    .request-right,
     .deliverable-right {
       width: 350px;
     }
@@ -1078,7 +1098,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
       padding: 0px;
     }
 
-    .deliverable-title {
+    .request-title {
       --fs: 12px
     }
   }
@@ -1088,7 +1108,7 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
       flex-grow: 0;
       width: 100%;
     }
-
+    .request-right,
     .deliverable-right {
       display: none;
     }
@@ -1108,15 +1128,69 @@ position: fixed; top: 150px; left: 100px; border-width: 1px; border-style: solid
     --px: 2px;
     --py: 2px;
   }
-
   }
 
-.deliverable-left li {
+
+
+/* 受け取ったリクエスト一覧 */
+
+.received-request-menu {
+  flex: 1 0 0;
+}
+
+.request-detail-area {
   padding: 16px;
-  border-top: 1px solid rgba(129, 129, 129, 0.716);
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0px 4px 4px rgba(33, 35, 37, 0.12);
+}
+
+.preview-card {
+  background-color: #f0f2f4;
+  border: 1px solid #d9dee5;
+  margin: 0 auto;
+  border-radius: 0.25rem; 
+  margin-bottom: 1.5rem; 
+  padding-top: 1rem;      
+  padding-bottom: 1rem;   
+}
+
+/* 受信した承認待ちリクエスト */
+
+@media (max-width: 768px) {
+.received-request-area .small-button{
+  padding: 7px 12px;
+}
+}
+
+.image-grid-container {
+  display: grid;
+  gap: 16px; 
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 768px) {
+  .image-grid-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .image-grid-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.confirm-area {
+background-color: #EDEEF0;
+    padding: 30px;
+    border-left: 3px solid #dcd9d9;
 }
 
 
 
-
-
+@media (min-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+}

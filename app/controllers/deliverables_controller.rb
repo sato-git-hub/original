@@ -2,8 +2,14 @@ class DeliverablesController < ApplicationController
 
   def update
     @request = current_user.received_requests.find(params[:request_id])
+    
     @request.complete!(deliverable_params)
-    redirect_to deliverables_path, notice: "納品が完了しました"
+    Rails.logger.debug "=======================成功#{ @request.inspect }================================="
+      redirect_to received_requests_path, notice: "納品が完了しました"
+    rescue => e
+      flash[:alert] = e.message
+      Rails.logger.debug "=======================失敗#{ @request.inspect }================================="
+      redirect_to root_path
   end
 
   def index
@@ -27,6 +33,6 @@ class DeliverablesController < ApplicationController
 
   private
   def deliverable_params
-    params.require(:request).permit(deliverable: [], deliverable_psd: [])
+    params.require(:request).permit(:deliverable, :deliverable_psd)
   end
 end

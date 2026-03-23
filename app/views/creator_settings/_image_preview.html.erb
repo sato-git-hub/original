@@ -1,0 +1,13 @@
+<% @creator_setting.images.each do |image| %>
+        <li class="relative" id="image_container_<%= image.id %>" style= " border: 1px solid #78787850; background-color: #afafaf23; aspect-ratio: 4 / 5;">
+          <div class="inline-block absolute">
+            <%= link_to remove_image_creator_setting_path(image_id: image.id, creator_setting_id: @creator_setting.id ),
+            data: { turbo_method: :delete } do %>
+              <i class="fa-solid fa-circle-xmark" style="color: red;"></i>
+            <% end %>
+          </div>
+
+            <%= image_tag default_image(image), style: "width: 100%; height: 100%;", class: "object-contain rounded"%>
+
+        </li>
+      <% end %>

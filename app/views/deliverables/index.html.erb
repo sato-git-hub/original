@@ -2,22 +2,12 @@
 <div class="deliverable-flex"> 
   <ul class="deliverable-left">
 
-
-
-    <div data-controller="request" class="request-main-container">
-    <nav class="flex">
-      <%= link_to "進行中", requests_path(status: :approve),
-      class: "request-content-menu"%>
-    </nav>
-    </div>
-
-
     <% @requests.each do |request| %>
-      <li class="parent">
-        <%= link_to preview_request_path(request), class: "request-preview", 
+      <li class="request_list">
+        <%= link_to preview_request_path(request), class: "", 
         data: { turbo_frame: "request_preview", controller: "responsive-link", action:"click->responsive-link#click" } do %>
           <div>
-            <div class="deliverable-title flex flex-col gap-2 mb-6">
+            <div class="request-title flex flex-col gap-2 mb-6">
               <p class="mb-2"><%= l request.deadline_at, format: :simple  %></p>
               <div class="flex items-center gap-4">
                 <div class="text-sm" style="flex: 0 0 auto;">リクエスト:</div>
@@ -36,15 +26,7 @@
   <div class="deliverable-right" data-request-preview-target="previewArea">
     <%= turbo_frame_tag "request_preview" do %>
     <% if @requests.any? %>
-      <div class="bg-[#f0f2f4] border border-[#d9dee5] mx-auto rounded mb-6 py-4">
-        <h2 class="font-bold md:text-lg text-center mb-4">
-          <%= @requests.first.title %>
-        </h2>
-        <%= render "shared/image", images: @requests.first.request_images, object_fit: "contain"%>
-        <div class="bg-white rounded p-3 mt-4">
-          <%= simple_format(@requests.first.body) %>
-        </div>
-      </div>
+      <%= render "shared/request_preview", request: @requests.first %>
       <div class="bg-white p-4">
         <%= form_with model: @requests.first, url: request_deliverable_path(request_id: @requests.first),  method: :patch, data: { turbo_frame: "_top" }  do |f| %>
 
@@ -64,7 +46,7 @@
                 <div class="small-button" style="--display: inline-block; --w: auto; flex: 0 0 auto;">ファイルを選択</div>
               </div>
               <%= f.file_field :deliverable, class: "hidden",
-              data: { action:"change->request-preview#check"}, 
+              data: { action:"change->request-preview#check" }, 
               accept: 'image/jpeg, image/gif, image/png, image/webp, .psd' %>
             <%end%>
           </div>

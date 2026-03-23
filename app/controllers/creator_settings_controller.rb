@@ -52,6 +52,34 @@ class CreatorSettingsController < ApplicationController
     render :edit, status: :unprocessable_entity
   end
 
+  def remove_image
+    @creator_setting = CreatorSetting.find(params[:creator_setting_id])
+    #record_type = 'CreatorSetting' #name = images #record_id = 1
+    image = @creator_setting.images.find(params[:image_id])
+    image.purge
+    respond_to do |format|
+    # 3. Turbo Stream で画面上の要素だけを消す
+      format.turbo_stream {
+        render turbo_stream: turbo_stream.remove("image_container_#{image.id}")
+      }
+    end
+  end
+
+  def add_image
+    @creator_setting = CreatorSetting.find(params[:creator_setting_id])
+    #record_type = 'CreatorSetting' #name = images #record_id = 1
+
+    @creator_setting.images.attach(creator_setting_params[:images])
+     respond_to do |format|
+       format.turbo_stream {
+       render turbo_stream: turbo_stream.update("image-preview",
+       partial: "creator_settings/image_preview",
+        locals: { creator_setting: @creator_setting })
+      }
+    end
+
+  end
+
   private
 
   def redirect_if_deposit_exists

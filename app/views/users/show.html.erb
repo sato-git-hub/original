@@ -6,7 +6,7 @@
 
 <div class="user-body-container">
   <div class="user-top">
-    <div class="avatar-container flex-shrink-0"><%= user_avatar(@user, 180, 400, class:"user-avatar") %></div>
+    <div class="avatar-container flex-shrink-0"><%= user_avatar(@user, size: 180, resize: 400, class:"user-avatar") %></div>
     <div class="user-body-area column flex-1 min-w-0">
       <h1 class="user-name text-2xl font-bold mb-4"><%= @user.name %></h1>
       <div class="flex space-x-4 mb-7">
@@ -130,8 +130,8 @@
           <% end %>
         </div>
         <div class="deliverables">
-          <% if @creator_setting.present? %>
-          <%= render "shared/deliverables", creator_setting: @creator_setting %>
+          <% if @requests.present? %>
+          <%= render "shared/deliverables", requests: @requests %>
           <% else %>
             <p style="text-align: center; color: #666; padding: 40px 0;">作品は現在投稿されていません</p>
           <% end %>

@@ -14,7 +14,7 @@
 
   <hr class="menu-border">
 
-  <%= link_to "受け取ったリクエスト", incoming_requests_path,
+  <%= link_to "受け取ったリクエスト", received_requests_path,
     class: "block py-3 hover:bg-gray-100 rounded", data: { turbo_frame: "_top" } %>
 
   <hr class="menu-border">
@@ -28,6 +28,10 @@
   <hr class="menu-border">
 
   <%= link_to "納品一覧", deliverables_path,
+    class: "block py-3 hover:bg-gray-100 rounded", data: { turbo_frame: "_top" } %>
+  <hr class="menu-border">
+
+  <%= link_to "下書き一覧", drafts_path,
     class: "block py-3 hover:bg-gray-100 rounded", data: { turbo_frame: "_top" } %>
   <hr class="menu-border">
   

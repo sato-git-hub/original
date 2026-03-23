@@ -1,6 +1,6 @@
-<% if @requests.present? %>
+<% if requests.present? %>
   <% 
-    count = creator_setting.images.size 
+    count = requests.size 
 
     max_width = case
                 when count == 1 then "400px"
@@ -11,10 +11,10 @@
   %>
 
   <div style="column-width: 250px; column-gap: 16px; width: 100%; max-width: <%= max_width %>; margin: 0 auto;">
-    <% @requests.each do |request| %>
-      <% if request.attached.deliverable? %>
+    <% requests.each do |request| %>
+      <% if request.deliverable.attached? %> 
         <div style="break-inside: avoid; margin-bottom: 16px;">
-          <%= image_tag default_image(image), style: "width: 100%; height: auto; display: block; border-radius: 8px;" %>
+          <%= image_tag default_image(request.deliverable), style: "width: 100%; height: auto; display: block; border-radius: 8px;" %>
         </div>
       <% else %>
         <div style="break-inside: avoid; margin-bottom: 16px;">
@@ -26,3 +26,4 @@
 <% else %>
   <p style="text-align: center; color: #666; padding: 40px 0;">現在投稿されていません</p>
 <% end %>
+

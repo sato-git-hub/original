@@ -1,0 +1,2 @@
+module SupportedRequestsHelper
+end

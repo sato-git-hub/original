@@ -1,15 +1,23 @@
-<div class="page-container" style="--mw: 600px; --pb: 100px; --pt: 40px;">
+<div class="page-container creator-setting-page" style="--mw: 700px; --pb: 100px; --pt: 40px;">
   <h2 class="title title-border" style="margin-bottom: 40px;">クリエーター設定</h2>
-  <% if @creator_setting.errors.any? %>
+  <% if creator_setting.errors.any? %>
 
     <div class="form-error" style="color: red;">
       <ul>
-        <% @creator_setting.errors.full_messages.each do |message| %>
+        <% creator_setting.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
+
+  <%= form_with model: creator_setting, url: add_image_creator_setting_path( creator_setting_id: creator_setting.id), 
+              id: "image-upload-form", 
+              method: :post, 
+              multipart: true,
+              class: "hidden" do %>
+  <% end %>
+  
   <%= form_with model: creator_setting, url: creator_setting_path, method: (creator_setting.new_record? ? :post : :patch) do |f| %>
     <div class="form-container">
       <div class="label-container">
@@ -31,29 +39,26 @@
     </div>
    
     <% if creator_setting.images.attached? %>
-    
-      <div class="label-container label-title">ポートフォリオに掲載中</div>
+  <div data-controller="image-preview">
+      <div class="label-container label-title">ポートフォリオに掲載するイラスト</div>
 
-
-    <ul class="preview flex flex-wrap items-center gap-4 mb-5">
+    <ul class="image-grid-container mb-6 p-4" id="image-preview">
       <% @creator_setting.images.each do |image| %>
-        <li class="relative">
+        <li class="relative" id="image_container_<%= image.id %>" style= " border: 1px solid #78787850; background-color: #afafaf23; aspect-ratio: 4 / 5;">
           <div class="inline-block absolute">
-            <%= check_box_tag "remove_image_ids[]", image.id, false, id: "remove_image_#{image.id}", class:"hidden"%>
-            <%= label_tag "remove_image_#{image.id}", class: "delete-icon-label" do %>
-              <i class="fa-solid fa-circle-xmark" style="color: red; font-size: 20px;"></i>
+            <%= link_to remove_image_creator_setting_path(image_id: image.id, creator_setting_id: @creator_setting.id ),
+            data: { turbo_method: :delete } do %>
+              <i class="fa-solid fa-circle-xmark" style="color: red; font-size: 1.5em;"></i>
             <% end %>
           </div>
-          <div style= "width: 200px; height: 150px;">
-            <%= image_tag default_image(image), style: "width: 100%; height: 100%", class: "object-contain rounded"%>
-          </div>
+
+            <%= image_tag default_image(image), style: "width: 100%; height: 100%;", class: "object-contain rounded"%>
+
         </li>
       <% end %>
     </ul>
     <% end %>
-      <div data-controller="image-preview">
-          
-        <div class="label-container label-title" data-image-preview-target="title">ポートフォリオに掲載する画像を追加</div>
+
         <% unless f.object.persisted? %>
           <span class="form-badge">
             必須
@@ -62,18 +67,23 @@
       <div data-image-preview-target="preview" class="preview hidden p-4 flex flex-wrap items-center gap-4 mb-4"></div>
 
       <div class="mb-5">
-        <%= f.label :images, "ファイルを選択", 
-            class: "button"%>
-        <%= f.file_field :images,
-          class: "hidden", 
-          data: { action: "change->image-preview#preview"},
-          multiple: true,
-          accept: "image/jpeg,image/png,image/webp" %>
+
+        <label for="image_upload_input" class="button">ファイルを選択</label>
+
+        <input type="file" 
+               name="creator_setting[images][]" 
+               id="image_upload_input"
+               class="hidden" 
+               multiple="multiple"
+               accept="image/jpeg,image/png,image/webp"
+               form="image-upload-form" 
+               data-action="change->image-preview#add">
+      
       </div>
     </div>
 
     <div class="flex flex-col gap-4">
-      <%= f.label :minimum_amount, "最低リクエスト金額", class: "font-bold text-base my-5" %>
+      <%= f.label :minimum_amount, "最低リクエスト金額", class: "font-bold label-title my-5" %>
     
       <div class="flex items-center gap-4">
         <div style="flex: 1;">
@@ -100,7 +110,7 @@
     </div>
 
     <div class="flex flex-col gap-4">
-      <%= f.label :minimum_supporters, "最低支援者数", class: "font-bold text-base my-5" %>
+      <%= f.label :minimum_supporters, "最低支援者数", class: "font-bold label-title my-5" %>
       
       <div class="flex items-center gap-4">
         <div style="flex: 1;">
@@ -127,7 +137,7 @@
     </div>
 
 <div class="flex flex-col gap-4">
-  <%= f.label :delivery_deadline, "納品期日", class: "font-bold text-base my-5" %>
+  <%= f.label :delivery_deadline, "納品期日", class: "font-bold label-title my-5" %>
   
   <div class="flex items-center gap-4">
     <div style="flex: 1;">
@@ -152,7 +162,7 @@
     </div>
   </div>
 </div>
-<p class= "font-bold text-base my-5">公開設定</p>
+<p class= "font-bold label-title my-5">公開設定</p>
   <div class="flex items-center gap-2 mb-10">
     <%= f.check_box :published, 
     { checked: @creator_setting.published?, class: "h-4 w-4 rounded border-gray-300" }, 
@@ -161,8 +171,8 @@
     <%= f.label :published, "公開する(リクエストが送られるようになります)" %>
   </div>
 
-<p class= "font-bold text-base my-5">確認事項</p>
-  <div class="flex items-center gap-2 mb-10">
+<p class= "font-bold label-title my-5">確認事項</p>
+  <div class="confirm-area flex items-center gap-2 mb-10">
     <%= f.check_box :terms_agreed, 
     { checked: @creator_setting.persisted?, class: "h-4 w-4 rounded border-gray-300" }, 
     "true", 

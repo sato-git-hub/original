@@ -1,0 +1,31 @@
+<nav class="flex">
+  <%= link_to "承認待ち", received_requests_path(status: "submit"), class: "received-request-menu" %>
+  <%= link_to "進行中", received_requests_path(status: "approved"), class: "received-request-menu" %>
+  <%= link_to "納品待ち", received_requests_path(status: "success_finished"), class: "received-request-menu" %>
+  <%= link_to "完了", received_requests_path(status: "completed"), class: "received-request-menu" %>
+  <%= link_to "キャンセル", received_requests_path(status: "expired"),  class: "received-request-menu" %>
+</nav>
+
+
+<div data-controller="request-preview">
+  <div class="request-flex"> 
+    <ul class="request-left">
+      <% if @requests.present? %>
+        <% @requests.each do |request| %>
+          <li>
+            <%= link_to received_request_path(request), data: { turbo_frame: "received-request-detail", controller: "responsive-link", action:"click->responsive-link#click" } do %>
+              <div class="request-list-area">
+                <%= render "received_request_list", request: request %>
+              </div>
+            <% end %>
+          </li>
+        <% end %>
+      <% else %>
+        <div>現在依頼されているリクエストはありません</div>
+      <% end %>
+    </ul>
+    <div class="request-right">
+      <%= turbo_frame_tag "received-request-detail" %>
+    </div>
+  </div>
+</div>

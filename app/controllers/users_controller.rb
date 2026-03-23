@@ -9,6 +9,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    # statusが完了になっている受け取ったリクエスト
     @requests = @user.received_requests.completed.with_attached_deliverable
     base = @user.received_requests
     @ont = (base.on_time.count.zero?)? 0 : (base.on_time.count.to_f / (base.off_time.count + base.on_time.count)*100).round
@@ -34,6 +35,7 @@ class UsersController < ApplicationController
 
   def supported_request
     @user = User.find(params[:user_id])
+    # request_idの重複を除去
     @requests = @user.supported_requests.distinct
   end
 

@@ -1,0 +1,12 @@
+<% case request.status %>
+<% when "submit" %>
+  <%= render "received_requests/lists/submit", request: request %>
+<% when "approved" %>
+  <%= render "received_requests/lists/approved", request: request %>
+<% when "success_finished" %>
+  <%= render "received_requests/lists/success_finished", request: request %>
+<% when "completed" %>
+  <%= render "received_requests/lists/completed", request: request %>
+<% when "expired" %>
+  <%= render "received_requests/lists/expired", request: request %>
+<% end %>

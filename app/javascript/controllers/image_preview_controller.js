@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { Turbo } from "@hotwired/turbo-rails"
 
 export default class extends Controller {
   static targets = ["preview"]
@@ -9,32 +10,12 @@ export default class extends Controller {
     position: { type: String, default: "center" }
   }
 
-  preview(event) {
+  add(event) {
 //存在する？
-    const files = event.target.files
-  
-    if (!files || files.length === 0) {
-    this.previewTarget.innerHTML = ""
-    this.previewTarget.classList.add("hidden")
-    return
+    const input = event.currentTarget
+    const form = input.form 
+    if (form) {
+      form.requestSubmit()
+    } 
   }
-      this.previewTarget.classList.remove("hidden")
-      this.previewTarget.innerHTML = ""
-    Array.from(files).forEach(file=>{
-    if (!file.type.startsWith("image/")) return;
-
-    const imageUrl = URL.createObjectURL(file);
-    const img = document.createElement("img")
-    img.src = imageUrl
-    img.style.width = this.widthValue;
-    img.style.height = this.heightValue;
-    img.style.objectFit = this.fitValue;
-    img.style.objectPosition = this.positionValue;
-    img.classList.add("rounded");
-    img.onload = () => {
-      URL.revokeObjectURL(imageUrl); 
-    };
-  this.previewTarget.appendChild(img)
-    })
-}
 }

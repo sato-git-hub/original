@@ -1,5 +1,5 @@
 Sidekiq::Cron::Job.create(
   name: "Expire requests",
-  cron: "0 3 * * *",
+  cron: "* 12 * * *",
   class: "CancelRequestJob"
 )

@@ -1,0 +1,37 @@
+<div data-controller="request-preview">
+  <div class="request-flex"> 
+    <ul class="request-left">
+      <% if @requests.present? %>
+        <% @requests.each do |request| %>
+          <li id="<%= dom_id(request) %>">
+            <%= link_to draft_path(request), data: { turbo_frame: "draft-detail", controller: "responsive-link", action: "click->responsive-link#click" } do %>
+              <div class="request-list-area">
+                <div class="request-title flex flex-col gap-2 mb-6">
+                  <p class="mb-2"><%= l request.updated_at, format: :simple  %></p>
+                  <div class="flex items-center gap-4">
+                    <div class="text-sm" style="flex: 0 0 auto;">リクエスト名:</div>
+                    <div class="title"><%= request.title %></div>
+                  </div>
+                  <div class="flex gap-4 items-center">
+                    <div class="text-sm" style="flex: 0 0 auto;">クリエーター名:</div>
+                    <div><%= user_avatar(request.creator, size: 30) %></div>
+                    <div class="title"><%= request.creator.name %></div>
+                  </div>
+                  <div class="flex items-center gap-6">
+                    <%= link_to edit_request_path(request), class: "button" do %>編集する<% end %>
+                    <%= link_to request_path(request), data: { turbo_method: :delete, turbo_confirm: "削除してよろしいですか" }, class: "button" do %>削除する<% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </li>
+        <% end %>
+      <% else %>
+        <div>現在依頼されているリクエストはありません</div>
+      <% end %>
+    </ul>
+    <div class="request-right">
+      <%= turbo_frame_tag "draft-detail" %>
+    </div>
+  </div>
+</div>

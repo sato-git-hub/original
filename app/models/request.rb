@@ -1,5 +1,8 @@
 class Request < ApplicationRecord
   before_save :set_search_conf
+  before_destroy :ensure_draft
+
+
   # 納品期日前のリクエスト
   scope :active_deadline, -> { where("delivery_due_date > ?", Time.current.floor) }
   # 納品期日が過去のリクエスト
@@ -8,7 +11,6 @@ class Request < ApplicationRecord
   scope :on_time, -> { where("delivered_at <= delivery_due_date") }
   # 納品期日を守らなかったリクエスト
   scope :off_time, -> { where("delivered_at > delivery_due_date") }
-
   scope :search, ->(keyword) {
     keywords = keyword.split(/[ 　]+/)
     relation = all
@@ -18,27 +20,12 @@ class Request < ApplicationRecord
    end
    relation
 }
-
 # jobが失敗してstatusがfinishedまたはsuccess_finishedに切り替わらなかった時用
 scope :active, -> {
     where("deadline_at > ?", Time.current.floor)
   }
-
 # 1. 公開中（承認済み、または成功）
 scope :publish, -> { where(status: [:approved, :succeeded]) }
-
-  def self.ransackable_attributes(auth_object = nil)
-    %w[
-      title
-      search_conf
-      status
-    ]
-  end
-
-  def self.ransackable_associations(auth_object = nil)
-  %w[]
-  end
-  # request_idが該当のsupport_historyレコード、そのレコードのuser_idからuserインスタンスを取り出す
 
   has_many :notifications, dependent: :destroy
   has_many :support_histories, dependent: :destroy
@@ -64,10 +51,9 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
   completed: 8 # クリエーターが納品を完了(期日内)
 }
 
-
   # 納品イラストファイル
   has_one_attached :deliverable_psd
-  validates :deliverable,
+  validates :deliverable_psd,
                     content_type: { in: %w[image/jpeg image/gif image/png image/webp image/vnd.adobe.photoshop ],
                     message: "psd, png, jpg, jpeg, gif, webp いずれかの形式にして下さい" },
                     size: { less_than: 500.megabytes, message: " 500MBを超えるファイルはアップロードできません" }
@@ -80,20 +66,35 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
 
   with_options on: :step1 do
-    validates :deliverable_thumbnail,
-                      presence: true
+    validates :deliverable, presence: true
   end
 
   # リクエスト画像
   has_many_attached :request_images
   validates :request_images,
-                    presence: true,
+                   # presence: true,
                     content_type: { in: %w[image/jpeg image/gif image/png image/webp],
                     message: "png, jpg, jpeg, gif, webp いずれかの形式にして下さい" },
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
 
-  validates :title, :body, :target_amount, presence: true, on: :create
+  #validates :title, :body, :target_amount, presence: true, on: :create
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[
+      title
+      search_conf
+      status
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+  %w[]
+  end
+  # request_idが該当のsupport_historyレコード、そのレコードのuser_idからuserインスタンスを取り出す
+
+  def ensure_draft
+    throw(:abort) unless draft?
+  end
 
   def supporters_count
     if support_histories.loaded?
@@ -148,6 +149,7 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
   # 納品完了
   def complete!(deliverable_params)
     raise "already completed" if completed?
+    raise "false" unless self.valid?(:step1)
     transaction do
       update!(deliverable_params.merge(status: :completed, delivered_at: Time.current.floor))
       self.notifications.create!(action: :completed, receiver: self.user, target: :supporter)

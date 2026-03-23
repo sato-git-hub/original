@@ -1,0 +1,14 @@
+<%= turbo_frame_tag "received-request-detail" do %>
+  <div class="request-detail-area">
+    <section class="received-request-area">
+      <div class="">
+        <h3 class="title mb-10">リクエスト内容</h3>
+        <%= render "shared/request_preview", request: request %>
+      </div>
+      <div class="flex justify-between" style="max-width: 350px; margin: 0 auto;">
+        <%= link_to "リクエストを承認", approve_request_status_path(request), data: { turbo_method: :patch, turbo_frame: "_top"  }, class: "small-button"%>
+        <%= link_to "リクエストを拒否", decline_request_status_path(request), data: { turbo_method: :patch, turbo_frame: "_top"  }, class: "small-button" %>
+      </div>
+    </section>
+  </div>
+<% end %>
