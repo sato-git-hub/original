@@ -3,30 +3,6 @@ class RequestsController < ApplicationController
   before_action :authorize_user!, only: [ :update ]
   before_action :ensure_draft!, only: [ :edit, :update ]
   #before_action :ensure_editable_status, only: [ :destroy ]
-  
-  def preview
-
-  end
-
-  def detail
-
-  end
-  # 受け取ったリクエスト一覧
-  def incoming
-    
-    @status = params[:status] || "submit"
-    unless Request.statuses.keys.include?(@status)
-      @status = "submit"
-    end
-    #　最新順
-    @requests = current_user.requests.where(status: @status).order(created_at: :desc)
-  end
-
-  def dashboard
-    @q = Request.ransack(params[:q])
-    # Request.where(status: 1)
-    @requests = @q.result.where(user: current_user).order(updated_at: :desc)
-  end
 
   def index
     Rails.logger.debug "=============================================#{params[:q]}"
@@ -38,7 +14,7 @@ class RequestsController < ApplicationController
 
       words = search_params[:title_or_search_conf_cont].split(/[[:space:]]+/)
       # titleまたはsearch_conf に渡した すべての words を含んでいるレコード
-Rails.logger.debug "=============================================#{words}"
+      Rails.logger.debug "=============================================#{words}"
       # formから受け取ったparamsを加工せず、そのまま絞る時は@q = Request.ransack(params[:q])
       # 空白で分割して絞り込み検索
       keywords = words.reduce({}) do |hash, word|
@@ -47,8 +23,7 @@ Rails.logger.debug "=============================================#{words}"
       end
       Rails.logger.debug "=============================================#{keywords}"
       @q = base_query.ransack({ combinator: 'and', groupings: keywords })
-      
-      
+
       Rails.logger.debug "=============================================#{@q}"
     else
       # 空で渡す
@@ -113,7 +88,6 @@ Rails.logger.debug "=============================================#{words}"
       if request_params[:request_images].present?
           @request.request_images.attach(request_params[:request_images]) 
       end
-
     end
 
     redirect_to current_user, notice: "更新しました"

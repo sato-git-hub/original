@@ -93,20 +93,6 @@ end
 
 resources :support_histories, only: [ :index ]
 
-resources :requests, only: [] do # /requests/
-  collection do
-    get :dashboard
-    get :incoming
-  end
-end
-
-resources :requests do
-  member do
-    get :preview
-    get :detail
-  end
-end
-
 resources :requests
 
 resources :users, only: [] do
