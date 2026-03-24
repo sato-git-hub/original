@@ -1,4 +1,4 @@
-class CloseProjectJob < ApplicationJob
+class CloseRequestJob < ApplicationJob
   queue_as :default
 
   def perform(request_id)
@@ -11,8 +11,6 @@ class CloseProjectJob < ApplicationJob
     request.finish_if_expired!
     Rails.logger.debug "DEBUG: keyword=#{request.status}================================================="
     if request.success_finished?
-      request.notifications.create!(receiver: request.user, action: :success_finished, target: :supporter)
-      request.notifications.create!(receiver: request.creator, action: :success_finished, target: :creator)
       request.support_histories.authorized.find_each do |support_history|
         begin
           charge = Payjp::Charge.retrieve(support_history.payjp_charge_id)
@@ -41,8 +39,6 @@ class CloseProjectJob < ApplicationJob
         end
       end
     else # request.finished?
-      request.notifications.create!(receiver: request.user, action: :failed_finished, target: :supporter)
-      request.notifications.create!(receiver: request.creator, action: :failed_finished, target: :creator)
       request.support_histories.authorized.find_each do |support_history|
         begin
           charge = Payjp::Charge.retrieve(support_history.payjp_charge_id)

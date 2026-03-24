@@ -9,7 +9,10 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
-    @request = @user.received_requests
+    # statusが完了になっている受け取ったリクエスト
+    @requests = @user.received_requests.completed.with_attached_deliverable
+    base = @user.received_requests
+    @ont = (base.on_time.count.zero?)? 0 : (base.on_time.count.to_f / (base.off_time.count + base.on_time.count)*100).round
     @creator_setting = @user.creator_setting
   end
 
@@ -20,13 +23,20 @@ class UsersController < ApplicationController
 
   def received_request
     @user = User.find(params[:user_id])
-    @received_requests = @user.received_requests.publish.active
+    @requests = @user.received_requests.publish
+    .with_attached_request_images
   end
 
   def sent_request
     @user = User.find(params[:user_id])
-    @requests = @user.requests
+    @requests = @user.requests.publish
     .with_attached_request_images
+  end
+
+  def supported_request
+    @user = User.find(params[:user_id])
+    # request_idの重複を除去
+    @requests = @user.supported_requests.distinct
   end
 
   def remember_me

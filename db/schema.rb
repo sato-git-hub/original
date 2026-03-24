@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_24_010628) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_14_083610) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -47,6 +47,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_24_010628) do
     t.integer "minimum_supporters", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "delivery_deadline", null: false
     t.index ["user_id"], name: "index_creator_settings_on_user_id", unique: true
   end
 
@@ -90,6 +91,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_24_010628) do
     t.datetime "approved_at", precision: nil
     t.datetime "deadline_at", precision: nil
     t.text "search_conf"
+    t.datetime "delivered_at", precision: nil
+    t.datetime "delivery_due_date", precision: nil
     t.index ["creator_id"], name: "index_requests_on_creator_id"
     t.index ["user_id"], name: "index_requests_on_user_id"
   end

@@ -1,30 +1,20 @@
 <%= turbo_frame_tag "notifications_list" do %>
-<div class="max-w-2xl mx-auto">
-<%= form_with url: notification_path, method: :get, data: {  
-  turbo_frame: "notifications_list" }, class: "selector"  do |f| %>
-  <%= f.select :target, 
-    [ ["依頼したリクエスト", "supporter"], ["依頼されたリクエスト", "creator"] ], 
-    { include_blank: "すべて", selected: params[:target] }, 
-    { onchange: "requestSubmit()" } 
-  %>
-<% end %>
 
-<div style="margin-top: 100px;">
+
+<div style="background-color: white;
+    padding: 1em;">
 <% @notifications.each do |notification| %>
   <div class="flex flex-col hover:bg-gray-100 block pt-3 rounded">
   <% if notification.supporter? %>
     <p class="mb-5">
-    <%if notification.approved?%>
-      <%= link_to request_path(notification.request) do%>
-      <p>依頼が承認され、リクエストの公開が開始されました</p>
-      <% end %>
-    <% elsif notification.decline?%>
-      依頼したリクエストが拒否されました
-    <% elsif notification.success_finished?%> 
-      支援したリクエストが達成金額に到達して、終了しました。クリエーターからの連絡をお待ちください。
+
+    <% if notification.success_finished?%> 
+     <%  %>
+      支援したリクエストが、達成金額に到達して終了しました。クリエーターの作品完成までお待ちください。
+      <% %>
     <% elsif notification.succeeded?%>
       <%= link_to request_path(notification.request) do%>
-      <p>支援したリクエストが達成金額に到達しました。</p>
+        <p>支援したリクエストが達成金額に到達しました。</p>
       <% end %>
     <%elsif notification.failed_finished?%>
       支援したリクエストが達成金額に到達せず、終了しました
@@ -34,6 +24,8 @@
       登録したカードの決済に失敗しました　リターンはキャンセルされました
     <%elsif notification.refunded?%>
       仮押さえを解除しました。お金は引き落とされていません
+    <%elsif notification.completed?%>
+      支援したリクエストのイラストが完成しました。
     <% end %>
     </p>
 
@@ -49,10 +41,23 @@
       依頼されたリクエストが達成金額に到達しました。
     <%elsif notification.failed_finished?%>
       依頼されたリクエストが達成金額に到達せず、終了しました
+    <%elsif notification.completed?%>
+      イラストの納品が完了しました。
     <% end %>
     </p>
-  <% end %>
 
+  <% elsif notification.sender? %>
+    <p class="mb-5">
+    
+    <%if notification.approved?%>
+      <%= link_to request_path(notification.request), class: "flex items-center gap-4" do%>
+          <%= user_avatar(notification.request.creator) %>
+          <span>リクエストが承認されました</span>
+      <% end %>
+  <% end %>
+</p>
+  <% end %>
+</div>
 <div class="flex justify-between mt-7">
 <p><%=notification.created_at.strftime('%Y/%m/%d %k:%M')%></p>
 <div id="<%= notification.id %>">
@@ -66,9 +71,8 @@
 <% end %>
 </div>
 </div>
-</div>
+
 <hr class="border-gray-200 my-4">
 <% end %> 
 </div>
 <% end %>
-</div>

@@ -1,0 +1,9 @@
+<div class="preview-card" id="preview_<%= dom_id(request) %>">
+  <h2 class="font-bold md:text-lg text-center mb-4">
+    <%= request.title %>
+  </h2>
+  <%= render "shared/image", images: request.request_images, object_fit: "contain"%>
+  <div class="bg-white rounded p-3 mt-4">
+    <%= simple_format(request.body) %>
+  </div>
+</div>

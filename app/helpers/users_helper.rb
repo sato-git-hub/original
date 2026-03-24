@@ -1,5 +1,5 @@
 module UsersHelper
-  def user_avatar(user, size = 50, resize = 180, **options)
+  def user_avatar(user, size: 50, resize: 180, **options)
     # 1. クラスの合体（基本クラス + 引数で渡された任意のクラス）
     combined_classes = "user-avatar-helper #{options[:class]}".strip
 
@@ -15,7 +15,7 @@ module UsersHelper
     image_tag(
       image_path,
       class: combined_classes,
-      style: "--size: #{size}px;"
+      style: "--size: #{size}px; flex-shrink: 0;"
     )
   end
 end

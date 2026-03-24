@@ -1,0 +1,2 @@
+module SentRequestsHelper
+end

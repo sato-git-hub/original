@@ -1,0 +1,64 @@
+<%= turbo_frame_tag "received-request-detail" do %>
+<div class="request-detail-area">
+  <section class="deliverable-form mb-10">
+     <div class="">
+        <h3 class="title mb-10">納品する</h3>
+        <%= form_with model: request, url: request_deliverable_path(request_id: request),  method: :patch, data: { turbo_frame: "_top" }  do |f| %>
+
+          <div class="deliverable-input-area">
+            <div class="mb-4">
+
+              <div class="flex items-center gap-1">
+                <p class="font-bold">納品ファイル(JPEG,JPG,PNGのみ)</p>
+                <span class="form-badge">必須</span>
+              </div>
+              <small>※ 納品者のホーム画面にある成果物表示部、サムネイルにも使用されます</small>
+              
+            </div>
+            <%= f.label :deliverable do %>
+              <div class="deliverable-input flex mb-4">
+                <div class="input file-input"></div>
+                <div class="small-button" style="--display: inline-block; --w: auto; flex: 0 0 auto;">ファイルを選択</div>
+              </div>
+              <%= f.file_field :deliverable, class: "hidden",
+              data: { action:"change->request-preview#check"}, 
+              accept: 'image/jpeg, image/gif, image/png, image/webp, .psd' %>
+            <%end%>
+          </div>
+          <div class="deliverable-input-area mb-10">
+            <div class="mb-4">
+              <p class="font-bold">納品ファイル(JPEG,JPG,PNG以外)</p>
+              <small>※ 元データファイル(PSD等)で納品する場合はこちら</small>
+            </div>
+            <%= f.label :deliverable_psd do %>
+              <div class="deliverable-input flex">
+                <div class="input file-input"></div>
+                <div class="small-button" style="--display: inline-block; --w: auto; flex: 0 0 auto;">ファイルを選択</div>
+              </div>
+              <%= f.file_field :deliverable_psd, class: "hidden",
+                data: { action:"change->request-preview#check"},
+                accept: 'image/jpeg, image/gif, image/png, image/webp, .psd' %>
+            <%end%>
+          </div>
+          <%= f.submit "ファイルをアップロード", class: "button"%>
+        <% end %>
+      </div>
+  </section>
+  <section>
+    <div class="">
+      <h3 class="title mb-10">リクエスト内容</h3>
+      <%= render "shared/request_preview", request: request %>
+    </div>
+  </section>
+  <section class="supporters">
+     <h3 class="title mb-10">支援者一覧</h3>
+    <div class="preview-card p-4">
+      <ul class="preview-body bg-white flex flex-col gap-4 p-4">
+      <% request.support_histories.each do |support_history| %>
+        <li class="flex items-center gap-4" style="border-bottom: 1px solid #c8c8c8;" ><%= user_avatar(support_history.user, size: 30) %><%= support_history.user.name %></li>
+      <% end %>
+      </ul>
+    </div>
+  </section>
+</div>
+<% end %>

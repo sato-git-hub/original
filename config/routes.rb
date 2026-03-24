@@ -1,6 +1,7 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
+
   get "static_pages/after_registration_confirmation"
 
   devise_for :users, controllers: {
@@ -12,6 +13,11 @@ Rails.application.routes.draw do
 #    mount LetterOpenerWeb::Engine, at: "/letter_opener"
 # end　を消す
 
+
+resources :received_requests, only: [:index, :show]
+resources :sent_requests, only: [:index, :show]
+resources :supported_requests, only: [:index, :show]
+resources :drafts, only: [:index, :show]
 resources :contacts, only: [:new, :create]
 
 get 'user_menu', to: 'users#menu', as: :user_menu
@@ -19,8 +25,16 @@ get 'user_menu', to: 'users#menu', as: :user_menu
 root "requests#index"
 
 resources :requests, only: [] do
-  resources :deliverables, only: [:new, :create]
+  resource :deliverable, only: [:update]
 end
+
+resources :deliverables, only: [] do
+  member do
+    get :download
+  end
+end
+
+resources :deliverables, only: [:index]
 
 # 確認メール送信後
 get 'after_registration_confirmation', to: 'static_pages#after_registration_confirmation'
@@ -41,12 +55,18 @@ resources :notifications, only: [] do
   patch :checked
 end
 
+resource :creator_setting do
+  member do
+    delete :remove_image
+    post :add_image
+  end
+end
+
 namespace :creator_settings, only: [] do
     resource :publish, only: [ :update ]
 end
 
 resource :creator_setting, only: [ :new, :create, :edit, :update]
-
 
 resources :requests, only: [] do
   scope module: :requests do
@@ -73,19 +93,14 @@ end
 
 resources :support_histories, only: [ :index ]
 
-resources :requests, only: [] do # /requests/
-  collection do
-    get :dashboard
-    get :incoming
-  end
-end
-
 resources :requests
+
 resources :users, only: [] do
   get :portfolio
   get :received_request
   get :sent_request
   get :supported_request
+
 end
 
 resources :users, only: [ :show ]

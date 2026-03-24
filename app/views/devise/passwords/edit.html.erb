@@ -3,7 +3,7 @@
 <div class="layout-form relative">
 <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
 
-  <h2 class="title signin-title">パスワード再設定</h2>
+  <h2 class="title title-border">パスワード再設定</h2>
     <%= f.hidden_field :reset_password_token %>
     <%= render "devise/shared/error_messages", resource: resource %>
       <div class="form-container">
@@ -11,7 +11,7 @@
           <%= f.label :password do %>
             新しいパスワード
             <% unless f.object.persisted? %>
-              <span class="badge-red">
+              <span class="form-badge">
                 必須
               </span>
             <% end %>
@@ -31,7 +31,7 @@
           <%= f.label :password_confirmation do %>
             新しいパスワード(確認用)
             <% unless f.object.persisted? %>
-              <span class="badge-red">
+              <span class="form-badge">
                 必須
               </span>
             <% end %>

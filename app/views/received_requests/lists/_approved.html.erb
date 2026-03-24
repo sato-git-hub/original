@@ -1,0 +1,11 @@
+<div class="request-title flex flex-col gap-2 mb-6">
+  <p class="mb-2"><%= l request.approved_at, format: :simple  %></p>
+  <div class="flex items-center gap-4">
+    <div class="text-sm" style="flex: 0 0 auto;">リクエスト名:</div>
+    <div class="title"><%= request.title %></div>
+  </div>
+  <div class="flex items-center gap-6">
+    <div class="text-sm" style="flex: 0 0 auto;">公開終了日時:</div>
+    <div class="title"><%= l request.deadline_at %></div>
+  </div>
+</div>

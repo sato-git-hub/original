@@ -19,7 +19,7 @@ enum :action, {
   completed:        9
 }
 
-enum :target, { supporter: 0, creator: 1 }
+enum :target, { supporter: 0, creator: 1, sender: 2 }
 
   def checked!
     raise "invalid state" if self.checked

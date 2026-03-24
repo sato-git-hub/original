@@ -3,24 +3,31 @@
 <% images = local_assigns[:images] %>
 
 <% if images.present? && images.attached? %>
-  <div class="swiper card-image" style="--ratio: <%= ratio %>; --object-fit: <%= object_fit %>;">
-    <div class="swiper-wrapper">
-      <% images.each do |image| %>
-        <div class="swiper-slide">
-          <%= image_tag default_image(image),
-            class: "bg-black w-full h-full select-none card-image", style: "--ratio: #{ratio}; --object-fit: #{object_fit};",
-            draggable: false %>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="swiper-button-next">
-      <%= image_tag "next-arrow.png", class: "custom-arrow" %>
-    </div>
-    <div class="swiper-button-prev">
-      <%= image_tag "arrow.png", class: "custom-arrow" %>
+  <% if images.size > 1 %>
+  <div data-controller="swiper">
+    <div class="swiper card-image" style="--ratio: <%= ratio %>; --object-fit: <%= object_fit %>;">
+      <div class="swiper-wrapper">
+        <% images.each do |image| %>
+          <div class="swiper-slide">
+            <%= image_tag default_image(image),
+              class: "bg-black w-full h-full select-none card-image", style: "--ratio: #{ratio}; --object-fit: #{object_fit};",
+              draggable: false %>
+          </div>
+        <% end %>
+      </div>
+      <div class="swiper-button-next">
+        <%= image_tag "next-arrow.png", class: "custom-arrow" %>
+      </div>
+      <div class="swiper-button-prev">
+        <%= image_tag "arrow.png", class: "custom-arrow" %>
+      </div>
     </div>
   </div>
+  <% else %>
+    <%= image_tag default_image(images.first),
+              class: "bg-black w-full h-full select-none card-image", style: "--ratio: #{ratio}; --object-fit: #{object_fit};",
+              draggable: false %>
+  <% end %>
 <% else %>
   <div class="">
     <%= image_tag "no_image.jpeg", class: "card-image"%>

@@ -11,13 +11,12 @@ class CreatorSettingsController < ApplicationController
 
   def create
     @creator_setting = current_user.build_creator_setting(creator_setting_params)
-    if @creator_setting.save
-      redirect_to current_user, notice: "処理に成功しました"
-    else
+    @creator_setting.save!
+    redirect_to current_user, notice: "処理に成功しました"
+    rescue => e
       flash.now[:alert] = "処理に失敗しました"
       render :new, status: :unprocessable_entity
     end
-  end
 
   def edit
     @creator_setting = current_user.creator_setting
@@ -30,24 +29,55 @@ class CreatorSettingsController < ApplicationController
       if params[:remove_image_ids].present?
         attachments = @creator_setting.images.where(id: params[:remove_image_ids])
         if @creator_setting.images.attachments.count - attachments.count <= 0
-          raise StandardError, "画像は少なくとも1枚必要です"
+          if creator_setting_params[:images].reject(&:blank?).empty?
+            @creator_setting.errors.add(:images, "は少なくとも1枚必要です")
+            raise StandardError, "画像は少なくとも1枚必要です"
+          end
         end
         attachments.each(&:purge)
       end
-
-      @creator_setting.update!(creator_setting_params.except(:images))
-
-      if creator_setting_params[:images].present?
+      # 存在しなかったら、
+      if creator_setting_params[:images].reject(&:blank?).present?
           @creator_setting.images.attach(creator_setting_params[:images]) 
       end
+
+      @creator_setting.update!(creator_setting_params.except(:images))
 
     end
 
     redirect_to @creator_setting, notice: "ポートフォリオを更新しました"
 
   rescue => e
-    flash.now[:alert] = e.message
+    flash.now[:alert] = CreatorSetting.human_attribute_name(:images)
     render :edit, status: :unprocessable_entity
+  end
+
+  def remove_image
+    @creator_setting = CreatorSetting.find(params[:creator_setting_id])
+    #record_type = 'CreatorSetting' #name = images #record_id = 1
+    image = @creator_setting.images.find(params[:image_id])
+    image.purge
+    respond_to do |format|
+    # 3. Turbo Stream で画面上の要素だけを消す
+      format.turbo_stream {
+        render turbo_stream: turbo_stream.remove("image_container_#{image.id}")
+      }
+    end
+  end
+
+  def add_image
+    @creator_setting = CreatorSetting.find(params[:creator_setting_id])
+    #record_type = 'CreatorSetting' #name = images #record_id = 1
+
+    @creator_setting.images.attach(creator_setting_params[:images])
+     respond_to do |format|
+       format.turbo_stream {
+       render turbo_stream: turbo_stream.update("image-preview",
+       partial: "creator_settings/image_preview",
+        locals: { creator_setting: @creator_setting })
+      }
+    end
+
   end
 
   private

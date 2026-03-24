@@ -1,20 +1,8 @@
 class RequestsController < ApplicationController
-  before_action :set_request, only: [ :edit, :show, :update ]
+  before_action :set_request, only: [ :edit, :show, :update, :destroy, :preview]
   before_action :authorize_user!, only: [ :update ]
-  before_action :authorize_approved_or_succeeded!, only: [ :show ]
-
   before_action :ensure_draft!, only: [ :edit, :update ]
-  # 受け取ったリクエスト一覧
-  def incoming
-    @q = Request.ransack(params[:q])
-    @requests = @q.result.where(creator: current_user).where.not(status: [ :draft, :creator_declined ]).order(updated_at: :desc)
-  end
-
-  def dashboard
-    @q = Request.ransack(params[:q])
-    # Request.where(status: 1)
-    @requests = @q.result.where(user: current_user).order(updated_at: :desc)
-  end
+  #before_action :ensure_editable_status, only: [ :destroy ]
 
   def index
     Rails.logger.debug "=============================================#{params[:q]}"
@@ -26,7 +14,7 @@ class RequestsController < ApplicationController
 
       words = search_params[:title_or_search_conf_cont].split(/[[:space:]]+/)
       # titleまたはsearch_conf に渡した すべての words を含んでいるレコード
-Rails.logger.debug "=============================================#{words}"
+      Rails.logger.debug "=============================================#{words}"
       # formから受け取ったparamsを加工せず、そのまま絞る時は@q = Request.ransack(params[:q])
       # 空白で分割して絞り込み検索
       keywords = words.reduce({}) do |hash, word|
@@ -35,8 +23,7 @@ Rails.logger.debug "=============================================#{words}"
       end
       Rails.logger.debug "=============================================#{keywords}"
       @q = base_query.ransack({ combinator: 'and', groupings: keywords })
-      
-      
+
       Rails.logger.debug "=============================================#{@q}"
     else
       # 空で渡す
@@ -60,9 +47,9 @@ Rails.logger.debug "=============================================#{words}"
     @creator_setting = CreatorSetting.find(params[:creator_setting_id])
     @creator = @creator_setting.user
     @request.creator = @creator
-    if @request.save
-        @request.submit! if params[:commit] == "send"
-        redirect_to current_user,notice: "処理に成功しました"
+    if  @request.save
+      @request.submit! if params[:commit] == "send"
+      redirect_to current_user, notice: "処理に成功しました"
     else
       flash.now[:alert] = "処理に失敗しました"
       render :new, status: :unprocessable_entity
@@ -70,7 +57,6 @@ Rails.logger.debug "=============================================#{words}"
   end
 
   def show
-
     @request = Request
       .with_attached_request_images
       .preload(
@@ -80,10 +66,10 @@ Rails.logger.debug "=============================================#{words}"
       { avatar_attachment: :blob }
       ]
     ).find(params[:id])
-
   end
 
   def edit
+    @creator_setting = CreatorSetting.find_by(user: @request.creator)
   end
 
   def update
@@ -102,7 +88,6 @@ Rails.logger.debug "=============================================#{words}"
       if request_params[:request_images].present?
           @request.request_images.attach(request_params[:request_images]) 
       end
-
     end
 
     redirect_to current_user, notice: "更新しました"
@@ -113,22 +98,24 @@ Rails.logger.debug "=============================================#{words}"
   end
 
   def destroy
-    # リクエストを取得
-    @request = Request.find(params[:id])
     @request.destroy
+    flash[:notice] = "下書きを削除しました"
+    respond_to do |format|
+    format.turbo_stream {
+      render turbo_stream: [
+        turbo_stream.remove("request_#{@request.id}"),
+        turbo_stream.remove("preview_request_#{@request.id}"),
+        turbo_stream.update("flash", partial: "shared/flash_messages" )
+      ]
+    }
+    format.html { redirect_to drafts_path, notice: "削除しました" }
+    end
   end
 
 private
 
   def set_request
     @request = Request.find(params[:id])
-  end
-
-  # approvedとsucceeded以外のリクエストは入金ページを表示できない # approvedであるか
-  def authorize_approved_or_succeeded!
-    unless @request.approved? || @request.succeeded?
-      redirect_to current_user, alert: "このリクエストは非公開です"
-    end
   end
 
   # 操作しているのが依頼者でない場合弾く
@@ -152,5 +139,13 @@ private
 
   def request_params
     params.require(:request).permit(:title, :body, :target_amount, request_images: [])
+    .tap do |whitelisted|
+      whitelisted[:request_images] = whitelisted[:request_images].reject(&:blank?)
+    end
+  end
+
+  def ensure_editable_status
+    return if @request.draft?
+    redirect_to request_path(@request),alert: "送信済みのリクエストは削除できません"
   end
 end

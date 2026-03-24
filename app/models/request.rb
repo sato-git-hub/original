@@ -1,6 +1,16 @@
 class Request < ApplicationRecord
   before_save :set_search_conf
+  before_destroy :ensure_draft
 
+
+  # 納品期日前のリクエスト
+  scope :active_deadline, -> { where("delivery_due_date > ?", Time.current.floor) }
+  # 納品期日が過去のリクエスト
+  scope :expired, -> { where("delivery_due_date < ?", Time.current.floor) } 
+  # 納品期日を守ったリクエスト
+  scope :on_time, -> { where("delivered_at <= delivery_due_date") }
+  # 納品期日を守らなかったリクエスト
+  scope :off_time, -> { where("delivered_at > delivery_due_date") }
   scope :search, ->(keyword) {
     keywords = keyword.split(/[ 　]+/)
     relation = all
@@ -10,32 +20,18 @@ class Request < ApplicationRecord
    end
    relation
 }
-
 # jobが失敗してstatusがfinishedまたはsuccess_finishedに切り替わらなかった時用
 scope :active, -> {
     where("deadline_at > ?", Time.current.floor)
   }
-
 # 1. 公開中（承認済み、または成功）
 scope :publish, -> { where(status: [:approved, :succeeded]) }
 
-  def self.ransackable_attributes(auth_object = nil)
-    %w[
-      title
-      search_conf
-      status
-    ]
-  end
-
-  def self.ransackable_associations(auth_object = nil)
-  %w[]
-  end
-
-  has_many :supported_requests, through: :support_histories, source: :request
   has_many :notifications, dependent: :destroy
   has_many :support_histories, dependent: :destroy
   belongs_to :user
   belongs_to :creator, class_name: "User"
+  has_many :supporters, through: :support_histories, source: :user
   validates :user, :creator, presence: true
 
   # 複数の子要素に対して処理したいとき 「Userの新規登録と同時に、そのUserの最初のPostを1つだけ作る」といったケースでは、使わない
@@ -51,26 +47,54 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
   succeeded: 4,
   finished: 5,
   success_finished: 6,
-  completed: 7
+  expired: 7, # 納品期日を過ぎた
+  completed: 8 # クリエーターが納品を完了(期日内)
 }
 
   # 納品イラストファイル
+  has_one_attached :deliverable_psd
+  validates :deliverable_psd,
+                    content_type: { in: %w[image/jpeg image/gif image/png image/webp image/vnd.adobe.photoshop ],
+                    message: "psd, png, jpg, jpeg, gif, webp いずれかの形式にして下さい" },
+                    size: { less_than: 500.megabytes, message: " 500MBを超えるファイルはアップロードできません" }
+
+  # 納品イラスト サムネイル用
   has_one_attached :deliverable
   validates :deliverable,
-                    presence: true,
-                    content_type: { in: %w[image/jpeg image/gif image/png],
-                    message: "png, jpg, jpegいずれかの形式にして下さい" },
+                    content_type: { in: %w[image/jpeg image/gif image/png image/webp ],
+                    message: "png, jpg, jpeg, gif, webp いずれかの形式にして下さい" },
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
+
+  with_options on: :step1 do
+    validates :deliverable, presence: true
+  end
 
   # リクエスト画像
   has_many_attached :request_images
   validates :request_images,
-                    presence: true,
-                    content_type: { in: %w[image/jpeg image/gif image/png],
-                    message: "png, jpg, jpegいずれかの形式にして下さい" },
+                   # presence: true,
+                    content_type: { in: %w[image/jpeg image/gif image/png image/webp],
+                    message: "png, jpg, jpeg, gif, webp いずれかの形式にして下さい" },
                     size: { less_than: 5.megabytes, message: " 5MBを超える画像はアップロードできません" }
 
-  validates :title, :body, :target_amount, presence: true, on: :create
+  #validates :title, :body, :target_amount, presence: true, on: :create
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[
+      title
+      search_conf
+      status
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+  %w[]
+  end
+  # request_idが該当のsupport_historyレコード、そのレコードのuser_idからuserインスタンスを取り出す
+
+  def ensure_draft
+    throw(:abort) unless draft?
+  end
 
   def supporters_count
     if support_histories.loaded?
@@ -89,12 +113,12 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
   def approve!
     raise "invalid state" unless submit?
     transaction do
-      #update!(status: :approved, approved_at: Time.current.floor, deadline_at: 2.minutes.from_now)
-      update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
+      update!(status: :approved, approved_at: Time.current.floor, deadline_at: 2.minutes.from_now)
+      #update!(status: :approved, approved_at: Time.current.floor, deadline_at: Time.current.floor + 30.days)
 
       # selfはリクエストレコード
       Rails.logger.debug "DEBUG: keyword=#{self.inspect}"
-      CloseProjectJob.set(wait_until: self.deadline_at).perform_later(self.id)
+      CloseRequestJob.set(wait_until: self.deadline_at).perform_later(self.id)
       self.notifications.create!(action: :approved, receiver: self.user, target: :supporter)
     end
   end
@@ -105,10 +129,32 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
     self.notifications.create!(action: :decline, receiver: self.user, target: :supporter)
   end
 
-  def complete!
-    raise "invalid state" unless success_finished?
-    update!(status: :completed)
-    self.notifications.create!(action: :completed, receiver: self.creator, target: :creator)
+  def finished!
+    transaction do
+      update!(status: :finished)
+      self.notifications.create!(action: :finished, receiver: self.user, target: :supporter)
+      self.notifications.create!(action: :finished, receiver: self.creator, target: :creator)
+    end
+  end
+
+  def success_finished!
+    transaction do
+      update!(status: :success_finished, delivery_due_date: Time.current.floor + self.creator.creator_setting.delivery_deadline.days)
+      self.notifications.create!(action: :success_finished, receiver: self.user, target: :supporter)
+      self.notifications.create!(action: :success_finished, receiver: self.creator, target: :creator)
+      # self.notifications.create!(action: :, receiver: self.user, target: :supporter)
+    end
+  end
+
+  # 納品完了
+  def complete!(deliverable_params)
+    raise "already completed" if completed?
+    raise "false" unless self.valid?(:step1)
+    transaction do
+      update!(deliverable_params.merge(status: :completed, delivered_at: Time.current.floor))
+      self.notifications.create!(action: :completed, receiver: self.user, target: :supporter)
+      self.notifications.create!(action: :completed, receiver: self.creator, target: :creator)
+    end
   end
 
   def mark_success_if_reached!
@@ -122,11 +168,10 @@ scope :publish, -> { where(status: [:approved, :succeeded]) }
 
   def finish_if_expired!
     return unless Time.current.floor >= deadline_at
-    # 期間が過ぎた時にどっちになるか判定
     if succeeded?
-      update!(status: :success_finished)
+      success_finished!
     elsif approved?
-      update!(status: :finished)
+      finished!
     end
   end
 PAYJP_ERROR_CODE = {

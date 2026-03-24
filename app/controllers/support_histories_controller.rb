@@ -24,9 +24,8 @@ class SupportHistoriesController < ApplicationController
   end
 
   def index
-    @q = current_user.support_histories
-              .ransack(params[:q])
-    @support_histories = @q.result
+    @support_histories = current_user.support_histories.includes(request: { avatar_attachment: :blob })
+
   end
 
   private

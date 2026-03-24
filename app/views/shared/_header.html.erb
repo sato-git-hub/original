@@ -8,15 +8,16 @@
           <%= image_tag "/flaag.png", class: "flaag-image" %>
           <h1 class="flaag-text">Flaag</h1>
         </div>
-       <% end %>
+      <% end %>
     </div>
 <% if user_signed_in? %>
   <div class="flex items-center gap-4">
 
   <%= turbo_stream_from current_user %>
   <div id="notification_bell" class="relative">
-  <%= render "notifications/notification_bell", unchecked_count: current_user.received_notifications.where(checked: false).count %>
+    <%= render "notifications/notification_bell", unchecked_count: current_user.received_notifications.where(checked: false).count %>
   </div>
+  
     <nav>
       <ul class="flex">
         <li ><%= "リクエストを送るには" %></li>

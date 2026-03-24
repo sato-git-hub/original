@@ -39,9 +39,18 @@
   <div data-controller="notification">
     <%= render "shared/header" %>
     <div data-notification-target="list" class="notification-list-panel">
-      <%= turbo_frame_tag "notifications_list" do %><% end %>
+      <div data-controller="notification" class="">
+
+        <div class="max-w-2xl mx-auto">
+          <nav class="flex gap-4 notification-menu text-center">
+          <%= link_to "受信", notification_path(target: "creator"), data: { action: "click->notification#show", turbo_frame: "notifications_list", notification_target: "link" }, class: "notification-menu-content" %>
+          <%= link_to "送信", notification_path(target: "sender"), data: { action: "click->notification#show", turbo_frame: "notifications_list", notification_target: "link" }, class: "notification-menu-content"  %>
+          <%= link_to "支援", notification_path(target: "supporter"), data: { action: "click->notification#show", turbo_frame: "notifications_list", notification_target: "link" }, class: "notification-menu-content"  %>
+          </nav>
+          <%= turbo_frame_tag "notifications_list" do %><% end %>
+        </div>
+      </div>
     </div>
-  </div>
 
 
 <div id="flash">
